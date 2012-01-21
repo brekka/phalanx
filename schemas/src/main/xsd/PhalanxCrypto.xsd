@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://brekka.org/xml/v1/phalanx"
+	xmlns:x="http://brekka.org/xml/v1/phalanx" elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+
+	<xsd:complexType name="SymmetricInfoType">
+		<xsd:sequence>
+			<xsd:element name="Profile" type="xsd:int" minOccurs="1" maxOccurs="1" />
+			<xsd:element name="Key" type="xsd:base64Binary" minOccurs="1" maxOccurs="1" />
+			<xsd:element name="IV" type="xsd:base64Binary" minOccurs="1" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:element name="SymmetricInfo" type="x:SymmetricInfoType" />
+</xsd:schema>

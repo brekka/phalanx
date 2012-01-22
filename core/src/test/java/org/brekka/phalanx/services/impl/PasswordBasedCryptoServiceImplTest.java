@@ -7,10 +7,10 @@ import java.util.Random;
 
 import net.iharder.Base64;
 
+import org.brekka.phalanx.crypto.CryptoFactoryRegistry;
+import org.brekka.phalanx.crypto.impl.CryptoFactoryRegistryImpl;
 import org.brekka.phalanx.dao.CryptoDataDAO;
 import org.brekka.phalanx.model.PasswordedCryptoData;
-import org.brekka.phalanx.profile.CryptoProfileRegistry;
-import org.brekka.phalanx.profile.impl.CryptoProfileRegistryImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -21,7 +21,7 @@ public class PasswordBasedCryptoServiceImplTest {
     
     @Before
     public void setUp() throws Exception {
-        CryptoProfileRegistry cryptoProfileRegistry = CryptoProfileRegistryImpl.createBasicRegistry();
+        CryptoFactoryRegistry cryptoProfileRegistry = CryptoFactoryRegistryImpl.createBasicRegistry();
         service = new PasswordBasedCryptoServiceImpl();
         CryptoDataDAO cryptoDAO = Mockito.mock(CryptoDataDAO.class);
         service.setCryptoDataDAO(cryptoDAO);

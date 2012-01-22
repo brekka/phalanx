@@ -1,7 +1,7 @@
 package org.brekka.phalanx.services.impl;
 
-import org.brekka.phalanx.CryptoErrorCode;
-import org.brekka.phalanx.CryptoException;
+import org.brekka.phalanx.PhalanxErrorCode;
+import org.brekka.phalanx.PhalanxException;
 import org.brekka.phalanx.dao.PrincipalDAO;
 import org.brekka.phalanx.model.AsymmetricKeyPair;
 import org.brekka.phalanx.model.AuthenticatedPrincipal;
@@ -41,7 +41,7 @@ public class PrincipalServiceImpl implements PrincipalService {
             privateKeyToken = passwordBasedCryptoService.decrypt(passwordedData, password, InternalPrivateKeyToken.class);
             privateKeyToken.setAsymetricKeyPair(defaultKeyPair);
         } else {
-            throw new CryptoException(CryptoErrorCode.CP202, 
+            throw new PhalanxException(PhalanxErrorCode.CP202, 
                     "Unable to decrypt private key for user '%s'. Expected %s, found %s for id %s", 
                     user.getId(), PasswordedCryptoData.class.getSimpleName(), privateKeyData.getClass().getSimpleName(),
                     privateKeyData.getId());

@@ -1,4 +1,4 @@
-package org.brekka.phalanx.profile;
+package org.brekka.phalanx.crypto;
 
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -9,9 +9,9 @@ import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKeyFactory;
 
-public interface CryptoProfile {
+public interface CryptoFactory {
 
-    int getId();
+    int getProfileId();
     
     MessageDigest getDigestInstance();
     

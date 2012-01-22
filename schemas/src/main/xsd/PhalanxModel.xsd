@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://brekka.org/xml/v1/phalanx"
+	xmlns:x="http://brekka.org/xml/v1/phalanx" elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+	
+	<!-- 
+		Elements
+	 -->
+	
+	<xsd:element name="CryptoProfileRegistry">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="DefaultProfile" type="xsd:IDREF" minOccurs="1" maxOccurs="1" />
+				<xsd:element ref="x:CryptoProfile"                  minOccurs="1" maxOccurs="unbounded" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="CryptoProfile">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="ID" minOccurs="1" maxOccurs="1">
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:ID">
+							<xsd:pattern value="\d+"></xsd:pattern>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="Label"         type="xsd:string"                 minOccurs="1" maxOccurs="1" />
+				<xsd:element name="Random"        type="x:AlgorithmType"            minOccurs="1" maxOccurs="1" />
+				<xsd:element name="MessageDigest" type="x:AlgorithmType"            minOccurs="1" maxOccurs="1" />
+				<xsd:element name="Symmetric"     type="x:SymmetricProfileType"     minOccurs="1" maxOccurs="1" />
+				<xsd:element name="Asymmetric"    type="x:AsymmetricProfileType"    minOccurs="1" maxOccurs="1" />
+				<xsd:element name="PasswordBased" type="x:PasswordBasedProfileType" minOccurs="1" maxOccurs="1" />
+			</xsd:sequence>
+		</xsd:complexType>
+ 	</xsd:element>
+ 	
+ 	<xsd:element name="SymmetricProfile"     type="x:SymmetricProfileType" />
+ 	<xsd:element name="AsymmetricProfile"    type="x:AsymmetricProfileType" />
+ 	<xsd:element name="PasswordBasedProfile" type="x:PasswordBasedProfileType" />
+
+	<!-- 
+		Complex types
+	 -->
+
+	<xsd:complexType name="SymmetricProfileType">
+		<xsd:sequence>
+		    <xsd:element name="Cipher"       type="x:CipherType"       minOccurs="1" maxOccurs="1" />
+			<xsd:element name="KeyGenerator" type="x:KeyGeneratorType" minOccurs="1" maxOccurs="1" />
+			<xsd:element name="IVLength"     type="xsd:int"            minOccurs="1" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="AsymmetricProfileType">
+		<xsd:sequence>
+		    <xsd:element name="Cipher"           type="x:CipherType"       minOccurs="1" maxOccurs="1" />
+			<xsd:element name="KeyPairGenerator" type="x:KeyGeneratorType" minOccurs="1" maxOccurs="1" />
+			<xsd:element name="KeyFactory"                                 minOccurs="1" maxOccurs="1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Algorithm" type="x:AlgorithmType"    minOccurs="1" maxOccurs="1" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="PasswordBasedProfileType">
+		<xsd:sequence>
+		    <xsd:element name="Cipher"           type="x:CipherType"    minOccurs="1" maxOccurs="1" />
+		    <xsd:element name="SecretKeyFactory"                        minOccurs="1" maxOccurs="1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Algorithm" type="x:AlgorithmType" minOccurs="1" maxOccurs="1" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="SaltLength"      type="xsd:int"          minOccurs="1" maxOccurs="1" />
+			<xsd:element name="IterationFactor" type="xsd:int"          minOccurs="1" maxOccurs="1" />
+		</xsd:sequence>
+		
+	</xsd:complexType>
+	
+	<xsd:complexType name="CipherType">
+		<xsd:sequence>
+			<xsd:element name="Algorithm" type="x:AlgorithmType" minOccurs="1" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="KeyGeneratorType">
+		<xsd:sequence>
+			<xsd:element name="Algorithm" type="x:AlgorithmType" minOccurs="1" maxOccurs="1" />
+			<xsd:element name="KeyLength" type="xsd:int"         minOccurs="1" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="AlgorithmType">
+		<xsd:simpleContent>
+			<xsd:extension base="xsd:string" />
+		</xsd:simpleContent>
+	</xsd:complexType>
+	
+</xsd:schema>

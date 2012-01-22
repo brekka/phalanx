@@ -16,7 +16,7 @@
 
 		<dependency>
 			<groupId>org.brekka.phalanx</groupId>
-			<artifactId>phalanx-schemas</artifactId>
+			<artifactId>phalanx-crypto</artifactId>
 			<version>1.0.0</version>
 		</dependency>
 		<dependency>

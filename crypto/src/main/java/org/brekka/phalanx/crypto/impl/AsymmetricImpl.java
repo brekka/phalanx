@@ -1,4 +1,4 @@
-package org.brekka.phalanx.profile.impl;
+package org.brekka.phalanx.crypto.impl;
 
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
@@ -7,11 +7,11 @@ import java.security.KeyPairGenerator;
 
 import javax.crypto.Cipher;
 
-import org.brekka.phalanx.CryptoErrorCode;
-import org.brekka.phalanx.CryptoException;
-import org.brekka.phalanx.profile.CryptoProfile;
+import org.brekka.phalanx.crypto.CryptoErrorCode;
+import org.brekka.phalanx.crypto.CryptoException;
+import org.brekka.phalanx.crypto.CryptoFactory;
 
-class AsymmetricImpl implements CryptoProfile.Asymmetric {
+class AsymmetricImpl implements CryptoFactory.Asymmetric {
 
     private final KeyFactory keyFactory;
     

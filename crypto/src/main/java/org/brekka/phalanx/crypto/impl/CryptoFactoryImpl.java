@@ -1,14 +1,14 @@
-package org.brekka.phalanx.profile.impl;
+package org.brekka.phalanx.crypto.impl;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
-import org.brekka.phalanx.CryptoErrorCode;
-import org.brekka.phalanx.CryptoException;
-import org.brekka.phalanx.profile.CryptoProfile;
+import org.brekka.phalanx.crypto.CryptoErrorCode;
+import org.brekka.phalanx.crypto.CryptoException;
+import org.brekka.phalanx.crypto.CryptoFactory;
 
-public class CryptoProfileImpl implements CryptoProfile {
+public class CryptoFactoryImpl implements CryptoFactory {
 
     private final int id;
     
@@ -22,11 +22,11 @@ public class CryptoProfileImpl implements CryptoProfile {
     
     private final Symmetric synchronous;
     
-    CryptoProfileImpl() {
+    CryptoFactoryImpl() {
         this(0, "SHA-256", "NativePRNG", new AsymmetricImpl(), new PasswordBasedImpl(), new SymmetricImpl());
     }
     
-    public CryptoProfileImpl(int id, String messageDigestAlgorithm, String secureRandomAlgorithm, 
+    public CryptoFactoryImpl(int id, String messageDigestAlgorithm, String secureRandomAlgorithm, 
             Asymmetric asynchronous, PasswordBased passwordBased, Symmetric synchronous) {
         this.id = id;
         this.messageDigestAlgorithm = messageDigestAlgorithm;
@@ -42,7 +42,7 @@ public class CryptoProfileImpl implements CryptoProfile {
     }
 
     @Override
-    public int getId() {
+    public int getProfileId() {
         return id;
     }
 

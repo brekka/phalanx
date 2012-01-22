@@ -1,15 +1,15 @@
-package org.brekka.phalanx.profile.impl;
+package org.brekka.phalanx.crypto.impl;
 
 import java.security.GeneralSecurityException;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 
-import org.brekka.phalanx.CryptoErrorCode;
-import org.brekka.phalanx.CryptoException;
-import org.brekka.phalanx.profile.CryptoProfile;
+import org.brekka.phalanx.crypto.CryptoErrorCode;
+import org.brekka.phalanx.crypto.CryptoException;
+import org.brekka.phalanx.crypto.CryptoFactory;
 
-class SymmetricImpl implements CryptoProfile.Symmetric {
+class SymmetricImpl implements CryptoFactory.Symmetric {
 
     private final KeyGenerator keyGenerator;
     

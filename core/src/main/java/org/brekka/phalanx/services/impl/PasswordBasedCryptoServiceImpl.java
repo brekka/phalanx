@@ -8,11 +8,11 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 
-import org.brekka.phalanx.CryptoErrorCode;
-import org.brekka.phalanx.CryptoException;
+import org.brekka.phalanx.PhalanxErrorCode;
+import org.brekka.phalanx.PhalanxException;
+import org.brekka.phalanx.crypto.CryptoFactory;
 import org.brekka.phalanx.dao.CryptoDataDAO;
 import org.brekka.phalanx.model.PasswordedCryptoData;
-import org.brekka.phalanx.profile.CryptoProfile;
 import org.brekka.phalanx.services.PasswordBasedCryptoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ public class PasswordBasedCryptoServiceImpl extends AbstractCryptoService implem
         byte[] data = cryptoData.getData();
         byte[] salt = cryptoData.getSalt();
         
-        CryptoProfile profile = getCryptoProfileRegistry().getProfile(cryptoData.getProfile());
+        CryptoFactory profile = getCryptoProfileRegistry().getFactory(cryptoData.getProfile());
         
         byte[] result = crypt(Cipher.DECRYPT_MODE, data, salt, password.toCharArray(), profile.getPasswordBased());
         
@@ -42,8 +42,8 @@ public class PasswordBasedCryptoServiceImpl extends AbstractCryptoService implem
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
     public PasswordedCryptoData encrypt(Object obj, String password) {
-        CryptoProfile profile = getCryptoProfileRegistry().getDefaultProfile();
-        CryptoProfile.PasswordBased passwordBasedProfile = profile.getPasswordBased();
+        CryptoFactory profile = getCryptoProfileRegistry().getDefault();
+        CryptoFactory.PasswordBased passwordBasedProfile = profile.getPasswordBased();
         
         byte[] data = toBytes(obj);
         
@@ -59,7 +59,7 @@ public class PasswordBasedCryptoServiceImpl extends AbstractCryptoService implem
         return encryptedData;
     }
     
-    protected byte[] crypt(int mode, byte[] data, byte[] salt, char[] password, CryptoProfile.PasswordBased passwordBasedProfile) {
+    protected byte[] crypt(int mode, byte[] data, byte[] salt, char[] password, CryptoFactory.PasswordBased passwordBasedProfile) {
         int iterationCount = calculateIterations(password.length, passwordBasedProfile.getIterationFactor());
         PBEParameterSpec pbeParamSpec = new PBEParameterSpec(salt, iterationCount);
 
@@ -72,7 +72,7 @@ public class PasswordBasedCryptoServiceImpl extends AbstractCryptoService implem
             encryptionCipher.init(mode, pbeKey, pbeParamSpec);
             return encryptionCipher.doFinal(data);
         } catch (GeneralSecurityException e) {
-            throw new CryptoException(CryptoErrorCode.CP300, e, 
+            throw new PhalanxException(PhalanxErrorCode.CP300, e, 
                     "Failed to perform encryption/decryption operation");
         }
     }

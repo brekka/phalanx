@@ -6,7 +6,7 @@ import org.brekka.commons.lang.BaseException;
 /**
  * @author Andrew Taylor
  */
-public class CryptoException extends BaseException {
+public class PhalanxException extends BaseException {
 
     /**
      * Serial UID
@@ -18,7 +18,7 @@ public class CryptoException extends BaseException {
      * @param message
      * @param messageArgs
      */
-    public CryptoException(CryptoErrorCode errorCode, String message, Object... messageArgs) {
+    public PhalanxException(PhalanxErrorCode errorCode, String message, Object... messageArgs) {
         super(errorCode, message, messageArgs);
     }
 
@@ -28,7 +28,7 @@ public class CryptoException extends BaseException {
      * @param message
      * @param messageArgs
      */
-    public CryptoException(CryptoErrorCode errorCode, Throwable cause, String message, Object... messageArgs) {
+    public PhalanxException(PhalanxErrorCode errorCode, Throwable cause, String message, Object... messageArgs) {
         super(errorCode, cause, message, messageArgs);
     }
 

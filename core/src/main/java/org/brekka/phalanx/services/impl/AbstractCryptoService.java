@@ -20,12 +20,11 @@ import javax.crypto.spec.SecretKeySpec;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
-import org.brekka.phalanx.CryptoErrorCode;
-import org.brekka.phalanx.CryptoException;
+import org.brekka.phalanx.PhalanxErrorCode;
+import org.brekka.phalanx.PhalanxException;
+import org.brekka.phalanx.crypto.CryptoFactory;
+import org.brekka.phalanx.crypto.CryptoFactoryRegistry;
 import org.brekka.phalanx.model.SymedCryptoData;
-import org.brekka.phalanx.profile.CryptoProfile;
-import org.brekka.phalanx.profile.CryptoProfileRegistry;
-import org.brekka.xml.v1.phalanx.SymmetricInfoType;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbstractCryptoService {
@@ -33,12 +32,12 @@ public abstract class AbstractCryptoService {
     private static final byte[] SK_MAGIC_MARKER = "ISKT".getBytes();
 
     @Autowired
-    private CryptoProfileRegistry cryptoProfileRegistry;
+    private CryptoFactoryRegistry cryptoProfileRegistry;
     
     private XmlOptions xmlOptions = new XmlOptions();
 
     @SuppressWarnings("unchecked")
-    protected <T> T toType(byte[] data, Class<T> expectedType, UUID idOfData, CryptoProfile cryptoProfile) {
+    protected <T> T toType(byte[] data, Class<T> expectedType, UUID idOfData, CryptoFactory cryptoProfile) {
         if (expectedType == null) {
             throw new NullPointerException("An expected type is required");
         }
@@ -52,16 +51,13 @@ public abstract class AbstractCryptoService {
                 KeyFactory keyFactory = cryptoProfile.getAsymmetric().getKeyFactory();
                 retVal = keyFactory.generatePublic(publicKeySpec);
             } catch (InvalidKeySpecException e) {
-                throw new CryptoException(CryptoErrorCode.CP200, e, 
+                throw new PhalanxException(PhalanxErrorCode.CP200, e, 
                         "Failed to extract public key from CryptoData item '%s'", idOfData);
             }
         } else if (expectedType == InternalPrivateKeyToken.class) {
             retVal = decodePrivateKey(data, idOfData);
         } else if (expectedType == InternalSecretKeyToken.class) {
             retVal = decodeSecretKey(data, idOfData);
-        } else if (expectedType == InternalSymmetricInfo.class) {
-            SymmetricInfoType symInfoType = toType(data, SymmetricInfoType.class, idOfData, cryptoProfile);
-            retVal = new InternalSymmetricInfo(symInfoType);
         } else if (XmlObject.class.isAssignableFrom(expectedType)) {
             retVal = decodeXmlObject(data, idOfData);
         } else {
@@ -87,9 +83,6 @@ public abstract class AbstractCryptoService {
             retVal = encodeSecretKey(iskt);
         } else if (obj instanceof Key) {
             retVal = ((Key) obj).getEncoded();
-        } else if (obj instanceof InternalSymmetricInfo) {
-            InternalSymmetricInfo isp = (InternalSymmetricInfo) obj;
-            retVal = toBytes(isp.getSymmetricInfoType());
         } else if (obj instanceof XmlObject) {
             retVal = encodeXmlObject((XmlObject) obj);
         } else {
@@ -103,14 +96,14 @@ public abstract class AbstractCryptoService {
         byte[] marker = new byte[SK_MAGIC_MARKER.length];
         buffer.get(marker);
         if (!Arrays.equals(SK_MAGIC_MARKER, marker)) {
-            throw new CryptoException(CryptoErrorCode.CP213, 
+            throw new PhalanxException(PhalanxErrorCode.CP213, 
                     "CryptoData item '%s' does not appear to contain a secret key", idOfData);
         }
         int profileId = buffer.getInt();
         byte[] keyId = new byte[16];
         buffer.get(keyId);
         UUID symCryptoDataId = toUUID(keyId);
-        CryptoProfile cryptoProfile = getCryptoProfileRegistry().getProfile(profileId);
+        CryptoFactory cryptoProfile = getCryptoProfileRegistry().getFactory(profileId);
         byte[] data = new byte[encoded.length - (SK_MAGIC_MARKER.length + 20)];
         buffer.get(data);
         SecretKey secretKey = new SecretKeySpec(data, cryptoProfile.getSymmetric().getKeyGenerator().getAlgorithm());
@@ -147,11 +140,11 @@ public abstract class AbstractCryptoService {
         byte[] marker = new byte[PK_MAGIC_MARKER.length];
         buffer.get(marker);
         if (!Arrays.equals(PK_MAGIC_MARKER, marker)) {
-            throw new CryptoException(CryptoErrorCode.CP208, 
+            throw new PhalanxException(PhalanxErrorCode.CP208, 
                     "CryptoData item '%s' does not appear to contain a private key", idOfData);
         }
         int profileId = buffer.getInt();
-        CryptoProfile cryptoProfile = getCryptoProfileRegistry().getProfile(profileId);
+        CryptoFactory cryptoProfile = getCryptoProfileRegistry().getFactory(profileId);
         byte[] data = new byte[encoded.length - (SK_MAGIC_MARKER.length + 4)];
         buffer.get(data);
         PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(data);
@@ -160,7 +153,7 @@ public abstract class AbstractCryptoService {
             PrivateKey privateKey =  keyFactory.generatePrivate(privateKeySpec);
             return new InternalPrivateKeyToken(privateKey);
         } catch (InvalidKeySpecException e) {
-            throw new CryptoException(CryptoErrorCode.CP207, e, 
+            throw new PhalanxException(PhalanxErrorCode.CP207, e, 
                     "Failed to extract private key from CryptoData item '%s'", idOfData);
         }
     }
@@ -190,11 +183,11 @@ public abstract class AbstractCryptoService {
         return obj;
     }
 
-    protected final CryptoProfileRegistry getCryptoProfileRegistry() {
+    protected final CryptoFactoryRegistry getCryptoProfileRegistry() {
         return cryptoProfileRegistry;
     }
 
-    public void setCryptoProfileRegistry(CryptoProfileRegistry cryptoProfileRegistry) {
+    public void setCryptoProfileRegistry(CryptoFactoryRegistry cryptoProfileRegistry) {
         this.cryptoProfileRegistry = cryptoProfileRegistry;
     }
 

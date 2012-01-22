@@ -1,15 +1,15 @@
-package org.brekka.phalanx.profile.impl;
+package org.brekka.phalanx.crypto.impl;
 
 import java.security.GeneralSecurityException;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKeyFactory;
 
-import org.brekka.phalanx.CryptoErrorCode;
-import org.brekka.phalanx.CryptoException;
-import org.brekka.phalanx.profile.CryptoProfile;
+import org.brekka.phalanx.crypto.CryptoErrorCode;
+import org.brekka.phalanx.crypto.CryptoException;
+import org.brekka.phalanx.crypto.CryptoFactory;
 
-class PasswordBasedImpl implements CryptoProfile.PasswordBased {
+class PasswordBasedImpl implements CryptoFactory.PasswordBased {
     
     private final SecretKeyFactory secretKeyFactory;
     

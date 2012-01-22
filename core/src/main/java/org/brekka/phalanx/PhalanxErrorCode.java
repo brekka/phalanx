@@ -7,7 +7,7 @@ import org.brekka.commons.lang.ErrorCode;
  * 
  * @author Andrew Taylor
  */
-public enum CryptoErrorCode implements ErrorCode {
+public enum PhalanxErrorCode implements ErrorCode {
 
     CP100,
     CP101,

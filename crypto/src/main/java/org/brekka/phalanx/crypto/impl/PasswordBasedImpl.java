@@ -8,6 +8,7 @@ import javax.crypto.SecretKeyFactory;
 import org.brekka.phalanx.crypto.CryptoErrorCode;
 import org.brekka.phalanx.crypto.CryptoException;
 import org.brekka.phalanx.crypto.CryptoFactory;
+import org.brekka.xml.v1.phalanx.PasswordBasedProfileType;
 
 class PasswordBasedImpl implements CryptoFactory.PasswordBased {
     
@@ -20,20 +21,25 @@ class PasswordBasedImpl implements CryptoFactory.PasswordBased {
     private final String algorithm;
     
     
-    public PasswordBasedImpl() {
-        this("PBEWITHSHA256AND256BITAES-CBC-BC", 32, 20);
+    public PasswordBasedImpl(PasswordBasedProfileType profile) {
+        this(
+            profile.getCipher().getAlgorithm().getStringValue(),
+            profile.getSecretKeyFactory().getAlgorithm().getStringValue(),
+            profile.getSaltLength(),
+            profile.getIterationFactor()
+        );
     }
     
-    public PasswordBasedImpl(String algorithm, int saltLength, int iterationFactor) {
+    public PasswordBasedImpl(String cipherAlgorithm, String secretKeyAlgorithm, int saltLength, int iterationFactor) {
         try {
-            this.secretKeyFactory = SecretKeyFactory.getInstance(algorithm);
+            this.secretKeyFactory = SecretKeyFactory.getInstance(secretKeyAlgorithm);
         } catch (GeneralSecurityException e) {
             throw new CryptoException(CryptoErrorCode.CP300, e, 
-                    "Failed to prepare key factory with algorithm '%s'", algorithm);
+                    "Failed to prepare key factory with algorithm '%s'", secretKeyAlgorithm);
         }
         this.saltLength = saltLength;
         this.iterationFactor = iterationFactor;
-        this.algorithm = algorithm;
+        this.algorithm = cipherAlgorithm;
     }
 
     @Override

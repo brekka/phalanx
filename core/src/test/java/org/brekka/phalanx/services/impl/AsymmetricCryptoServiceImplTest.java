@@ -17,6 +17,7 @@ import org.brekka.phalanx.model.Principal;
 import org.brekka.phalanx.model.PrivateKeyToken;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
 
 public class AsymmetricCryptoServiceImplTest {
 
@@ -28,7 +29,8 @@ public class AsymmetricCryptoServiceImplTest {
     
     @Before
     public void setUp() throws Exception {
-        CryptoFactoryRegistry cryptoProfileRegistry = CryptoFactoryRegistryImpl.createBasicRegistry();
+        CryptoFactoryRegistry cryptoProfileRegistry = CryptoFactoryRegistryImpl.createBasicRegistryFromXml(
+                new ClassPathResource("BasicCryptoProfileRegistry.xml", PasswordBasedCryptoServiceImpl.class.getClassLoader()));
         CryptoDataDAO cryptoDAO = new TestCryptoDataDAO();
         AsymmetricKeyPairDAO asymmetricKeyPairDAO = new TestAsymmetricKeyPairDAO();
         

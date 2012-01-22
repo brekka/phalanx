@@ -10,6 +10,7 @@ import javax.crypto.Cipher;
 import org.brekka.phalanx.crypto.CryptoErrorCode;
 import org.brekka.phalanx.crypto.CryptoException;
 import org.brekka.phalanx.crypto.CryptoFactory;
+import org.brekka.xml.v1.phalanx.AsymmetricProfileType;
 
 class AsymmetricImpl implements CryptoFactory.Asymmetric {
 
@@ -19,17 +20,21 @@ class AsymmetricImpl implements CryptoFactory.Asymmetric {
     
     private final String algorithm;
     
-    public AsymmetricImpl() {
-        // Keep it low for testing
-        this("RSA", 1024);
+    public AsymmetricImpl(AsymmetricProfileType profile) {
+        this(
+            profile.getCipher().getAlgorithm().getStringValue(),
+            profile.getKeyFactory().getAlgorithm().getStringValue(),
+            profile.getKeyPairGenerator().getAlgorithm().getStringValue(),
+            profile.getKeyPairGenerator().getKeyLength()
+        );
     }
     
-    public AsymmetricImpl(String algorithm, int keySize) {
-        this.algorithm = algorithm;
+    public AsymmetricImpl(String cipherAlgorithm, String keyFactoryAlgorithm, String keyPairGeneratorAlgorithm, int keyPairLength) {
+        this.algorithm = cipherAlgorithm;
         try {
-            this.keyFactory = KeyFactory.getInstance(algorithm);
-            this.keyPairGenerator = KeyPairGenerator.getInstance(algorithm);
-            this.keyPairGenerator.initialize(keySize);
+            this.keyFactory = KeyFactory.getInstance(keyFactoryAlgorithm);
+            this.keyPairGenerator = KeyPairGenerator.getInstance(keyPairGeneratorAlgorithm);
+            this.keyPairGenerator.initialize(keyPairLength);
         } catch (GeneralSecurityException e) {
             throw new CryptoException(CryptoErrorCode.CP205, e, 
                     "Key algorithm '%s' not found", algorithm);

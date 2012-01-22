@@ -39,6 +39,8 @@ public enum CryptoErrorCode implements ErrorCode {
     CP400,
     
     CP700,
+    
+    CP800,
     ;
     
     private static final Area AREA = ErrorCode.Utils.createArea("CP");

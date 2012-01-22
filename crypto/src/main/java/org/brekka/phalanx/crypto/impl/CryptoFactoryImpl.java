@@ -7,6 +7,7 @@ import java.security.SecureRandom;
 import org.brekka.phalanx.crypto.CryptoErrorCode;
 import org.brekka.phalanx.crypto.CryptoException;
 import org.brekka.phalanx.crypto.CryptoFactory;
+import org.brekka.xml.v1.phalanx.CryptoProfileDocument.CryptoProfile;
 
 public class CryptoFactoryImpl implements CryptoFactory {
 
@@ -22,8 +23,15 @@ public class CryptoFactoryImpl implements CryptoFactory {
     
     private final Symmetric synchronous;
     
-    CryptoFactoryImpl() {
-        this(0, "SHA-256", "NativePRNG", new AsymmetricImpl(), new PasswordBasedImpl(), new SymmetricImpl());
+    public CryptoFactoryImpl(CryptoProfile cryptoProfile) {
+        this(
+            cryptoProfile.getID(),
+            cryptoProfile.getMessageDigest().getStringValue(),
+            cryptoProfile.getRandom().getStringValue(),
+            new AsymmetricImpl(cryptoProfile.getAsymmetric()), 
+            new PasswordBasedImpl(cryptoProfile.getPasswordBased()), 
+            new SymmetricImpl(cryptoProfile.getSymmetric())
+        );
     }
     
     public CryptoFactoryImpl(int id, String messageDigestAlgorithm, String secureRandomAlgorithm, 

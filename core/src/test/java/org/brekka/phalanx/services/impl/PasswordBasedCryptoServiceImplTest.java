@@ -14,6 +14,7 @@ import org.brekka.phalanx.model.PasswordedCryptoData;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.core.io.ClassPathResource;
 
 public class PasswordBasedCryptoServiceImplTest {
 
@@ -21,7 +22,8 @@ public class PasswordBasedCryptoServiceImplTest {
     
     @Before
     public void setUp() throws Exception {
-        CryptoFactoryRegistry cryptoProfileRegistry = CryptoFactoryRegistryImpl.createBasicRegistry();
+        CryptoFactoryRegistry cryptoProfileRegistry = CryptoFactoryRegistryImpl.createBasicRegistryFromXml(
+                new ClassPathResource("BasicCryptoProfileRegistry.xml", PasswordBasedCryptoServiceImpl.class.getClassLoader()));
         service = new PasswordBasedCryptoServiceImpl();
         CryptoDataDAO cryptoDAO = Mockito.mock(CryptoDataDAO.class);
         service.setCryptoDataDAO(cryptoDAO);

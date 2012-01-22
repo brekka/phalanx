@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<x:CryptoProfileRegistry xmlns:x="http://brekka.org/xml/v1/phalanx" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://brekka.org/xml/v1/phalanx ../xsd/PhalanxModel.xsd ">
+  <x:DefaultProfileID>1</x:DefaultProfileID>
+  <x:CryptoProfile>
+    <x:ID>1</x:ID>
+    <x:Label>Basic</x:Label>
+    <x:Random>NativePRNG</x:Random>
+    <x:MessageDigest>SHA-256</x:MessageDigest>
+    <x:Symmetric>
+      <x:Cipher>
+        <x:Algorithm>AES</x:Algorithm>
+      </x:Cipher>
+      <x:KeyGenerator>
+        <x:Algorithm>AES/CBC/PKCS5Padding</x:Algorithm>
+        <x:KeyLength>256</x:KeyLength>
+      </x:KeyGenerator>
+      <x:IVLength>16</x:IVLength>
+    </x:Symmetric>
+    <x:Asymmetric>
+      <x:Cipher>
+        <x:Algorithm>RSA</x:Algorithm>
+      </x:Cipher>
+      <x:KeyPairGenerator>
+        <x:Algorithm>RSA</x:Algorithm>
+        <x:KeyLength>1024</x:KeyLength>
+      </x:KeyPairGenerator>
+      <x:KeyFactory>
+        <x:Algorithm>RSA</x:Algorithm>
+      </x:KeyFactory>
+    </x:Asymmetric>
+    <x:PasswordBased>
+      <x:Cipher>
+        <x:Algorithm>PBEWITHSHA256AND256BITAES-CBC-BC</x:Algorithm>
+      </x:Cipher>
+      <x:SecretKeyFactory>
+        <x:Algorithm>PBEWITHSHA256AND256BITAES-CBC-BC</x:Algorithm>
+      </x:SecretKeyFactory>
+      <x:SaltLength>32</x:SaltLength>
+      <x:IterationFactor>20</x:IterationFactor>
+    </x:PasswordBased>
+  </x:CryptoProfile>
+</x:CryptoProfileRegistry>

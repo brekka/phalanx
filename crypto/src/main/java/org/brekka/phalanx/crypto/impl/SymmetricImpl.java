@@ -8,6 +8,7 @@ import javax.crypto.KeyGenerator;
 import org.brekka.phalanx.crypto.CryptoErrorCode;
 import org.brekka.phalanx.crypto.CryptoException;
 import org.brekka.phalanx.crypto.CryptoFactory;
+import org.brekka.xml.v1.phalanx.SymmetricProfileType;
 
 class SymmetricImpl implements CryptoFactory.Symmetric {
 
@@ -15,14 +16,18 @@ class SymmetricImpl implements CryptoFactory.Symmetric {
     
     private final int ivLength;
     
-    private final String cipherAlgorithm;
+    private final String algorithm;
     
-    public SymmetricImpl() {
-        this("AES", 256, 16, "AES/CBC/PKCS5Padding");
-        
+    public SymmetricImpl(SymmetricProfileType profile) {
+        this(
+            profile.getCipher().getAlgorithm().getStringValue(),
+            profile.getKeyGenerator().getAlgorithm().getStringValue(),
+            profile.getKeyGenerator().getKeyLength(),
+            profile.getIVLength()
+        );
     }
     
-    public SymmetricImpl(String keyAlgorithm, int keyLength, int ivLength, String cipherAlgorithm) {
+    public SymmetricImpl(String cipherAlgorithm, String keyAlgorithm, int keyLength, int ivLength) {
         try {
             this.keyGenerator = KeyGenerator.getInstance(keyAlgorithm);
             this.keyGenerator.init(keyLength);
@@ -32,7 +37,7 @@ class SymmetricImpl implements CryptoFactory.Symmetric {
                     keyAlgorithm, keyLength);
         }
         this.ivLength = ivLength;
-        this.cipherAlgorithm = cipherAlgorithm;
+        this.algorithm = cipherAlgorithm;
     }
 
     @Override
@@ -43,11 +48,11 @@ class SymmetricImpl implements CryptoFactory.Symmetric {
     @Override
     public Cipher getInstance() {
         try {
-            return Cipher.getInstance(cipherAlgorithm);
+            return Cipher.getInstance(algorithm);
         } catch (GeneralSecurityException e) {
             throw new CryptoException(CryptoErrorCode.CP101, e, 
                     "Problem with the symmetric encryption algorithm '%s'", 
-                    cipherAlgorithm);
+                    algorithm);
         }
     }
 

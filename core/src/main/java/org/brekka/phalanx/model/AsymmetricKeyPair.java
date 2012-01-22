@@ -1,5 +1,7 @@
 package org.brekka.phalanx.model;
 
+import java.util.UUID;
+
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -27,6 +29,15 @@ public class AsymmetricKeyPair extends IdentifiableEntity {
     @JoinColumn(name="PublicKeyID", nullable=false)
     private CryptoData publicKey;
 
+    
+    
+
+    public AsymmetricKeyPair() {
+    }
+    
+    public AsymmetricKeyPair(UUID id) {
+        setId(id);
+    }
 
     public Principal getOwner() {
         return owner;

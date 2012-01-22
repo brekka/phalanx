@@ -71,6 +71,7 @@ public class SymmetricCryptoServiceImpl extends AbstractCryptoService implements
         SymedCryptoData cryptoData = new SymedCryptoData();
         cryptoData.setIv(initializationVector.getIV());
         cryptoData.setData(cipherData);
+        cryptoData.setProfile(profile.getProfileId());
         cryptoDataDAO.create(cryptoData);
         return cryptoData;
     }

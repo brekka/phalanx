@@ -55,6 +55,7 @@ public class PasswordBasedCryptoServiceImpl extends AbstractCryptoService implem
         PasswordedCryptoData encryptedData = new PasswordedCryptoData();
         encryptedData.setData(result);
         encryptedData.setSalt(salt);
+        encryptedData.setProfile(profile.getProfileId());
         cryptoDataDAO.create(encryptedData);
         return encryptedData;
     }

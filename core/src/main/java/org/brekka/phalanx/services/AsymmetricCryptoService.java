@@ -51,4 +51,12 @@ public interface AsymmetricCryptoService {
      * @return
      */
     AsymmetricKeyPair assignKeyPair(PrivateKeyToken privateKeyToken, Principal owner);
+    
+    /**
+     * Change a password for the given principal
+     * @param principal
+     * @param oldPassword
+     * @param newPassword
+     */
+    void changePassword(Principal principal, String oldPassword, String newPassword);
 }

@@ -15,6 +15,7 @@ import org.brekka.phalanx.PhalanxException;
 import org.brekka.phalanx.crypto.CryptoFactory;
 import org.brekka.phalanx.dao.AsymmetricKeyPairDAO;
 import org.brekka.phalanx.dao.CryptoDataDAO;
+import org.brekka.phalanx.dao.PrincipalDAO;
 import org.brekka.phalanx.model.AsymedCryptoData;
 import org.brekka.phalanx.model.AsymmetricKeyPair;
 import org.brekka.phalanx.model.CryptoData;
@@ -45,6 +46,9 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
     
     @Autowired
     private SymmetricCryptoService symmetricCryptoService;
+    
+    @Autowired
+    private PrincipalDAO principalDAO;
     
 
     @Override
@@ -104,6 +108,7 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
         AsymedCryptoData encryptedData = new AsymedCryptoData();
         encryptedData.setData(cipherData);
         encryptedData.setKeyPair(keyPair);
+        encryptedData.setProfile(profile.getProfileId());
         cryptoDataDAO.create(encryptedData);
         return encryptedData;
     }
@@ -191,6 +196,27 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
         asymKeyPair.setOwner(owner);
         asymetricKeyPairDAO.create(asymKeyPair);
         return asymKeyPair;
+    }
+    
+    @Transactional(propagation=Propagation.REQUIRED)
+    public void changePassword(Principal principal, String oldPassword, String newPassword) {
+        principal = principalDAO.retrieveById(principal.getId());
+        AsymmetricKeyPair keyPair = principal.getDefaultKeyPair();
+        CryptoData privateKey = keyPair.getPrivateKey();
+        if (privateKey instanceof PasswordedCryptoData == false) {
+            throw new PhalanxException(PhalanxErrorCode.CP209, 
+                    "Key pair '%s' private key is not password protected", keyPair.getId());
+        }
+        PasswordedCryptoData passwordedCryptoData = (PasswordedCryptoData) privateKey;
+        InternalSecretKeyToken secretKeyToken = passwordBasedCryptoService.decrypt(
+                passwordedCryptoData, oldPassword, InternalSecretKeyToken.class);
+        
+        PasswordedCryptoData privateKeyData = passwordBasedCryptoService.encrypt(secretKeyToken, newPassword);
+        
+        keyPair.setPrivateKey(privateKeyData);
+        asymetricKeyPairDAO.update(keyPair);
+        // Delete the original private key
+        cryptoDataDAO.delete(privateKey.getId());
     }
     
     protected PublicKey toPublicKey(CryptoData publicKeyData) {

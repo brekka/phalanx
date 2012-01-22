@@ -44,5 +44,7 @@ public abstract class AbstractHibernateEntityDAO<T extends IdentifiableEntity> i
         session.delete(toDelete);
     }
 
-    
+    protected final Session getCurrentSession() {
+        return sessionFactory.getCurrentSession();
+    }
 }

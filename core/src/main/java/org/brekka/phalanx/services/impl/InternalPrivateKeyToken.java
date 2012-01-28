@@ -11,6 +11,11 @@ class InternalPrivateKeyToken implements PrivateKeyToken {
     
     private transient AsymmetricKeyPair asymmetricKeyPair;
     
+    /**
+     * Needed to assign the private key to others.
+     */
+    private transient InternalSecretKeyToken secretKey;
+    
     public InternalPrivateKeyToken(PrivateKey privateKey) {
         this(privateKey, null);
     }
@@ -38,7 +43,15 @@ class InternalPrivateKeyToken implements PrivateKeyToken {
         this.asymmetricKeyPair = asymetricKeyPair;
     }
     
+    void setSecretKey(InternalSecretKeyToken secretKey) {
+        this.secretKey = secretKey;
+    }
+    
     PrivateKey getPrivateKey() {
         return privateKey;
+    }
+    
+    InternalSecretKeyToken getSecretKey() {
+        return secretKey;
     }
 }

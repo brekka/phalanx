@@ -14,7 +14,7 @@ import javax.persistence.Table;
  * @author Andrew Taylor
  */
 @Entity
-@Table(name="\"AsymetricKeyPair\"")
+@Table(name="\"AsymmetricKeyPair\"")
 public class AsymmetricKeyPair extends IdentifiableEntity {
 
     @ManyToOne

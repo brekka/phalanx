@@ -57,13 +57,8 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
         if (privateKeyToken == null) {
             throw new NullPointerException("No private key token supplied");
         }
-        if (privateKeyToken instanceof InternalPrivateKeyToken == false) {
-            throw new PhalanxException(PhalanxErrorCode.CP203, 
-                    "Private key token must be an instance issued previously by this service. Found '%s'.", 
-                    privateKeyToken.getClass().getSimpleName());
-        }
         CryptoFactory profile = getCryptoProfileRegistry().getFactory(cryptoData.getProfile());
-        InternalPrivateKeyToken ipkt = (InternalPrivateKeyToken) privateKeyToken;
+        InternalPrivateKeyToken ipkt = narrow(privateKeyToken);
         PrivateKey privateKey = ipkt.getPrivateKey();
         
         AsymmetricKeyPair dataKeyPair = cryptoData.getKeyPair();
@@ -84,6 +79,15 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
                     cryptoData.getId());
         }
         return toType(data, expectedType, cryptoData.getId(), profile);
+    }
+
+    private InternalPrivateKeyToken narrow(PrivateKeyToken privateKeyToken) {
+        if (privateKeyToken instanceof InternalPrivateKeyToken == false) {
+            throw new PhalanxException(PhalanxErrorCode.CP203, 
+                    "Private key token must be an instance issued previously by this service. Found '%s'.", 
+                    privateKeyToken.getClass().getSimpleName());
+        }
+        return (InternalPrivateKeyToken) privateKeyToken;
     }
     
     @Override
@@ -187,9 +191,10 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
     @Override
     public AsymmetricKeyPair assignKeyPair(PrivateKeyToken privateKeyToken, Principal owner) {
         AsymmetricKeyPair keyPair = privateKeyToken.getKeyPair();
-        SymedCryptoData symedCryptoData = narrow(keyPair.getPrivateKey());
+        InternalPrivateKeyToken internalPrivateKeyToken = narrow(privateKeyToken);
+        InternalSecretKeyToken secretKey = internalPrivateKeyToken.getSecretKey();
         
-        AsymedCryptoData privateKeyData = encrypt(symedCryptoData, owner.getDefaultKeyPair());
+        AsymedCryptoData privateKeyData = encrypt(secretKey, owner.getDefaultKeyPair());
         AsymmetricKeyPair asymKeyPair = new AsymmetricKeyPair();
         asymKeyPair.setPrivateKey(privateKeyData);
         asymKeyPair.setPublicKey(keyPair.getPublicKey());
@@ -264,6 +269,7 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
         CryptoData cryptoData = cryptoDataDAO.retrieveById(symDataId);
         SymedCryptoData symedCryptoData = narrow(cryptoData);
         InternalPrivateKeyToken privateKeyToken = symmetricCryptoService.decrypt(symedCryptoData, secretKeyToken, InternalPrivateKeyToken.class);
+        privateKeyToken.setSecretKey(secretKeyToken);
         privateKeyToken.setAsymetricKeyPair(keyPair);
         return privateKeyToken;
     }
@@ -272,6 +278,7 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
         InternalSecretKeyToken secretKeyToken = (InternalSecretKeyToken) symmetricCryptoService.generateSecretKey();
         SymedCryptoData symedCryptoData = symmetricCryptoService.encrypt(internalPrivateKey, secretKeyToken);
         secretKeyToken.setSymedCryptoData(symedCryptoData);
+        internalPrivateKey.setSecretKey(secretKeyToken);
         return secretKeyToken;
     }
     

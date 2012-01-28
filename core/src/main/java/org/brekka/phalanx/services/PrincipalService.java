@@ -5,7 +5,7 @@ import org.brekka.phalanx.model.Principal;
 
 public interface PrincipalService {
 
-    Principal createUser(String password);
+    Principal createPrincipal(String password);
     
     AuthenticatedPrincipal authenticate(Principal user, String password);
 }

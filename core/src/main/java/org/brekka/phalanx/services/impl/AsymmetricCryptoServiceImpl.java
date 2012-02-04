@@ -93,6 +93,9 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
     public AsymedCryptoData encrypt(Object obj, AsymmetricKeyPair keyPair) {
+        // Resolve the key pair from persistent storage (could just be id)
+        keyPair = asymetricKeyPairDAO.retrieveById(keyPair.getId());
+        
         CryptoData publicKeyData = keyPair.getPublicKey();
         PublicKey publicKey = toPublicKey(publicKeyData);
         byte[] data = toBytes(obj);
@@ -105,8 +108,8 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
             cipherData = asymmetricCipher.doFinal(data);
         } catch (GeneralSecurityException e) {
             throw new PhalanxException(PhalanxErrorCode.CP212, e,
-                    "Failed to encrypt data using key pair '%s'", 
-                    keyPair.getId());
+                    "Failed to encrypt data from object of type '%s' using key pair '%s'", 
+                    obj.getClass().getName(), keyPair.getId());
         }
         
         AsymedCryptoData encryptedData = new AsymedCryptoData();
@@ -121,6 +124,9 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
     @Override
     @Transactional(propagation=Propagation.SUPPORTS)
     public PrivateKeyToken decrypt(AsymmetricKeyPair keyPair, String password) {
+     // Resolve the key pair from persistent storage (could just be id)
+        keyPair = asymetricKeyPairDAO.retrieveById(keyPair.getId());
+        
         CryptoData privateKey = keyPair.getPrivateKey();
         if (privateKey instanceof PasswordedCryptoData == false) {
             throw new PhalanxException(PhalanxErrorCode.CP209, 
@@ -135,6 +141,9 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
     @Override
     @Transactional(propagation=Propagation.SUPPORTS)
     public PrivateKeyToken decrypt(AsymmetricKeyPair keyPair, PrivateKeyToken privateKeyToken) {
+        // Resolve the key pair from persistent storage (could just be id)
+        keyPair = asymetricKeyPairDAO.retrieveById(keyPair.getId());
+        
         CryptoData privateKey = keyPair.getPrivateKey();
         if (privateKey instanceof AsymedCryptoData == false) {
             throw new PhalanxException(PhalanxErrorCode.CP210, 
@@ -149,6 +158,9 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
     public AsymmetricKeyPair generateKeyPair(AsymmetricKeyPair protectedWithPublicKeyFrom, Principal owner) {
+        // Resolve the key pair from persistent storage (could just be id)
+        protectedWithPublicKeyFrom = asymetricKeyPairDAO.retrieveById(protectedWithPublicKeyFrom.getId());
+        
         CryptoFactory profile = getCryptoProfileRegistry().getDefault();
         CryptoFactory.Asymmetric asynchronousProfile = profile.getAsymmetric();
         KeyPair keyPair = asynchronousProfile.generateKeyPair();

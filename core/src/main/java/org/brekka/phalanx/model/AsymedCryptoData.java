@@ -1,5 +1,7 @@
 package org.brekka.phalanx.model;
 
+import java.util.UUID;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -19,6 +21,15 @@ public class AsymedCryptoData extends CryptoData {
     @OneToOne
     @JoinColumn(name="KeyPairID")
     private AsymmetricKeyPair keyPair;
+    
+    
+    public AsymedCryptoData() {
+    }
+    
+    public AsymedCryptoData(UUID id) {
+        setId(id);
+    }
+    
 
     public AsymmetricKeyPair getKeyPair() {
         return keyPair;

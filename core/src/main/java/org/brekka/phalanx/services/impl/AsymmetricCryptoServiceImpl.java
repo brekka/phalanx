@@ -57,6 +57,8 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
         if (privateKeyToken == null) {
             throw new NullPointerException("No private key token supplied");
         }
+        cryptoData = (AsymedCryptoData) cryptoDataDAO.retrieveById(cryptoData.getId());
+        
         CryptoFactory profile = getCryptoProfileRegistry().getFactory(cryptoData.getProfile());
         InternalPrivateKeyToken ipkt = narrow(privateKeyToken);
         PrivateKey privateKey = ipkt.getPrivateKey();

@@ -29,6 +29,8 @@ public class PasswordBasedCryptoServiceImpl extends AbstractCryptoService implem
     @Override
     @Transactional(propagation=Propagation.SUPPORTS)
     public <T> T decrypt(PasswordedCryptoData cryptoData, String password, Class<T> expectedType) {
+        cryptoData = (PasswordedCryptoData) cryptoDataDAO.retrieveById(cryptoData.getId());
+        
         byte[] data = cryptoData.getData();
         byte[] salt = cryptoData.getSalt();
         

@@ -1,5 +1,7 @@
 package org.brekka.phalanx.model;
 
+import java.util.UUID;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -21,6 +23,13 @@ public class PasswordedCryptoData extends CryptoData {
     
     @Column(name="Salt")
     private byte[] salt;
+    
+    public PasswordedCryptoData() {
+    }
+    
+    public PasswordedCryptoData(UUID id) {
+        setId(id);
+    }
 
     public byte[] getSalt() {
         return salt;

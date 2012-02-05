@@ -10,6 +10,10 @@ import javax.persistence.OneToOne;
 public class AsymedCryptoData extends CryptoData {
 
     /**
+     * Serial UID
+     */
+    private static final long serialVersionUID = -5682494152417841750L;
+    /**
      * The key pair that protects this content
      */
     @OneToOne

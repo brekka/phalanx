@@ -11,6 +11,11 @@ import javax.persistence.Table;
 @Table(name = "\"Principal\"")
 public class Principal extends IdentifiableEntity {
 
+    /**
+     * Serial UID
+     */
+    private static final long serialVersionUID = -4900201815422671490L;
+    
     @OneToOne
     @JoinColumn(name = "DefaultKeyPair")
     private AsymmetricKeyPair defaultKeyPair;

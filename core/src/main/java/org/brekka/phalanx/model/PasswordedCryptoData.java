@@ -13,6 +13,12 @@ import javax.persistence.Entity;
 @DiscriminatorValue("Password")
 public class PasswordedCryptoData extends CryptoData {
     
+    /**
+     * Serial UID
+     */
+    private static final long serialVersionUID = 7900986833181045388L;
+    
+    
     @Column(name="Salt")
     private byte[] salt;
 

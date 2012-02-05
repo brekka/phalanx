@@ -17,6 +17,11 @@ import javax.persistence.Table;
 @Table(name="\"AsymmetricKeyPair\"")
 public class AsymmetricKeyPair extends IdentifiableEntity {
 
+    /**
+     * Serial UID
+     */
+    private static final long serialVersionUID = 2584665854047069047L;
+
     @ManyToOne
     @JoinColumn(name="OwnerID")
     private Principal owner;

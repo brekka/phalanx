@@ -16,6 +16,11 @@ import javax.persistence.Table;
 @DiscriminatorValue("Plain")
 public class CryptoData extends IdentifiableEntity {
     
+    /**
+     * Serial UID
+     */
+    private static final long serialVersionUID = 118372503696946797L;
+
     @Column(name="Data", nullable=false)
     private byte[] data;
     

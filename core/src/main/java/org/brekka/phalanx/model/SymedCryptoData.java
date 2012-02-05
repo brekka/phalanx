@@ -10,6 +10,11 @@ import javax.persistence.OneToOne;
 @DiscriminatorValue("Sym")
 public class SymedCryptoData extends CryptoData {
 
+    /**
+     * Serial UID
+     */
+    private static final long serialVersionUID = -1121467573145122568L;
+
     @Column(name="IV")
     private byte[] iv;
     

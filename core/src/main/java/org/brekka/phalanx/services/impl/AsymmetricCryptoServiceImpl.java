@@ -61,13 +61,13 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
         InternalPrivateKeyToken ipkt = narrow(privateKeyToken);
         PrivateKey privateKey = ipkt.getPrivateKey();
         
-        AsymmetricKeyPair dataKeyPair = cryptoData.getKeyPair();
-        AsymmetricKeyPair incomingkeyPair = ipkt.getKeyPair();
-        if (!dataKeyPair.getId().equals(incomingkeyPair.getId())) {
-            throw new PhalanxException(PhalanxErrorCode.CP204, 
-                    "The supplied private key '%s' does not match that required to decrypt the key '%s'", 
-                    incomingkeyPair.getPrivateKey().getId(), dataKeyPair.getPrivateKey().getId());
-        }
+//        AsymmetricKeyPair dataKeyPair = cryptoData.getKeyPair();
+//        AsymmetricKeyPair incomingkeyPair = ipkt.getKeyPair();
+//        if (!dataKeyPair.getId().equals(incomingkeyPair.getId())) {
+//            throw new PhalanxException(PhalanxErrorCode.CP204, 
+//                    "The supplied private key '%s' does not match that required to decrypt the key '%s'", 
+//                    incomingkeyPair.getPrivateKey().getId(), dataKeyPair.getPrivateKey().getId());
+//        }
         
         Cipher asymmetricCipher = getAsymmetricCipher(Cipher.DECRYPT_MODE, privateKey, profile);
         byte[] data;
@@ -205,6 +205,8 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
         AsymmetricKeyPair keyPair = privateKeyToken.getKeyPair();
         InternalPrivateKeyToken internalPrivateKeyToken = narrow(privateKeyToken);
         InternalSecretKeyToken secretKey = internalPrivateKeyToken.getSecretKey();
+        
+        owner = principalDAO.retrieveById(owner.getId());
         
         AsymedCryptoData privateKeyData = encrypt(secretKey, owner.getDefaultKeyPair());
         AsymmetricKeyPair asymKeyPair = new AsymmetricKeyPair();

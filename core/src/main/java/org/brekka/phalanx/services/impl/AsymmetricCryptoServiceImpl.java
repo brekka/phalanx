@@ -122,6 +122,11 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
         return encryptedData;
     }
     
+    @Override
+    public void delete(UUID cryptoKeyId) {
+        cryptoDataDAO.delete(cryptoKeyId);
+    }
+    
     
     @Override
     @Transactional(propagation=Propagation.SUPPORTS)

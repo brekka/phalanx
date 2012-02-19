@@ -1,5 +1,7 @@
 package org.brekka.phalanx.services;
 
+import java.util.UUID;
+
 import org.brekka.phalanx.model.AsymedCryptoData;
 import org.brekka.phalanx.model.AsymmetricKeyPair;
 import org.brekka.phalanx.model.Principal;
@@ -59,4 +61,10 @@ public interface AsymmetricCryptoService {
      * @param newPassword
      */
     void changePassword(Principal principal, String oldPassword, String newPassword);
+
+    /**
+     * Delete the specified key
+     * @param cryptoKeyId
+     */
+    void delete(UUID cryptoKeyId);
 }

@@ -27,7 +27,7 @@ public class PasswordBasedCryptoServiceImpl extends AbstractCryptoService implem
     private CryptoDataDAO cryptoDataDAO;
     
     @Override
-    @Transactional(propagation=Propagation.SUPPORTS)
+    @Transactional(propagation=Propagation.SUPPORTS, noRollbackFor={ PhalanxException.class })
     public <T> T decrypt(PasswordedCryptoData cryptoData, String password, Class<T> expectedType) {
         cryptoData = (PasswordedCryptoData) cryptoDataDAO.retrieveById(cryptoData.getId());
         

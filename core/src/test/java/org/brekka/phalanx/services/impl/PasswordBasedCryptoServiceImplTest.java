@@ -25,7 +25,7 @@ public class PasswordBasedCryptoServiceImplTest {
         CryptoFactoryRegistry cryptoProfileRegistry = CryptoFactoryRegistryImpl.createBasicRegistryFromXml(
                 new ClassPathResource("BasicCryptoProfileRegistry.xml", PasswordBasedCryptoServiceImpl.class.getClassLoader()));
         service = new PasswordBasedCryptoServiceImpl();
-        CryptoDataDAO cryptoDAO = Mockito.mock(CryptoDataDAO.class);
+        CryptoDataDAO cryptoDAO = new TestCryptoDataDAO();
         service.setCryptoDataDAO(cryptoDAO);
         service.setCryptoProfileRegistry(cryptoProfileRegistry);
     }

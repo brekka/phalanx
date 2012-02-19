@@ -9,7 +9,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 /**
- * A public/private key pair where the private key has been protected by Password based encryption.
+ * Defines the storage of public/private key pair. The private key data will always be unique to a given
+ * {@link AsymmetricKeyPair} instance. The public key data may be shared among several {@link AsymmetricKeyPair}
+ * instances.
  * 
  * @author Andrew Taylor
  */
@@ -22,14 +24,24 @@ public class AsymmetricKeyPair extends IdentifiableEntity {
      */
     private static final long serialVersionUID = 2584665854047069047L;
 
+    /**
+     * Id of the principal that owns this key pair.
+     */
     @ManyToOne
     @JoinColumn(name="OwnerID")
     private Principal owner;
     
+    /**
+     * The private key data. This should always be an instance of on the {@link CryptoData} sub-types as private keys
+     * need to be protected.
+     */
     @OneToOne
     @JoinColumn(name="PrivateKeyID", nullable=false)
     private CryptoData privateKey;
     
+    /**
+     * The public key data, which should just be a plain {@link CryptoData} as it does not need to be encrypted.
+     */
     @ManyToOne
     @JoinColumn(name="PublicKeyID", nullable=false)
     private CryptoData publicKey;

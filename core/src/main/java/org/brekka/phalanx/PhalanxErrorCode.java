@@ -38,6 +38,8 @@ public enum PhalanxErrorCode implements ErrorCode {
     
     CP400,
     
+    CP600,
+    
     CP700,
     ;
     

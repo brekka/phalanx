@@ -1,5 +1,7 @@
 package org.brekka.phalanx.services.impl;
 
+import java.util.UUID;
+
 import org.brekka.phalanx.dao.PrincipalDAO;
 import org.brekka.phalanx.model.AsymmetricKeyPair;
 import org.brekka.phalanx.model.AuthenticatedPrincipal;
@@ -39,6 +41,18 @@ public class PrincipalServiceImpl implements PrincipalService {
         principal.setDefaultKeyPair(keyPair);
         principalDAO.create(principal);
         return principal;
+    }
+    
+    @Override
+    @Transactional(propagation=Propagation.REQUIRED)
+    public Principal retrieveById(UUID principalId) {
+        return principalDAO.retrieveById(principalId);
+    }
+    
+    @Override
+    @Transactional(propagation=Propagation.REQUIRED)
+    public void deletePrincipal(UUID principalId) {
+        principalDAO.delete(principalId);
     }
 
 }

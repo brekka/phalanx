@@ -82,6 +82,16 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
         }
         return toType(data, expectedType, cryptoData.getId(), profile);
     }
+    
+    @Override
+    @Transactional(propagation=Propagation.REQUIRED)
+    public void replacePrivateKey(AsymmetricKeyPair keyPair, PasswordedCryptoData newPrivateKeyData) {
+        CryptoData originalPrivateKey = keyPair.getPrivateKey();
+        keyPair.setPrivateKey(newPrivateKeyData);
+        asymetricKeyPairDAO.update(keyPair);
+        // Delete the original private key
+        cryptoDataDAO.delete(originalPrivateKey.getId());
+    }
 
     private InternalPrivateKeyToken narrow(PrivateKeyToken privateKeyToken) {
         if (privateKeyToken instanceof InternalPrivateKeyToken == false) {
@@ -224,25 +234,16 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
         return asymKeyPair;
     }
     
+    @Override
     @Transactional(propagation=Propagation.REQUIRED)
-    public void changePassword(Principal principal, String oldPassword, String newPassword) {
-        principal = principalDAO.retrieveById(principal.getId());
-        AsymmetricKeyPair keyPair = principal.getDefaultKeyPair();
-        CryptoData privateKey = keyPair.getPrivateKey();
-        if (privateKey instanceof PasswordedCryptoData == false) {
-            throw new PhalanxException(PhalanxErrorCode.CP209, 
-                    "Key pair '%s' private key is not password protected", keyPair.getId());
-        }
-        PasswordedCryptoData passwordedCryptoData = (PasswordedCryptoData) privateKey;
-        InternalSecretKeyToken secretKeyToken = passwordBasedCryptoService.decrypt(
-                passwordedCryptoData, oldPassword, InternalSecretKeyToken.class);
-        
-        PasswordedCryptoData privateKeyData = passwordBasedCryptoService.encrypt(secretKeyToken, newPassword);
-        
-        keyPair.setPrivateKey(privateKeyData);
-        asymetricKeyPairDAO.update(keyPair);
-        // Delete the original private key
-        cryptoDataDAO.delete(privateKey.getId());
+    public AsymmetricKeyPair retrieveKeyPair(UUID keyPairId) {
+        return asymetricKeyPairDAO.retrieveById(keyPairId);
+    }
+    
+    @Override
+    @Transactional(propagation=Propagation.REQUIRED)
+    public void deleteKeyPair(UUID keyPairId) {
+        asymetricKeyPairDAO.delete(keyPairId);
     }
     
     protected PublicKey toPublicKey(CryptoData publicKeyData) {
@@ -302,6 +303,8 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
         internalPrivateKey.setSecretKey(secretKeyToken);
         return secretKeyToken;
     }
+    
+    
     
     public void setAsymetricKeyPairDAO(AsymmetricKeyPairDAO asymetricKeyPairDAO) {
         this.asymetricKeyPairDAO = asymetricKeyPairDAO;

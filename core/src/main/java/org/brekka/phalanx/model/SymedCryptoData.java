@@ -6,6 +6,12 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
+/**
+ * A piece of data that is protected by a symmetric key and IV. For example this would normally be used
+ * to protect a private key.
+ * 
+ * @author Andrew Taylor
+ */
 @Entity
 @DiscriminatorValue("Sym")
 public class SymedCryptoData extends CryptoData {

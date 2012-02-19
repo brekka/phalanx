@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.brekka.phalanx.model.AsymedCryptoData;
 import org.brekka.phalanx.model.AsymmetricKeyPair;
+import org.brekka.phalanx.model.PasswordedCryptoData;
 import org.brekka.phalanx.model.Principal;
 import org.brekka.phalanx.model.PrivateKeyToken;
 
@@ -54,17 +55,30 @@ public interface AsymmetricCryptoService {
      */
     AsymmetricKeyPair assignKeyPair(PrivateKeyToken privateKeyToken, Principal owner);
     
-    /**
-     * Change a password for the given principal
-     * @param principal
-     * @param oldPassword
-     * @param newPassword
-     */
-    void changePassword(Principal principal, String oldPassword, String newPassword);
 
     /**
      * Delete the specified key
      * @param cryptoKeyId
      */
     void delete(UUID cryptoKeyId);
+
+    /**
+     * Retrieve the specified key pair
+     * @param keyPairId
+     * @return
+     */
+    AsymmetricKeyPair retrieveKeyPair(UUID keyPairId);
+
+    /**
+     * Delete a key pair
+     * @param keyPairId
+     */
+    void deleteKeyPair(UUID keyPairId);
+
+    /**
+     * Replace the private key data of the specified key pair with a new data item.
+     * @param keyPair
+     * @param privateKeyData
+     */
+    void replacePrivateKey(AsymmetricKeyPair keyPair, PasswordedCryptoData privateKeyData);
 }

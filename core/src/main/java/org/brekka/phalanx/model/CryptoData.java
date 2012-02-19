@@ -9,6 +9,11 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
+/**
+ * The implementation describes the mechanism used to encrypt the payload data, not the data itself which could be anything.
+ * 
+ * @author Andrew Taylor
+ */
 @Entity
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="Type", discriminatorType=DiscriminatorType.STRING, length=8)

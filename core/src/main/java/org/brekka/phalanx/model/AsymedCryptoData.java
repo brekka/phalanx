@@ -7,6 +7,12 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
+/**
+ * A piece of data that is encrypted using a public key and must be decrypted using the corresponding
+ * private key (both identified by <code>keyPair</code>).
+ * 
+ * @author Andrew Taylor
+ */
 @Entity
 @DiscriminatorValue("Asym")
 public class AsymedCryptoData extends CryptoData {
@@ -15,6 +21,7 @@ public class AsymedCryptoData extends CryptoData {
      * Serial UID
      */
     private static final long serialVersionUID = -5682494152417841750L;
+    
     /**
      * The key pair that protects this content
      */

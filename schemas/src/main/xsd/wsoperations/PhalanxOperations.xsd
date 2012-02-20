@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://brekka.org/xml/phalanx/v1/wsops"
+    elementFormDefault="qualified" xmlns:pxws="http://brekka.org/xml/phalanx/wsops">
+    
+    <xsd:element name="AuthenticateRequest">
+    	<xsd:complexType>
+    		<xsd:sequence>
+    			<xsd:element name="Principal">
+    			</xsd:element>
+    			<xsd:element name="Password">
+    			</xsd:element>
+    		</xsd:sequence>
+    	</xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="AuthenticateResponse">
+    	<xsd:complexType>
+    		<xsd:sequence>
+    		
+    		</xsd:sequence>
+    	</xsd:complexType>
+    </xsd:element>
+</xsd:schema>

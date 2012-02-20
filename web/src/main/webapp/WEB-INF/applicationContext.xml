@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:stil="http://brekka.org/schema/stillingar"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+        http://brekka.org/schema/stillingar http://brekka.org/schema/stillingar/brekka-stillingar-1.0.xsd">
+
+	<import resource="classpath:is/skeljungur/vista/spring/dao-context.xml"/>
+	<import resource="classpath:is/skeljungur/vista/spring/service-context.xml"/>
+
+    <stil:configuration id="phalanx-config" application-name="phalanx" reload-interval="5000" type="xmlbeans"> 
+        <stil:namespace prefix="c"     url="http://brekka.org/xml/phalanx/config" />
+        <stil:property-placeholder prefix="$phalanx{" suffix="}" />
+    </stil:configuration> 
+    
+</beans>

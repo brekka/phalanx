@@ -8,7 +8,7 @@ import javax.crypto.KeyGenerator;
 import org.brekka.phalanx.crypto.CryptoErrorCode;
 import org.brekka.phalanx.crypto.CryptoException;
 import org.brekka.phalanx.crypto.CryptoFactory;
-import org.brekka.xml.v1.phalanx.SymmetricProfileType;
+import org.brekka.xml.v1.crypto.SymmetricProfileType;
 
 class SymmetricImpl implements CryptoFactory.Symmetric {
 

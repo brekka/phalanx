@@ -7,7 +7,7 @@ import java.security.SecureRandom;
 import org.brekka.phalanx.crypto.CryptoErrorCode;
 import org.brekka.phalanx.crypto.CryptoException;
 import org.brekka.phalanx.crypto.CryptoFactory;
-import org.brekka.xml.v1.phalanx.CryptoProfileDocument.CryptoProfile;
+import org.brekka.xml.v1.crypto.CryptoProfileDocument.CryptoProfile;
 
 public class CryptoFactoryImpl implements CryptoFactory {
 

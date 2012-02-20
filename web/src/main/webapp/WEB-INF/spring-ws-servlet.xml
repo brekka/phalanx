@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:sws="http://www.springframework.org/schema/web-services"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                        http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context.xsd
+                        http://www.springframework.org/schema/util
+                        http://www.springframework.org/schema/util/spring-util.xsd
+                        http://www.springframework.org/schema/web-services
+                        http://www.springframework.org/schema/web-services/web-services-2.0.xsd">
+
+
+    <sws:annotation-driven marshaller="marshaller" unmarshaller="marshaller" />
+    
+    <context:component-scan base-package="org.brekka.phalanx.webservices" />
+    
+    <bean id="Phalanx" class="org.springframework.ws.wsdl.wsdl11.DefaultWsdl11Definition">
+        <property name="schema">
+            <bean class="org.springframework.xml.xsd.SimpleXsdSchema" 
+                  p:xsd="classpath:/schemaorg_apache_xmlbeans/src/wsoperations/PhalanxOperations.xsd">
+            </bean>
+        </property>
+        <property name="portTypeName" value="PhalanxPort" />
+        <property name="locationUri" value="http://phalanx.brekka.org/services" />
+        <property name="targetNamespace" value="http://brekka.org/wsdl/phalanx" />
+        <property name="serviceName" value="Phalanx" />
+    </bean>
+    
+    <bean id="marshaller" class="org.springframework.oxm.xmlbeans.XmlBeansMarshaller">
+		<property name="validating" value="true" />
+        <property name="xmlOptions" ref="wsXmlOptions" />
+    </bean>
+    <bean id="wsXmlOptions" class="org.springframework.oxm.xmlbeans.XmlOptionsFactoryBean">
+        <property name="options">
+            <map>
+                <entry key="SAVE_AGGRESSIVE_NAMESPACES"><null/></entry>
+            </map>
+        </property>
+    </bean>
+</beans>

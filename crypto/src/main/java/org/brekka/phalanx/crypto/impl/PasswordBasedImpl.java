@@ -8,7 +8,7 @@ import javax.crypto.SecretKeyFactory;
 import org.brekka.phalanx.crypto.CryptoErrorCode;
 import org.brekka.phalanx.crypto.CryptoException;
 import org.brekka.phalanx.crypto.CryptoFactory;
-import org.brekka.xml.v1.phalanx.PasswordBasedProfileType;
+import org.brekka.xml.v1.crypto.PasswordBasedProfileType;
 
 class PasswordBasedImpl implements CryptoFactory.PasswordBased {
     

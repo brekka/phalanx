@@ -10,7 +10,7 @@ import javax.crypto.Cipher;
 import org.brekka.phalanx.crypto.CryptoErrorCode;
 import org.brekka.phalanx.crypto.CryptoException;
 import org.brekka.phalanx.crypto.CryptoFactory;
-import org.brekka.xml.v1.phalanx.AsymmetricProfileType;
+import org.brekka.xml.v1.crypto.AsymmetricProfileType;
 
 class AsymmetricImpl implements CryptoFactory.Asymmetric {
 

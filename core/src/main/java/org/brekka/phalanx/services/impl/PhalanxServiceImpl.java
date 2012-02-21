@@ -48,7 +48,7 @@ public class PhalanxServiceImpl implements PhalanxService {
     
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
-    public UUID asyncEncrypt(byte[] data, UUID keyPairId) {
+    public UUID asymEncrypt(byte[] data, UUID keyPairId) {
         AsymmetricKeyPair keyPair = asymmetricCryptoService.retrieveKeyPair(keyPairId);
         AsymedCryptoData asymedCryptoData = asymmetricCryptoService.encrypt(data, keyPair);
         return asymedCryptoData.getId();
@@ -56,7 +56,7 @@ public class PhalanxServiceImpl implements PhalanxService {
 
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
-    public byte[] asyncDecrypt(UUID asymedCryptoDataId, PrivateKeyToken privateKeyToken) {
+    public byte[] asymDecrypt(UUID asymedCryptoDataId, PrivateKeyToken privateKeyToken) {
         AsymedCryptoData dataItem = retrieveDataItem(asymedCryptoDataId, AsymedCryptoData.class);
         byte[] data = asymmetricCryptoService.decrypt(dataItem, privateKeyToken, byte[].class);
         return data;
@@ -81,7 +81,7 @@ public class PhalanxServiceImpl implements PhalanxService {
 
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
-    public PrivateKeyToken asyncDecryptKeyPair(UUID asymmetricKeyPairId, PrivateKeyToken privateKeyToken) {
+    public PrivateKeyToken decryptKeyPair(UUID asymmetricKeyPairId, PrivateKeyToken privateKeyToken) {
         AsymmetricKeyPair keyPair = asymmetricCryptoService.retrieveKeyPair(asymmetricKeyPairId);
         PrivateKeyToken nextPrivateKeyToken = asymmetricCryptoService.decrypt(keyPair, privateKeyToken);
         return nextPrivateKeyToken;

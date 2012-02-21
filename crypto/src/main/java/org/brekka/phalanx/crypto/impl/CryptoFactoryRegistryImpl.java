@@ -14,9 +14,9 @@ import org.brekka.phalanx.crypto.CryptoErrorCode;
 import org.brekka.phalanx.crypto.CryptoException;
 import org.brekka.phalanx.crypto.CryptoFactory;
 import org.brekka.phalanx.crypto.CryptoFactoryRegistry;
-import org.brekka.xml.v1.crypto.CryptoProfileDocument.CryptoProfile;
-import org.brekka.xml.v1.crypto.CryptoProfileRegistryDocument;
-import org.brekka.xml.v1.crypto.CryptoProfileRegistryDocument.CryptoProfileRegistry;
+import org.brekka.xml.phalanx.v1.crypto.CryptoProfileDocument.CryptoProfile;
+import org.brekka.xml.phalanx.v1.crypto.CryptoProfileRegistryDocument;
+import org.brekka.xml.phalanx.v1.crypto.CryptoProfileRegistryDocument.CryptoProfileRegistry;
 import org.springframework.core.io.Resource;
 
 public class CryptoFactoryRegistryImpl implements CryptoFactoryRegistry {

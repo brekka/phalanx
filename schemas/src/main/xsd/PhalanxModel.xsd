@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://brekka.org/xml/phalanx/v1/model"
+	xmlns:px="http://brekka.org/xml/phalanx/v1/model" elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+	
+	<xsd:complexType name="CryptedDataType">
+		<xsd:sequence>
+		</xsd:sequence>
+		<xsd:attribute name="id" type="px:CryptedDataIdType" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="KeyPairType">
+		<xsd:sequence>
+		</xsd:sequence>
+		<xsd:attribute name="id" type="px:KeyPairIdType" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="AuthenticatedPrincipalType">
+		<xsd:complexContent>
+			<xsd:extension base="px:PrincipalType"></xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="PrincipalType">
+		<xsd:sequence>
+		</xsd:sequence>
+		<xsd:attribute name="id" type="px:PrincipalIdType" />
+	</xsd:complexType>
+	
+
+	
+    <xsd:simpleType name="PrivateKeyTokenType">
+    	<xsd:restriction base="xsd:string">
+    		<xsd:pattern value="[a-f0-9]{32}" />
+    	</xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="CryptedDataIdType">
+    	<xsd:restriction base="px:UUIDType" />
+    </xsd:simpleType>
+	
+    <xsd:simpleType name="KeyPairIdType">
+    	<xsd:restriction base="px:UUIDType">
+    	</xsd:restriction>
+    </xsd:simpleType>
+	
+    <xsd:simpleType name="PrincipalIdType">
+    	<xsd:restriction base="px:UUIDType">
+    	</xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="PasswordType">
+    	<xsd:restriction base="xsd:string">
+    	</xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="UUIDType">
+    	<xsd:restriction base="xsd:string">
+    		<xsd:pattern value="[a-f0-9]{8}\-[a-f0-9]{4}\-[a-f0-9]{4}\-[a-f0-9]{4}\-[a-f0-9]{12}" />
+    	</xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="BinaryDataType">
+    	<xsd:restriction base="xsd:base64Binary">
+    		<xsd:maxLength value="8096" />
+    	</xsd:restriction>
+    </xsd:simpleType>
+</xsd:schema>

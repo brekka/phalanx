@@ -22,7 +22,7 @@ public interface PhalanxService {
      * @param keyPairId id of the keyPair whose public key will be used to encrypt the data.
      * @return the id of the encrypted data item.
      */
-    UUID asyncEncrypt(byte[] data, UUID keyPairId);
+    UUID asymEncrypt(byte[] data, UUID keyPairId);
     
     /**
      * Decrypt the specified data item to reveal the 'plain' bytes originally encrypted, using the specified
@@ -32,7 +32,7 @@ public interface PhalanxService {
      * @param privateKeyToken the private key token that can decrypt this data item.
      * @return the unencrypted data.
      */
-    byte[] asyncDecrypt(UUID asymedCryptoDataId, PrivateKeyToken privateKeyToken);
+    byte[] asymDecrypt(UUID asymedCryptoDataId, PrivateKeyToken privateKeyToken);
     
     
     /*
@@ -67,7 +67,7 @@ public interface PhalanxService {
      * @param privateKeyToken the token to use to decrypt.
      * @return the private key token extracted from the requested keyPair.
      */
-    PrivateKeyToken asyncDecryptKeyPair(UUID asymmetricKeyPairId, PrivateKeyToken privateKeyToken);
+    PrivateKeyToken decryptKeyPair(UUID asymmetricKeyPairId, PrivateKeyToken privateKeyToken);
     
     /**
      * Create a new key pair which will be protected using the public key from the key pair <code>protectedByKeyPairId</code>.

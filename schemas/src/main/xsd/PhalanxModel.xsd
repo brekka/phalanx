@@ -17,7 +17,13 @@
 	
 	<xsd:complexType name="AuthenticatedPrincipalType">
 		<xsd:complexContent>
-			<xsd:extension base="px:PrincipalType"></xsd:extension>
+			<xsd:extension base="px:PrincipalType">
+				<xsd:sequence>
+					<xsd:element name="SessionID" type="px:SessionIdType" />
+					<xsd:element name="DefaultPrivateKey" type="px:PrivateKeyTokenType" />
+					
+				</xsd:sequence>
+			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
 
@@ -26,16 +32,16 @@
 		</xsd:sequence>
 		<xsd:attribute name="id" type="px:PrincipalIdType" />
 	</xsd:complexType>
-	
 
-	
-    <xsd:simpleType name="PrivateKeyTokenType">
-    	<xsd:restriction base="xsd:string">
-    		<xsd:pattern value="[a-f0-9]{32}" />
-    	</xsd:restriction>
-    </xsd:simpleType>
-    
-    <xsd:simpleType name="CryptedDataIdType">
+
+
+	<xsd:simpleType name="PrivateKeyTokenType">
+		<xsd:restriction base="xsd:base64Binary">
+			<xsd:length value="4" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="CryptedDataIdType">
     	<xsd:restriction base="px:UUIDType" />
     </xsd:simpleType>
 	
@@ -49,6 +55,12 @@
     	</xsd:restriction>
     </xsd:simpleType>
     
+    <xsd:simpleType name="SessionIdType">
+    	<xsd:restriction base="xsd:base64Binary">
+    		<xsd:length value="32" />
+    	</xsd:restriction>
+    </xsd:simpleType>
+
     <xsd:simpleType name="PasswordType">
     	<xsd:restriction base="xsd:string">
     	</xsd:restriction>

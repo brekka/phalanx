@@ -7,14 +7,13 @@ import java.util.Random;
 
 import net.iharder.Base64;
 
-import org.brekka.phalanx.crypto.CryptoFactoryRegistry;
-import org.brekka.phalanx.crypto.impl.CryptoFactoryRegistryImpl;
 import org.brekka.phalanx.dao.CryptoDataDAO;
 import org.brekka.phalanx.model.PasswordedCryptoData;
+import org.brekka.phoenix.CryptoFactoryRegistry;
+import org.brekka.phoenix.impl.CryptoFactoryRegistryImpl;
+import org.brekka.xml.phoenix.v1.model.CryptoProfileRegistryDocument;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
-import org.springframework.core.io.ClassPathResource;
 
 public class PasswordBasedCryptoServiceImplTest {
 
@@ -22,8 +21,10 @@ public class PasswordBasedCryptoServiceImplTest {
     
     @Before
     public void setUp() throws Exception {
-        CryptoFactoryRegistry cryptoProfileRegistry = CryptoFactoryRegistryImpl.createBasicRegistryFromXml(
-                new ClassPathResource("BasicCryptoProfileRegistry.xml", PasswordBasedCryptoServiceImpl.class.getClassLoader()));
+        CryptoProfileRegistryDocument regDoc = CryptoProfileRegistryDocument.Factory.parse(
+                PasswordBasedCryptoServiceImpl.class.getClassLoader().getResourceAsStream(
+                        "BasicCryptoProfileRegistry.xml"));
+        CryptoFactoryRegistry cryptoProfileRegistry = CryptoFactoryRegistryImpl.createRegistry(regDoc);
         service = new PasswordBasedCryptoServiceImpl();
         CryptoDataDAO cryptoDAO = new TestCryptoDataDAO();
         service.setCryptoDataDAO(cryptoDAO);

@@ -11,12 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract class AbstractHibernateEntityDAO<T extends IdentifiableEntity> implements EntityDAO<T> {
 
     @Autowired
-    private SessionFactory sessionFactory;
+    private SessionFactory phalanxSessionFactory;
     
     @SuppressWarnings("unchecked")
     @Override
     public T retrieveById(UUID entityId) {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = phalanxSessionFactory.getCurrentSession();
         return (T) session.get(type(), entityId);
     }
     
@@ -26,25 +26,25 @@ public abstract class AbstractHibernateEntityDAO<T extends IdentifiableEntity> i
     public UUID create(T entity) {
         UUID id = UUID.randomUUID();
         entity.setId(id);
-        Session session = sessionFactory.getCurrentSession();
+        Session session = phalanxSessionFactory.getCurrentSession();
         session.save(entity);
         return id;
     }
 
     @Override
     public void update(T entity) {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = phalanxSessionFactory.getCurrentSession();
         session.update(entity);
     }
 
     @Override
     public void delete(UUID entityId) {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = phalanxSessionFactory.getCurrentSession();
         Object toDelete = session.get(type(), entityId);
         session.delete(toDelete);
     }
 
     protected final Session getCurrentSession() {
-        return sessionFactory.getCurrentSession();
+        return phalanxSessionFactory.getCurrentSession();
     }
 }

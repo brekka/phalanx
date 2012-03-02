@@ -22,7 +22,6 @@
 
 	<modules>
 		<module>core</module>
-		<module>crypto</module>
 		<module>schemas</module>
 		<module>web</module>
 	</modules>

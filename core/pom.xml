@@ -13,10 +13,14 @@
 	<version>1.0.0</version>
 
 	<dependencies>
-
+		<dependency>
+			<groupId>org.brekka.phoenix</groupId>
+			<artifactId>phoenix-core</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 		<dependency>
 			<groupId>org.brekka.phalanx</groupId>
-			<artifactId>phalanx-crypto</artifactId>
+			<artifactId>phalanx-schemas</artifactId>
 			<version>1.0.0</version>
 		</dependency>
 		<dependency>

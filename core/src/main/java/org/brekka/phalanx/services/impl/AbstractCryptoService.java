@@ -1,8 +1,5 @@
 package org.brekka.phalanx.services.impl;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.security.Key;
 import java.security.KeyFactory;
@@ -17,13 +14,10 @@ import java.util.UUID;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
 import org.brekka.phalanx.PhalanxErrorCode;
 import org.brekka.phalanx.PhalanxException;
-import org.brekka.phalanx.crypto.CryptoFactory;
-import org.brekka.phalanx.crypto.CryptoFactoryRegistry;
+import org.brekka.phoenix.CryptoFactory;
+import org.brekka.phoenix.CryptoFactoryRegistry;
 import org.brekka.phalanx.model.SymedCryptoData;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -34,8 +28,6 @@ public abstract class AbstractCryptoService {
     @Autowired
     private CryptoFactoryRegistry cryptoProfileRegistry;
     
-    private XmlOptions xmlOptions = new XmlOptions();
-
     @SuppressWarnings("unchecked")
     protected <T> T toType(byte[] data, Class<T> expectedType, UUID idOfData, CryptoFactory cryptoProfile) {
         if (expectedType == null) {
@@ -58,8 +50,6 @@ public abstract class AbstractCryptoService {
             retVal = decodePrivateKey(data, idOfData);
         } else if (expectedType == InternalSecretKeyToken.class) {
             retVal = decodeSecretKey(data, idOfData);
-        } else if (XmlObject.class.isAssignableFrom(expectedType)) {
-            retVal = decodeXmlObject(data, idOfData);
         } else {
             throw new IllegalArgumentException(String.format(
                     "Unsupport type conversion to '%s'", expectedType.getName()));
@@ -83,8 +73,6 @@ public abstract class AbstractCryptoService {
             retVal = encodeSecretKey(iskt);
         } else if (obj instanceof Key) {
             retVal = ((Key) obj).getEncoded();
-        } else if (obj instanceof XmlObject) {
-            retVal = encodeXmlObject((XmlObject) obj);
         } else {
             throw new IllegalArgumentException(String.format("Unsupport type conversion from '%s'", clazz.getName()));
         }
@@ -158,31 +146,6 @@ public abstract class AbstractCryptoService {
         }
     }
     
-    
-    private byte[] encodeXmlObject(XmlObject obj) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(512);
-        try {
-            obj.save(baos, xmlOptions);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-        return baos.toByteArray();
-    }
-    
-    private XmlObject decodeXmlObject(byte[] data, UUID idOfData) {
-        ByteArrayInputStream bais = new ByteArrayInputStream(data);
-        XmlObject obj;
-        try {
-            obj = XmlObject.Factory.parse(bais);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        } catch (XmlException e) {
-            // TODO
-            throw new IllegalStateException(e);
-        }
-        return obj;
-    }
-
     protected final CryptoFactoryRegistry getCryptoProfileRegistry() {
         return cryptoProfileRegistry;
     }

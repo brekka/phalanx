@@ -11,11 +11,11 @@ import javax.crypto.spec.IvParameterSpec;
 
 import org.brekka.phalanx.PhalanxErrorCode;
 import org.brekka.phalanx.PhalanxException;
-import org.brekka.phalanx.crypto.CryptoFactory;
 import org.brekka.phalanx.dao.CryptoDataDAO;
 import org.brekka.phalanx.model.SecretKeyToken;
 import org.brekka.phalanx.model.SymedCryptoData;
 import org.brekka.phalanx.services.SymmetricCryptoService;
+import org.brekka.phoenix.CryptoFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;

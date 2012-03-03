@@ -13,7 +13,7 @@
 		<property name="dataSource" ref="phalanxDataSource" />
 		<property name="packagesToScan">
 		  <list>
-		      <value>org.brekka.phalanx.model</value>
+		      <value>org.brekka.phalanx.core.model</value>
 		  </list>
 		</property>
 		<property name="hibernateProperties">

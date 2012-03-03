@@ -17,6 +17,7 @@ import org.brekka.xml.phalanx.v1.model.AuthenticatedPrincipalType;
 import org.brekka.xml.phalanx.v1.model.CryptedDataIdType;
 import org.brekka.xml.phalanx.v1.model.KeyPairIdType;
 import org.brekka.xml.phalanx.v1.model.PrincipalIdType;
+import org.brekka.xml.phalanx.v1.model.PrincipalType;
 import org.brekka.xml.phalanx.v1.model.UUIDType;
 import org.brekka.xml.phalanx.v1.wsops.AssignKeyPairRequestDocument;
 import org.brekka.xml.phalanx.v1.wsops.AssignKeyPairRequestDocument.AssignKeyPairRequest;
@@ -112,16 +113,12 @@ public class PhalanxEndpoint {
     @ResponsePayload
     public AsymmetricEncryptionResponseDocument asymmetricEncryption(@RequestPayload AsymmetricEncryptionRequestDocument requestDocument) {
         AsymmetricEncryptionRequest request = requestDocument.getAsymmetricEncryptionRequest();
-        return doInSession(request, new SessionCallback<AsymmetricEncryptionRequest, AsymmetricEncryptionResponseDocument>() {
-            @Override
-            public AsymmetricEncryptionResponseDocument inSession(AsymmetricEncryptionRequest request) {
-                AsymmetricEncryptionResponseDocument responseDocument = AsymmetricEncryptionResponseDocument.Factory.newInstance();
-                AsymmetricEncryptionResponse response = responseDocument.addNewAsymmetricEncryptionResponse();
-                CryptedData cryptedData = phalanxService.asymEncrypt(request.getData(), id(request.getKeyPair().xgetId()));
-                response.addNewCryptedData().setId(id(cryptedData.getId()));
-                return responseDocument;
-            }
-        });
+        CryptedData cryptedData = phalanxService.asymEncrypt(request.getData(), id(request.getKeyPair().xgetId()));
+        
+        AsymmetricEncryptionResponseDocument responseDocument = AsymmetricEncryptionResponseDocument.Factory.newInstance();
+        AsymmetricEncryptionResponse response = responseDocument.addNewAsymmetricEncryptionResponse();
+        response.addNewCryptedData().setId(id(cryptedData.getId()));
+        return responseDocument;
     }
     
     @PayloadRoot(localPart = "AsymmetricDecryptionRequest", namespace = NS)
@@ -145,32 +142,24 @@ public class PhalanxEndpoint {
     @ResponsePayload
     public PasswordBasedEncryptionResponseDocument passwordBasedEncryption(@RequestPayload PasswordBasedEncryptionRequestDocument requestDocument) {
         PasswordBasedEncryptionRequest request = requestDocument.getPasswordBasedEncryptionRequest();
-        return doInSession(request, new SessionCallback<PasswordBasedEncryptionRequest, PasswordBasedEncryptionResponseDocument>() {
-            @Override
-            public PasswordBasedEncryptionResponseDocument inSession(PasswordBasedEncryptionRequest request) {
-                PasswordBasedEncryptionResponseDocument responseDocument = PasswordBasedEncryptionResponseDocument.Factory.newInstance();
-                PasswordBasedEncryptionResponse response = responseDocument.addNewPasswordBasedEncryptionResponse();
-                CryptedData cryptoData = phalanxService.pbeEncrypt(request.getData(), request.getPassword());
-                response.addNewCryptedData().setId(id(cryptoData.getId()));
-                return responseDocument;
-            }
-        });
+        CryptedData cryptoData = phalanxService.pbeEncrypt(request.getData(), request.getPassword());
+        
+        PasswordBasedEncryptionResponseDocument responseDocument = PasswordBasedEncryptionResponseDocument.Factory.newInstance();
+        PasswordBasedEncryptionResponse response = responseDocument.addNewPasswordBasedEncryptionResponse();
+        response.addNewCryptedData().setId(id(cryptoData.getId()));
+        return responseDocument;
     }
 
     @PayloadRoot(localPart = "PasswordBasedDecryptionRequest", namespace = NS)
     @ResponsePayload
     public PasswordBasedDecryptionResponseDocument passwordBasedDecryption(@RequestPayload PasswordBasedDecryptionRequestDocument requestDocument) {
         PasswordBasedDecryptionRequest request = requestDocument.getPasswordBasedDecryptionRequest();
-        return doInSession(request, new SessionCallback<PasswordBasedDecryptionRequest, PasswordBasedDecryptionResponseDocument>() {
-            @Override
-            public PasswordBasedDecryptionResponseDocument inSession(PasswordBasedDecryptionRequest request) {
-                PasswordBasedDecryptionResponseDocument responseDocument = PasswordBasedDecryptionResponseDocument.Factory.newInstance();
-                PasswordBasedDecryptionResponse response = responseDocument.addNewPasswordBasedDecryptionResponse();
-                byte[] data = phalanxService.pbeDecrypt(id(request.getCryptedData().xgetId()), request.getPassword());
-                response.setData(data);
-                return responseDocument;
-            }
-        });
+        byte[] data = phalanxService.pbeDecrypt(id(request.getCryptedData().xgetId()), request.getPassword());
+        
+        PasswordBasedDecryptionResponseDocument responseDocument = PasswordBasedDecryptionResponseDocument.Factory.newInstance();
+        PasswordBasedDecryptionResponse response = responseDocument.addNewPasswordBasedDecryptionResponse();
+        response.setData(data);
+        return responseDocument;
     }
 
     @PayloadRoot(localPart = "DecryptKeyPairRequest", namespace = NS)
@@ -195,16 +184,12 @@ public class PhalanxEndpoint {
     @ResponsePayload
     public GenerateKeyPairResponseDocument generateKeyPair(@RequestPayload GenerateKeyPairRequestDocument requestDocument) {
         GenerateKeyPairRequest request = requestDocument.getGenerateKeyPairRequest();
-        return doInSession(request, new SessionCallback<GenerateKeyPairRequest, GenerateKeyPairResponseDocument>() {
-            @Override
-            public GenerateKeyPairResponseDocument inSession(GenerateKeyPairRequest request) {
-                GenerateKeyPairResponseDocument responseDocument = GenerateKeyPairResponseDocument.Factory.newInstance();
-                GenerateKeyPairResponse response = responseDocument.addNewGenerateKeyPairResponse();
-                KeyPair keyPair = phalanxService.generateKeyPair(id(request.getKeyPair().xgetId()), id(request.getOwner().xgetId()));
-                response.addNewKeyPair().setId(id(keyPair.getId()));
-                return responseDocument;
-            }
-        });
+        KeyPair keyPair = phalanxService.generateKeyPair(id(request.getKeyPair().xgetId()), id(request.getOwner().xgetId()));
+        
+        GenerateKeyPairResponseDocument responseDocument = GenerateKeyPairResponseDocument.Factory.newInstance();
+        GenerateKeyPairResponse response = responseDocument.addNewGenerateKeyPairResponse();
+        response.addNewKeyPair().setId(id(keyPair.getId()));
+        return responseDocument;
     }
 
     @PayloadRoot(localPart = "AssignKeyPairRequest", namespace = NS)
@@ -262,7 +247,9 @@ public class PhalanxEndpoint {
         CreatePrincipalResponse response = responseDocument.addNewCreatePrincipalResponse();
         
         Principal principal = phalanxService.createPrincipal(request.getPassword());
-        response.addNewPrincipal().setId(id(principal.getId()));
+        PrincipalType principalXml = response.addNewPrincipal();
+        principalXml.setId(id(principal.getId()));
+        principalXml.addNewDefaultKeyPair().setId(id(principal.getDefaultKeyPair().getId()));
         
         return responseDocument;
     }
@@ -283,16 +270,12 @@ public class PhalanxEndpoint {
     @ResponsePayload
     public ChangePasswordResponseDocument changePassword(@RequestPayload ChangePasswordRequestDocument requestDocument) {
         ChangePasswordRequest request = requestDocument.getChangePasswordRequest();
-        return doInSession(request, new SessionCallback<ChangePasswordRequest, ChangePasswordResponseDocument>() {
-            @Override
-            public ChangePasswordResponseDocument inSession(ChangePasswordRequest request) {
-                ChangePasswordResponseDocument responseDocument = ChangePasswordResponseDocument.Factory.newInstance();
-                responseDocument.addNewChangePasswordResponse();
-                AuthenticatedPrincipal principal = sessionService.getCurrentPrincipal();
-                phalanxService.changePassword(principal.getPrincipal(), request.getCurrentPassword(), request.getNewPassword());
-                return responseDocument;
-            }
-        });
+        AuthenticatedPrincipal principal = sessionService.getCurrentPrincipal();
+        phalanxService.changePassword(principal.getPrincipal(), request.getCurrentPassword(), request.getNewPassword());
+        
+        ChangePasswordResponseDocument responseDocument = ChangePasswordResponseDocument.Factory.newInstance();
+        responseDocument.addNewChangePasswordResponse();
+        return responseDocument;
     }
 
 

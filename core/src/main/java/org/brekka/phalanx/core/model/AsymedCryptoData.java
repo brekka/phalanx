@@ -8,7 +8,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 import org.brekka.phalanx.api.model.CryptedData;
-import org.brekka.phalanx.api.model.KeyPair;
 
 /**
  * A piece of data that is encrypted using a public key and must be decrypted using the corresponding
@@ -30,7 +29,7 @@ public class AsymedCryptoData extends CryptoData implements CryptedData {
      */
     @OneToOne
     @JoinColumn(name="KeyPairID")
-    private KeyPair keyPair;
+    private AsymmetricKeyPair keyPair;
     
     
     public AsymedCryptoData() {
@@ -41,11 +40,11 @@ public class AsymedCryptoData extends CryptoData implements CryptedData {
     }
     
 
-    public KeyPair getKeyPair() {
+    public AsymmetricKeyPair getKeyPair() {
         return keyPair;
     }
 
-    public void setKeyPair(KeyPair keyPair) {
+    public void setKeyPair(AsymmetricKeyPair keyPair) {
         this.keyPair = keyPair;
     }
 }

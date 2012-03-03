@@ -8,7 +8,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.brekka.phalanx.api.model.Principal;
 import org.brekka.phalanx.api.model.KeyPair;
 
 /**

@@ -1,27 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://brekka.org/xml/phalanx/v1/model"
-	xmlns:px="http://brekka.org/xml/phalanx/v1/model" elementFormDefault="qualified"
+	xmlns:plxm="http://brekka.org/xml/phalanx/v1/model" elementFormDefault="qualified"
 	attributeFormDefault="unqualified">
 	
 	<xsd:complexType name="CryptedDataType">
 		<xsd:sequence>
 		</xsd:sequence>
-		<xsd:attribute name="id" type="px:CryptedDataIdType" />
+		<xsd:attribute name="id" type="plxm:CryptedDataIdType" />
 	</xsd:complexType>
 	
 	<xsd:complexType name="KeyPairType">
 		<xsd:sequence>
 		</xsd:sequence>
-		<xsd:attribute name="id" type="px:KeyPairIdType" />
+		<xsd:attribute name="id" type="plxm:KeyPairIdType" />
 	</xsd:complexType>
 	
 	<xsd:complexType name="AuthenticatedPrincipalType">
 		<xsd:complexContent>
-			<xsd:extension base="px:PrincipalType">
+			<xsd:extension base="plxm:PrincipalType">
 				<xsd:sequence>
-					<xsd:element name="SessionID" type="px:SessionIdType" />
-					<xsd:element name="DefaultPrivateKey" type="px:PrivateKeyTokenType" />
-					
+					<xsd:element name="SessionID" type="plxm:SessionIdType" />
+					<xsd:element name="DefaultPrivateKey" type="plxm:PrivateKeyTokenType" />
 				</xsd:sequence>
 			</xsd:extension>
 		</xsd:complexContent>
@@ -29,8 +28,9 @@
 
 	<xsd:complexType name="PrincipalType">
 		<xsd:sequence>
+            <xsd:element name="DefaultKeyPair" type="plxm:KeyPairType" minOccurs="0" maxOccurs="1" />
 		</xsd:sequence>
-		<xsd:attribute name="id" type="px:PrincipalIdType" />
+		<xsd:attribute name="id" type="plxm:PrincipalIdType" />
 	</xsd:complexType>
 
 
@@ -42,16 +42,16 @@
 	</xsd:simpleType>
 
 	<xsd:simpleType name="CryptedDataIdType">
-    	<xsd:restriction base="px:UUIDType" />
+    	<xsd:restriction base="plxm:UUIDType" />
     </xsd:simpleType>
 	
     <xsd:simpleType name="KeyPairIdType">
-    	<xsd:restriction base="px:UUIDType">
+    	<xsd:restriction base="plxm:UUIDType">
     	</xsd:restriction>
     </xsd:simpleType>
 	
     <xsd:simpleType name="PrincipalIdType">
-    	<xsd:restriction base="px:UUIDType">
+    	<xsd:restriction base="plxm:UUIDType">
     	</xsd:restriction>
     </xsd:simpleType>
     

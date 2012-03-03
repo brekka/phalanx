@@ -8,14 +8,10 @@
 
 	<xsd:element name="AsymmetricEncryptionRequest">
 		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="pxws:PrincipalAssertedRequest">
-					<xsd:sequence>
-						<xsd:element name="Data" type="px:BinaryDataType" />
-						<xsd:element name="KeyPair" type="px:KeyPairType" />
-					</xsd:sequence>
-				</xsd:extension>
-			</xsd:complexContent>
+			<xsd:sequence>
+				<xsd:element name="Data" type="px:BinaryDataType" />
+				<xsd:element name="KeyPair" type="px:KeyPairType" />
+			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
 
@@ -53,14 +49,10 @@
 
 	<xsd:element name="PasswordBasedEncryptionRequest">
 		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="pxws:PrincipalAssertedRequest">
-					<xsd:sequence>
-						<xsd:element name="Data" type="px:BinaryDataType" />
-						<xsd:element name="Password" type="px:PasswordType" />
-					</xsd:sequence>
-				</xsd:extension>
-			</xsd:complexContent>
+			<xsd:sequence>
+				<xsd:element name="Data" type="px:BinaryDataType" />
+				<xsd:element name="Password" type="px:PasswordType" />
+			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
 
@@ -74,14 +66,10 @@
 
 	<xsd:element name="PasswordBasedDecryptionRequest">
 		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="pxws:PrincipalAssertedRequest">
-					<xsd:sequence>
-						<xsd:element name="CryptedData" type="px:CryptedDataType" />
-						<xsd:element name="Password" type="px:PasswordType" />
-					</xsd:sequence>
-				</xsd:extension>
-			</xsd:complexContent>
+			<xsd:sequence>
+				<xsd:element name="CryptedData" type="px:CryptedDataType" />
+				<xsd:element name="Password" type="px:PasswordType" />
+			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
 
@@ -119,14 +107,10 @@
 
 	<xsd:element name="GenerateKeyPairRequest">
 		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="pxws:PrincipalAssertedRequest">
-					<xsd:sequence>
-						<xsd:element name="KeyPair" type="px:KeyPairType" />
-						<xsd:element name="Owner" type="px:PrincipalType" />
-					</xsd:sequence>
-				</xsd:extension>
-			</xsd:complexContent>
+			<xsd:sequence>
+				<xsd:element name="KeyPair" type="px:KeyPairType" />
+				<xsd:element name="Owner" type="px:PrincipalType" />
+			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
 
@@ -254,14 +238,11 @@
 
 	<xsd:element name="ChangePasswordRequest">
 		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="pxws:PrincipalAssertedRequest">
-					<xsd:sequence>
-						<xsd:element name="CurrentPassword" type="px:PasswordType" />
-						<xsd:element name="NewPassword" type="px:PasswordType" />
-					</xsd:sequence>
-				</xsd:extension>
-			</xsd:complexContent>
+			<xsd:sequence>
+                <xsd:element name="Principal" type="px:PrincipalType" />
+				<xsd:element name="CurrentPassword" type="px:PasswordType" />
+				<xsd:element name="NewPassword" type="px:PasswordType" />
+			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
 

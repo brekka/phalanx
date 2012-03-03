@@ -24,7 +24,7 @@ public class PasswordBasedCryptoServiceImplTest {
         CryptoProfileRegistryDocument regDoc = CryptoProfileRegistryDocument.Factory.parse(
                 PasswordBasedCryptoServiceImpl.class.getClassLoader().getResourceAsStream(
                         "BasicCryptoProfileRegistry.xml"));
-        CryptoFactoryRegistry cryptoProfileRegistry = CryptoFactoryRegistryImpl.createRegistry(regDoc);
+        CryptoFactoryRegistry cryptoProfileRegistry = CryptoFactoryRegistryImpl.createRegistry(regDoc.getCryptoProfileRegistry());
         service = new PasswordBasedCryptoServiceImpl();
         CryptoDataDAO cryptoDAO = new TestCryptoDataDAO();
         service.setCryptoDataDAO(cryptoDAO);

@@ -6,6 +6,7 @@ import org.brekka.phoenix.impl.CryptoFactoryRegistryImpl;
 import org.brekka.stillingar.annotations.ConfigurationListener;
 import org.brekka.stillingar.annotations.Configured;
 import org.brekka.xml.phoenix.v1.model.CryptoProfileRegistryDocument;
+import org.brekka.xml.phoenix.v1.model.CryptoProfileRegistryDocument.CryptoProfileRegistry;
 import org.springframework.stereotype.Component;
 
 @Configured
@@ -26,7 +27,7 @@ public class ConfiguredCryptoFactoryRegistry implements CryptoFactoryRegistry {
     
     
     @ConfigurationListener
-    public void configure(@Configured CryptoProfileRegistryDocument cryptoProfileRegistryDocument) {
-        delegate = CryptoFactoryRegistryImpl.createRegistry(cryptoProfileRegistryDocument);
+    public void configure(@Configured CryptoProfileRegistry cryptoProfileRegistry) {
+        delegate = CryptoFactoryRegistryImpl.createRegistry(cryptoProfileRegistry);
     }
 }

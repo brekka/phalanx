@@ -37,7 +37,7 @@
 
 	<xsd:simpleType name="PrivateKeyTokenType">
 		<xsd:restriction base="xsd:base64Binary">
-			<xsd:length value="4" />
+			<xsd:length value="3" />
 		</xsd:restriction>
 	</xsd:simpleType>
 
@@ -57,7 +57,7 @@
     
     <xsd:simpleType name="SessionIdType">
     	<xsd:restriction base="xsd:base64Binary">
-    		<xsd:length value="32" />
+    		<xsd:length value="24" />
     	</xsd:restriction>
     </xsd:simpleType>
 

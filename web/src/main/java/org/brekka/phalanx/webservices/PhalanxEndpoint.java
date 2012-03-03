@@ -61,6 +61,7 @@ import org.brekka.xml.phalanx.v1.wsops.PrincipalAssertedRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
+import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 
 @Endpoint
@@ -74,9 +75,9 @@ public class PhalanxEndpoint {
     private PhalanxSessionService sessionService;
     
     
-    @PayloadRoot(localPart = "Authenticate", namespace = NS)
+    @PayloadRoot(localPart = "AuthenticateRequest", namespace = NS)
     @ResponsePayload
-    public AuthenticateResponseDocument authenticate(AuthenticateRequestDocument requestDocument) {
+    public AuthenticateResponseDocument authenticate(@RequestPayload AuthenticateRequestDocument requestDocument) {
         AuthenticateResponseDocument responseDocument = AuthenticateResponseDocument.Factory.newInstance();
         AuthenticateResponse response = responseDocument.addNewAuthenticateResponse();
         
@@ -90,15 +91,17 @@ public class PhalanxEndpoint {
             authenticatedPrincipalXml.setId(id(authenticatedPrincipal.getPrincipal().getId()));
             authenticatedPrincipalXml.setDefaultPrivateKey(privateKeyTokenId);
             authenticatedPrincipalXml.setSessionID(sessionId);
+            authenticatedPrincipalXml.addNewDefaultKeyPair()
+                .setId(id(authenticatedPrincipal.getPrincipal().getDefaultKeyPair().getId()));
         } finally {
             sessionService.unbind();
         }
         return responseDocument;
     }
     
-    @PayloadRoot(localPart = "AsymmetricEncryption", namespace = NS)
+    @PayloadRoot(localPart = "AsymmetricEncryptionRequest", namespace = NS)
     @ResponsePayload
-    public AsymmetricEncryptionResponseDocument asymmetricEncryption(AsymmetricEncryptionRequestDocument requestDocument) {
+    public AsymmetricEncryptionResponseDocument asymmetricEncryption(@RequestPayload AsymmetricEncryptionRequestDocument requestDocument) {
         AsymmetricEncryptionRequest request = requestDocument.getAsymmetricEncryptionRequest();
         return doInSession(request, new SessionCallback<AsymmetricEncryptionRequest, AsymmetricEncryptionResponseDocument>() {
             @Override
@@ -112,9 +115,9 @@ public class PhalanxEndpoint {
         });
     }
     
-    @PayloadRoot(localPart = "AsymmetricDecryption", namespace = NS)
+    @PayloadRoot(localPart = "AsymmetricDecryptionRequest", namespace = NS)
     @ResponsePayload
-    public AsymmetricDecryptionResponseDocument asymmetricDecryption(AsymmetricDecryptionRequestDocument requestDocument) {
+    public AsymmetricDecryptionResponseDocument asymmetricDecryption(@RequestPayload AsymmetricDecryptionRequestDocument requestDocument) {
         AsymmetricDecryptionRequest request = requestDocument.getAsymmetricDecryptionRequest();
         return doInSession(request, new SessionCallback<AsymmetricDecryptionRequest, AsymmetricDecryptionResponseDocument>() {
             @Override
@@ -129,9 +132,9 @@ public class PhalanxEndpoint {
         });
     }
 
-    @PayloadRoot(localPart = "PasswordBasedEncryption", namespace = NS)
+    @PayloadRoot(localPart = "PasswordBasedEncryptionRequest", namespace = NS)
     @ResponsePayload
-    public PasswordBasedEncryptionResponseDocument passwordBasedEncryption(PasswordBasedEncryptionRequestDocument requestDocument) {
+    public PasswordBasedEncryptionResponseDocument passwordBasedEncryption(@RequestPayload PasswordBasedEncryptionRequestDocument requestDocument) {
         PasswordBasedEncryptionRequest request = requestDocument.getPasswordBasedEncryptionRequest();
         return doInSession(request, new SessionCallback<PasswordBasedEncryptionRequest, PasswordBasedEncryptionResponseDocument>() {
             @Override
@@ -145,9 +148,9 @@ public class PhalanxEndpoint {
         });
     }
 
-    @PayloadRoot(localPart = "PasswordBasedDecryption", namespace = NS)
+    @PayloadRoot(localPart = "PasswordBasedDecryptionRequest", namespace = NS)
     @ResponsePayload
-    public PasswordBasedDecryptionResponseDocument passwordBasedDecryption(PasswordBasedDecryptionRequestDocument requestDocument) {
+    public PasswordBasedDecryptionResponseDocument passwordBasedDecryption(@RequestPayload PasswordBasedDecryptionRequestDocument requestDocument) {
         PasswordBasedDecryptionRequest request = requestDocument.getPasswordBasedDecryptionRequest();
         return doInSession(request, new SessionCallback<PasswordBasedDecryptionRequest, PasswordBasedDecryptionResponseDocument>() {
             @Override
@@ -161,9 +164,9 @@ public class PhalanxEndpoint {
         });
     }
 
-    @PayloadRoot(localPart = "DecryptKeyPair", namespace = NS)
+    @PayloadRoot(localPart = "DecryptKeyPairRequest", namespace = NS)
     @ResponsePayload
-    public DecryptKeyPairResponseDocument decryptKeyPair(DecryptKeyPairRequestDocument requestDocument) {
+    public DecryptKeyPairResponseDocument decryptKeyPair(@RequestPayload DecryptKeyPairRequestDocument requestDocument) {
         DecryptKeyPairRequest request = requestDocument.getDecryptKeyPairRequest();
         return doInSession(request, new SessionCallback<DecryptKeyPairRequest, DecryptKeyPairResponseDocument>() {
             @Override
@@ -179,9 +182,9 @@ public class PhalanxEndpoint {
         });
     }
 
-    @PayloadRoot(localPart = "GenerateKeyPair", namespace = NS)
+    @PayloadRoot(localPart = "GenerateKeyPairRequest", namespace = NS)
     @ResponsePayload
-    public GenerateKeyPairResponseDocument generateKeyPair(GenerateKeyPairRequestDocument requestDocument) {
+    public GenerateKeyPairResponseDocument generateKeyPair(@RequestPayload GenerateKeyPairRequestDocument requestDocument) {
         GenerateKeyPairRequest request = requestDocument.getGenerateKeyPairRequest();
         return doInSession(request, new SessionCallback<GenerateKeyPairRequest, GenerateKeyPairResponseDocument>() {
             @Override
@@ -195,9 +198,9 @@ public class PhalanxEndpoint {
         });
     }
 
-    @PayloadRoot(localPart = "AssignKeyPair", namespace = NS)
+    @PayloadRoot(localPart = "AssignKeyPairRequest", namespace = NS)
     @ResponsePayload
-    public AssignKeyPairResponseDocument assignKeyPair(AssignKeyPairRequestDocument requestDocument) {
+    public AssignKeyPairResponseDocument assignKeyPair(@RequestPayload AssignKeyPairRequestDocument requestDocument) {
         AssignKeyPairRequest request = requestDocument.getAssignKeyPairRequest();
         return doInSession(request, new SessionCallback<AssignKeyPairRequest, AssignKeyPairResponseDocument>() {
             @Override
@@ -212,9 +215,9 @@ public class PhalanxEndpoint {
         });
     }
 
-    @PayloadRoot(localPart = "DeleteCryptedData", namespace = NS)
+    @PayloadRoot(localPart = "DeleteCryptedDataRequest", namespace = NS)
     @ResponsePayload
-    public DeleteCryptedDataResponseDocument deleteCryptedData(DeleteCryptedDataRequestDocument requestDocument) {
+    public DeleteCryptedDataResponseDocument deleteCryptedData(@RequestPayload DeleteCryptedDataRequestDocument requestDocument) {
         DeleteCryptedDataRequest request = requestDocument.getDeleteCryptedDataRequest();
         return doInSession(request, new SessionCallback<DeleteCryptedDataRequest, DeleteCryptedDataResponseDocument>() {
             @Override
@@ -227,9 +230,9 @@ public class PhalanxEndpoint {
         });
     }
 
-    @PayloadRoot(localPart = "DeleteKeyPair", namespace = NS)
+    @PayloadRoot(localPart = "DeleteKeyPairRequest", namespace = NS)
     @ResponsePayload
-    public DeleteKeyPairResponseDocument deleteKeyPair(DeleteKeyPairRequestDocument requestDocument) {
+    public DeleteKeyPairResponseDocument deleteKeyPair(@RequestPayload DeleteKeyPairRequestDocument requestDocument) {
         DeleteKeyPairRequest request = requestDocument.getDeleteKeyPairRequest();
         return doInSession(request, new SessionCallback<DeleteKeyPairRequest, DeleteKeyPairResponseDocument>() {
             @Override
@@ -242,9 +245,9 @@ public class PhalanxEndpoint {
         });
     }
 
-    @PayloadRoot(localPart = "CreatePrincipal", namespace = NS)
+    @PayloadRoot(localPart = "CreatePrincipalRequest", namespace = NS)
     @ResponsePayload
-    public CreatePrincipalResponseDocument createPrincipal(CreatePrincipalRequestDocument requestDocument) {
+    public CreatePrincipalResponseDocument createPrincipal(@RequestPayload CreatePrincipalRequestDocument requestDocument) {
         CreatePrincipalRequest request = requestDocument.getCreatePrincipalRequest();
         CreatePrincipalResponseDocument responseDocument = CreatePrincipalResponseDocument.Factory.newInstance();
         CreatePrincipalResponse response = responseDocument.addNewCreatePrincipalResponse();
@@ -255,9 +258,9 @@ public class PhalanxEndpoint {
         return responseDocument;
     }
 
-    @PayloadRoot(localPart = "DeletePrincipal", namespace = NS)
+    @PayloadRoot(localPart = "DeletePrincipalRequest", namespace = NS)
     @ResponsePayload
-    public DeletePrincipalResponseDocument deletePrincipal(DeletePrincipalRequestDocument requestDocument) {
+    public DeletePrincipalResponseDocument deletePrincipal(@RequestPayload DeletePrincipalRequestDocument requestDocument) {
         DeletePrincipalRequest request = requestDocument.getDeletePrincipalRequest();
         DeletePrincipalResponseDocument responseDocument = DeletePrincipalResponseDocument.Factory.newInstance();
         responseDocument.addNewDeletePrincipalResponse();
@@ -267,9 +270,9 @@ public class PhalanxEndpoint {
         return responseDocument;
     }
 
-    @PayloadRoot(localPart = "ChangePassword", namespace = NS)
+    @PayloadRoot(localPart = "ChangePasswordRequest", namespace = NS)
     @ResponsePayload
-    public ChangePasswordResponseDocument changePassword(ChangePasswordRequestDocument requestDocument) {
+    public ChangePasswordResponseDocument changePassword(@RequestPayload ChangePasswordRequestDocument requestDocument) {
         ChangePasswordRequest request = requestDocument.getChangePasswordRequest();
         return doInSession(request, new SessionCallback<ChangePasswordRequest, ChangePasswordResponseDocument>() {
             @Override

@@ -32,7 +32,7 @@ public class AsymmetricCryptoServiceImplTest {
         CryptoProfileRegistryDocument regDoc = CryptoProfileRegistryDocument.Factory.parse(
                 PasswordBasedCryptoServiceImpl.class.getClassLoader().getResourceAsStream(
                         "BasicCryptoProfileRegistry.xml"));
-        CryptoFactoryRegistry cryptoProfileRegistry = CryptoFactoryRegistryImpl.createRegistry(regDoc);
+        CryptoFactoryRegistry cryptoProfileRegistry = CryptoFactoryRegistryImpl.createRegistry(regDoc.getCryptoProfileRegistry());
         CryptoDataDAO cryptoDAO = new TestCryptoDataDAO();
         AsymmetricKeyPairDAO asymmetricKeyPairDAO = new TestAsymmetricKeyPairDAO();
         

@@ -15,6 +15,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PhalanxSessionServiceImpl implements PhalanxSessionService {
+    private static final int SESSION_ID_LENGTH = 24;
+
+    private static final int PK_KEY_LENGTH = 3;
+    
 
     private final Map<CacheKey, PrincipalSession> cache = new ConcurrentHashMap<>();
     
@@ -38,10 +42,12 @@ public class PhalanxSessionServiceImpl implements PhalanxSessionService {
     @Override
     public byte[] allocateAndBind(AuthenticatedPrincipal authenticatedPrincipal) {
         SecureRandom secureRandom = cryptoProfileRegistry.getDefault().getSecureRandom();
-        byte[] keyBytes = new byte[32];
+        byte[] keyBytes = new byte[SESSION_ID_LENGTH];
         secureRandom.nextBytes(keyBytes);
         CacheKey key = new CacheKey(keyBytes);
-        cache.put(key, new PrincipalSession(authenticatedPrincipal));
+        PrincipalSession principalSession = new PrincipalSession(authenticatedPrincipal);
+        cache.put(key, principalSession);
+        context.set(principalSession);
         return keyBytes;
     }
     
@@ -84,6 +90,8 @@ public class PhalanxSessionServiceImpl implements PhalanxSessionService {
 
     
     private class PrincipalSession {
+        
+
         private final AuthenticatedPrincipal authenticatedPrincipal;
         
         private final Map<CacheKey, PrivateKeyToken> privateKeys = new HashMap<>();
@@ -94,7 +102,7 @@ public class PhalanxSessionServiceImpl implements PhalanxSessionService {
         
         public byte[] registerPrivateKey(PrivateKeyToken privateKey) {
             SecureRandom secureRandom = cryptoProfileRegistry.getDefault().getSecureRandom();
-            byte[] keyBytes = new byte[4];
+            byte[] keyBytes = new byte[PK_KEY_LENGTH];
             secureRandom.nextBytes(keyBytes);
             CacheKey key = new CacheKey(keyBytes);
             privateKeys.put(key, privateKey);
@@ -125,7 +133,7 @@ public class PhalanxSessionServiceImpl implements PhalanxSessionService {
         
         @Override
         public boolean equals(Object obj) {
-            return Arrays.equals(b, (byte[]) obj);
+            return Arrays.equals(b, ((CacheKey) obj).b);
         }
     }
 }

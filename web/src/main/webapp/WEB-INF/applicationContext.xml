@@ -16,7 +16,7 @@
 	<import resource="classpath:org/brekka/phalanx/spring/daoContext.xml"/>
 	<import resource="classpath:org/brekka/phalanx/spring/serviceContext.xml"/>
 	
-	<jee:jndi-lookup id="dataSource" jndi-name="jdbc/PhalanxDS" /> 
+	<jee:jndi-lookup id="phalanxDataSource" jndi-name="jdbc/PhalanxDS" /> 
 	
 	<context:component-scan base-package="org.brekka.phalanx.web.support" />
 

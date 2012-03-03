@@ -30,6 +30,10 @@
         <property name="serviceName" value="Phalanx" />
     </bean>
     
+    <bean id="PhalanxModel" class="org.springframework.xml.xsd.SimpleXsdSchema" 
+          p:xsd="classpath:/schemaorg_apache_xmlbeans/src/PhalanxModel.xsd">
+    </bean>
+    
     <bean id="marshaller" class="org.springframework.oxm.xmlbeans.XmlBeansMarshaller">
 		<property name="validating" value="true" />
         <property name="xmlOptions" ref="wsXmlOptions" />

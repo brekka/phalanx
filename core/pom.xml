@@ -20,6 +20,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.brekka.phalanx</groupId>
+			<artifactId>phalanx-api</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.brekka.phalanx</groupId>
 			<artifactId>phalanx-schemas</artifactId>
 			<version>1.0.0</version>
 		</dependency>

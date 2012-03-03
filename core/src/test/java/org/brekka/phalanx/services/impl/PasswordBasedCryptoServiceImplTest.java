@@ -7,8 +7,9 @@ import java.util.Random;
 
 import net.iharder.Base64;
 
-import org.brekka.phalanx.dao.CryptoDataDAO;
-import org.brekka.phalanx.model.PasswordedCryptoData;
+import org.brekka.phalanx.core.dao.CryptoDataDAO;
+import org.brekka.phalanx.core.model.PasswordedCryptoData;
+import org.brekka.phalanx.core.services.impl.PasswordBasedCryptoServiceImpl;
 import org.brekka.phoenix.CryptoFactoryRegistry;
 import org.brekka.phoenix.impl.CryptoFactoryRegistryImpl;
 import org.brekka.xml.phoenix.v1.model.CryptoProfileRegistryDocument;

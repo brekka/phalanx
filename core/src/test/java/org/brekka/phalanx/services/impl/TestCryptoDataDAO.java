@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import org.brekka.phalanx.dao.CryptoDataDAO;
-import org.brekka.phalanx.model.CryptoData;
+import org.brekka.phalanx.core.dao.CryptoDataDAO;
+import org.brekka.phalanx.core.model.CryptoData;
 
 public class TestCryptoDataDAO implements CryptoDataDAO {
 

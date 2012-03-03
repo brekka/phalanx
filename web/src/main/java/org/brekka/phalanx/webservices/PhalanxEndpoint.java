@@ -3,11 +3,20 @@ package org.brekka.phalanx.webservices;
 import java.util.UUID;
 
 import org.apache.xmlbeans.XmlObject;
-import org.brekka.phalanx.model.AuthenticatedPrincipal;
-import org.brekka.phalanx.model.PrivateKeyToken;
-import org.brekka.phalanx.services.PhalanxService;
-import org.brekka.phalanx.services.PhalanxSessionService;
+import org.brekka.phalanx.api.beans.IdentityCryptedData;
+import org.brekka.phalanx.api.beans.IdentityKeyPair;
+import org.brekka.phalanx.api.beans.IdentityPrincipal;
+import org.brekka.phalanx.api.model.AuthenticatedPrincipal;
+import org.brekka.phalanx.api.model.CryptedData;
+import org.brekka.phalanx.api.model.KeyPair;
+import org.brekka.phalanx.api.model.Principal;
+import org.brekka.phalanx.api.model.PrivateKeyToken;
+import org.brekka.phalanx.api.services.PhalanxService;
+import org.brekka.phalanx.core.services.PhalanxSessionService;
 import org.brekka.xml.phalanx.v1.model.AuthenticatedPrincipalType;
+import org.brekka.xml.phalanx.v1.model.CryptedDataIdType;
+import org.brekka.xml.phalanx.v1.model.KeyPairIdType;
+import org.brekka.xml.phalanx.v1.model.PrincipalIdType;
 import org.brekka.xml.phalanx.v1.model.UUIDType;
 import org.brekka.xml.phalanx.v1.wsops.AssignKeyPairRequestDocument;
 import org.brekka.xml.phalanx.v1.wsops.AssignKeyPairRequestDocument.AssignKeyPairRequest;
@@ -108,8 +117,8 @@ public class PhalanxEndpoint {
             public AsymmetricEncryptionResponseDocument inSession(AsymmetricEncryptionRequest request) {
                 AsymmetricEncryptionResponseDocument responseDocument = AsymmetricEncryptionResponseDocument.Factory.newInstance();
                 AsymmetricEncryptionResponse response = responseDocument.addNewAsymmetricEncryptionResponse();
-                UUID cryptoDataId = phalanxService.asymEncrypt(request.getData(), id(request.getKeyPair().xgetId()));
-                response.addNewCryptedData().setId(id(cryptoDataId));
+                CryptedData cryptedData = phalanxService.asymEncrypt(request.getData(), id(request.getKeyPair().xgetId()));
+                response.addNewCryptedData().setId(id(cryptedData.getId()));
                 return responseDocument;
             }
         });
@@ -141,8 +150,8 @@ public class PhalanxEndpoint {
             public PasswordBasedEncryptionResponseDocument inSession(PasswordBasedEncryptionRequest request) {
                 PasswordBasedEncryptionResponseDocument responseDocument = PasswordBasedEncryptionResponseDocument.Factory.newInstance();
                 PasswordBasedEncryptionResponse response = responseDocument.addNewPasswordBasedEncryptionResponse();
-                UUID cryptoDataId = phalanxService.pbeEncrypt(request.getData(), request.getPassword());
-                response.addNewCryptedData().setId(id(cryptoDataId));
+                CryptedData cryptoData = phalanxService.pbeEncrypt(request.getData(), request.getPassword());
+                response.addNewCryptedData().setId(id(cryptoData.getId()));
                 return responseDocument;
             }
         });
@@ -191,8 +200,8 @@ public class PhalanxEndpoint {
             public GenerateKeyPairResponseDocument inSession(GenerateKeyPairRequest request) {
                 GenerateKeyPairResponseDocument responseDocument = GenerateKeyPairResponseDocument.Factory.newInstance();
                 GenerateKeyPairResponse response = responseDocument.addNewGenerateKeyPairResponse();
-                UUID keyPairId = phalanxService.generateKeyPair(id(request.getKeyPair().xgetId()), id(request.getOwner().xgetId()));
-                response.addNewKeyPair().setId(id(keyPairId));
+                KeyPair keyPair = phalanxService.generateKeyPair(id(request.getKeyPair().xgetId()), id(request.getOwner().xgetId()));
+                response.addNewKeyPair().setId(id(keyPair.getId()));
                 return responseDocument;
             }
         });
@@ -208,8 +217,8 @@ public class PhalanxEndpoint {
                 AssignKeyPairResponseDocument responseDocument = AssignKeyPairResponseDocument.Factory.newInstance();
                 AssignKeyPairResponse response = responseDocument.addNewAssignKeyPairResponse();
                 PrivateKeyToken privateKeyToken = sessionService.retrievePrivateKey(request.getPrivateKey());
-                UUID keyPairId = phalanxService.assignKeyPair(privateKeyToken, id(request.getAssignTo().xgetId()));
-                response.addNewKeyPair().setId(id(keyPairId));
+                KeyPair keyPair = phalanxService.assignKeyPair(privateKeyToken, id(request.getAssignTo().xgetId()));
+                response.addNewKeyPair().setId(id(keyPair.getId()));
                 return responseDocument;
             }
         });
@@ -224,7 +233,7 @@ public class PhalanxEndpoint {
             public DeleteCryptedDataResponseDocument inSession(DeleteCryptedDataRequest request) {
                 DeleteCryptedDataResponseDocument responseDocument = DeleteCryptedDataResponseDocument.Factory.newInstance();
                 responseDocument.addNewDeleteCryptedDataResponse();
-                phalanxService.deleteCryptoDataItem(id(request.getCryptedData().xgetId()));
+                phalanxService.deleteCryptedData(id(request.getCryptedData().xgetId()));
                 return responseDocument;
             }
         });
@@ -252,8 +261,8 @@ public class PhalanxEndpoint {
         CreatePrincipalResponseDocument responseDocument = CreatePrincipalResponseDocument.Factory.newInstance();
         CreatePrincipalResponse response = responseDocument.addNewCreatePrincipalResponse();
         
-        UUID principalId = phalanxService.createPrincipal(request.getPassword());
-        response.addNewPrincipal().setId(id(principalId));
+        Principal principal = phalanxService.createPrincipal(request.getPassword());
+        response.addNewPrincipal().setId(id(principal.getId()));
         
         return responseDocument;
     }
@@ -280,7 +289,7 @@ public class PhalanxEndpoint {
                 ChangePasswordResponseDocument responseDocument = ChangePasswordResponseDocument.Factory.newInstance();
                 responseDocument.addNewChangePasswordResponse();
                 AuthenticatedPrincipal principal = sessionService.getCurrentPrincipal();
-                phalanxService.changePassword(principal.getPrincipal().getId(), request.getCurrentPassword(), request.getNewPassword());
+                phalanxService.changePassword(principal.getPrincipal(), request.getCurrentPassword(), request.getNewPassword());
                 return responseDocument;
             }
         });
@@ -297,8 +306,19 @@ public class PhalanxEndpoint {
     }
     
     
-    protected static UUID id(UUIDType uuidType) {
+    protected static UUID uuid(UUIDType uuidType) {
         return UUID.fromString(uuidType.getStringValue());
+    }
+    
+    protected static IdentityKeyPair id(KeyPairIdType keyPairId) {
+        return new IdentityKeyPair(uuid(keyPairId));
+    }
+    protected static IdentityPrincipal id(PrincipalIdType principalId) {
+        return new IdentityPrincipal(uuid(principalId));
+    }
+    
+    protected static IdentityCryptedData id(CryptedDataIdType cryptedDataId) {
+        return new IdentityCryptedData(uuid(cryptedDataId));
     }
     
     protected static String id(UUID id) {

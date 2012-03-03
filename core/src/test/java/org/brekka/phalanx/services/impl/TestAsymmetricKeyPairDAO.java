@@ -4,8 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import org.brekka.phalanx.dao.AsymmetricKeyPairDAO;
-import org.brekka.phalanx.model.AsymmetricKeyPair;
+import org.brekka.phalanx.api.model.KeyPair;
+import org.brekka.phalanx.core.dao.AsymmetricKeyPairDAO;
+import org.brekka.phalanx.core.model.AsymmetricKeyPair;
 
 public class TestAsymmetricKeyPairDAO implements AsymmetricKeyPairDAO {
 

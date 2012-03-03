@@ -59,6 +59,10 @@ import org.brekka.xml.phalanx.v1.wsops.GenerateKeyPairRequestDocument;
 import org.brekka.xml.phalanx.v1.wsops.GenerateKeyPairRequestDocument.GenerateKeyPairRequest;
 import org.brekka.xml.phalanx.v1.wsops.GenerateKeyPairResponseDocument;
 import org.brekka.xml.phalanx.v1.wsops.GenerateKeyPairResponseDocument.GenerateKeyPairResponse;
+import org.brekka.xml.phalanx.v1.wsops.LogoutRequestDocument;
+import org.brekka.xml.phalanx.v1.wsops.LogoutRequestDocument.LogoutRequest;
+import org.brekka.xml.phalanx.v1.wsops.LogoutResponseDocument;
+import org.brekka.xml.phalanx.v1.wsops.LogoutResponseDocument.LogoutResponse;
 import org.brekka.xml.phalanx.v1.wsops.PasswordBasedDecryptionRequestDocument;
 import org.brekka.xml.phalanx.v1.wsops.PasswordBasedDecryptionRequestDocument.PasswordBasedDecryptionRequest;
 import org.brekka.xml.phalanx.v1.wsops.PasswordBasedDecryptionResponseDocument;
@@ -106,6 +110,17 @@ public class PhalanxEndpoint {
         } finally {
             sessionService.unbind();
         }
+        return responseDocument;
+    }
+    
+    
+    @PayloadRoot(localPart = "LogoutRequest", namespace = NS)
+    @ResponsePayload
+    public LogoutResponseDocument asymmetricEncryption(@RequestPayload LogoutRequestDocument requestDocument) {
+        LogoutRequest request = requestDocument.getLogoutRequest();
+        sessionService.logout(request.getSessionID());
+        LogoutResponseDocument responseDocument = LogoutResponseDocument.Factory.newInstance();
+        responseDocument.addNewLogoutResponse();
         return responseDocument;
     }
     

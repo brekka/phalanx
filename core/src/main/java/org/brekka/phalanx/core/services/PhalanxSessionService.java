@@ -17,5 +17,5 @@ public interface PhalanxSessionService {
 
     AuthenticatedPrincipal getCurrentPrincipal();
 
-
+    void logout(byte[] sessionID);
 }

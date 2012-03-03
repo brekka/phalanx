@@ -134,6 +134,11 @@ public class PhalanxServiceImpl implements PhalanxService {
         AuthenticatedPrincipal authenticatedPrincipal = principalService.authenticate(corePrincipal, password);
         return authenticatedPrincipal;
     }
+    
+    @Override
+    public void logout(AuthenticatedPrincipal authenticatedPrincipal) {
+        // Don't need to do anything, maybe log something
+    }
 
     @Override
     @Transactional(propagation=Propagation.REQUIRED)

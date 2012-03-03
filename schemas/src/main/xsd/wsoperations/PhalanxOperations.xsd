@@ -235,6 +235,24 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
+    
+    <xsd:element name="LogoutRequest">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="pxws:PrincipalAssertedRequest">
+					<xsd:sequence>
+					</xsd:sequence>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="LogoutResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
 
 	<xsd:element name="ChangePasswordRequest">
 		<xsd:complexType>

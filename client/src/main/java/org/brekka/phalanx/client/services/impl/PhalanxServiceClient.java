@@ -56,6 +56,9 @@ import org.brekka.xml.phalanx.v1.wsops.GenerateKeyPairRequestDocument;
 import org.brekka.xml.phalanx.v1.wsops.GenerateKeyPairRequestDocument.GenerateKeyPairRequest;
 import org.brekka.xml.phalanx.v1.wsops.GenerateKeyPairResponseDocument;
 import org.brekka.xml.phalanx.v1.wsops.GenerateKeyPairResponseDocument.GenerateKeyPairResponse;
+import org.brekka.xml.phalanx.v1.wsops.LogoutRequestDocument;
+import org.brekka.xml.phalanx.v1.wsops.LogoutRequestDocument.LogoutRequest;
+import org.brekka.xml.phalanx.v1.wsops.LogoutResponseDocument;
 import org.brekka.xml.phalanx.v1.wsops.PasswordBasedDecryptionRequestDocument;
 import org.brekka.xml.phalanx.v1.wsops.PasswordBasedDecryptionRequestDocument.PasswordBasedDecryptionRequest;
 import org.brekka.xml.phalanx.v1.wsops.PasswordBasedDecryptionResponseDocument;
@@ -231,6 +234,15 @@ public class PhalanxServiceClient implements PhalanxService {
                 principalImpl, authenticatedPrincipal.getSessionID(), authenticatedPrincipal.getDefaultPrivateKey());
         return authenticatedPrincipalImpl;
     }
+    
+    @Override
+    public void logout(AuthenticatedPrincipal authenticatedPrincipal) {
+        LogoutRequestDocument requestDocument = LogoutRequestDocument.Factory.newInstance();
+        LogoutRequest request = requestDocument.addNewLogoutRequest();
+        AuthenticatedPrincipalImpl principal = narrow(authenticatedPrincipal);
+        request.setSessionID(principal.getSessionId());
+        marshal(requestDocument, LogoutResponseDocument.class);
+    }
 
 
 
@@ -263,6 +275,13 @@ public class PhalanxServiceClient implements PhalanxService {
             throw new IllegalStateException();
         }
         return (PrivateKeyTokenImpl) privateKeyToken;
+    }
+    protected AuthenticatedPrincipalImpl narrow(AuthenticatedPrincipal authenticatedPrincipal) {
+        if (authenticatedPrincipal instanceof AuthenticatedPrincipalImpl == false) {
+            // TODO
+            throw new IllegalStateException();
+        }
+        return (AuthenticatedPrincipalImpl) authenticatedPrincipal;
     }
     
     private static IdentityCryptedData identity(CryptedDataType cryptedData) {

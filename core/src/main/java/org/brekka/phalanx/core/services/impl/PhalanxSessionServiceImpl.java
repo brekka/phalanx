@@ -51,6 +51,11 @@ public class PhalanxSessionServiceImpl implements PhalanxSessionService {
         return keyBytes;
     }
     
+    @Override
+    public void logout(byte[] sessionID) {
+        cache.remove(new CacheKey(sessionID));
+    }
+    
     /* (non-Javadoc)
      * @see org.brekka.phalanx.web.support.PhalanxSessionCache#bind(byte[])
      */

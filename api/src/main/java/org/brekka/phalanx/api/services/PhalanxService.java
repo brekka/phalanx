@@ -131,6 +131,12 @@ public interface PhalanxService {
     AuthenticatedPrincipal authenticate(Principal principal, String password);
     
     /**
+     * Clear the session for the specified principal.
+     * @param authenticatedPrincipal
+     */
+    void logout(AuthenticatedPrincipal authenticatedPrincipal);
+    
+    /**
      * Change the password for a principal.
      * @param principalId
      * @param currentPassword

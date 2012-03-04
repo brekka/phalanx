@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-	targetNamespace="http://brekka.org/xml/phalanx/v1/wsops" xmlns:px="http://brekka.org/xml/phalanx/v1/model"
-	xmlns:pxws="http://brekka.org/xml/phalanx/v1/wsops" elementFormDefault="qualified">
+	targetNamespace="http://brekka.org/xml/phalanx/v2/wsops" xmlns:px="http://brekka.org/xml/phalanx/v2/model"
+	xmlns:pxws="http://brekka.org/xml/phalanx/v2/wsops" elementFormDefault="qualified">
 
-	<xsd:import namespace="http://brekka.org/xml/phalanx/v1/model"
+	<xsd:import namespace="http://brekka.org/xml/phalanx/v2/model"
 		schemaLocation="../PhalanxModel.xsd" />
 
 	<xsd:element name="AsymmetricEncryptionRequest">

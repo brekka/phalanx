@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://brekka.org/xml/phalanx/v1/model"
-	xmlns:plxm="http://brekka.org/xml/phalanx/v1/model" elementFormDefault="qualified"
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://brekka.org/xml/phalanx/v2/model"
+	xmlns:plxm="http://brekka.org/xml/phalanx/v2/model" elementFormDefault="qualified"
 	attributeFormDefault="unqualified">
 	
 	<xsd:complexType name="CryptedDataType">

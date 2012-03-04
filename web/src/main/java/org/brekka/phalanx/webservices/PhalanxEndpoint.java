@@ -79,7 +79,7 @@ import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 
 @Endpoint
 public class PhalanxEndpoint {
-    private static final String NS = "http://brekka.org/xml/phalanx/v1/wsops";
+    private static final String NS = "http://brekka.org/xml/phalanx/v2/wsops";
     
     @Autowired
     private PhalanxService phalanxService;

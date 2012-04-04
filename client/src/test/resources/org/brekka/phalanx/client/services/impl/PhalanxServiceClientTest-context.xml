@@ -15,6 +15,6 @@
 
     <bean id="template" class="org.springframework.ws.client.core.WebServiceTemplate" 
             p:marshaller-ref="marshaller" p:unmarshaller-ref="marshaller" 
-            p:defaultUri="http://localhost:8080/phalanx-web/services/">
+            p:defaultUri="https://phalanx.brekka.co.uk:11027/services/">
     </bean>
 </beans>

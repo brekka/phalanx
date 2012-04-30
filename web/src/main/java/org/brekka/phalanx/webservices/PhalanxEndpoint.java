@@ -126,7 +126,12 @@ public class PhalanxEndpoint {
     @ResponsePayload
     public AsymmetricEncryptionResponseDocument asymmetricEncryption(@RequestPayload AsymmetricEncryptionRequestDocument requestDocument) {
         AsymmetricEncryptionRequest request = requestDocument.getAsymmetricEncryptionRequest();
-        CryptedData cryptedData = phalanxService.asymEncrypt(request.getData(), id(request.getKeyPair().xgetId()));
+        CryptedData cryptedData;
+        if (request.isSetKeyPair()) {
+            cryptedData = phalanxService.asymEncrypt(request.getData(), id(request.getKeyPair().xgetId()));
+        } else {
+            cryptedData = phalanxService.asymEncrypt(request.getData(), id(request.getRecipient().xgetId()));
+        }
         
         AsymmetricEncryptionResponseDocument responseDocument = AsymmetricEncryptionResponseDocument.Factory.newInstance();
         AsymmetricEncryptionResponse response = responseDocument.addNewAsymmetricEncryptionResponse();

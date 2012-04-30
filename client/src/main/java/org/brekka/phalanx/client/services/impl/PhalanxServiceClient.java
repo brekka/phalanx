@@ -99,6 +99,21 @@ public class PhalanxServiceClient implements PhalanxService {
         return identity(response.getCryptedData());
     }
     
+    /* (non-Javadoc)
+     * @see org.brekka.phalanx.api.services.PhalanxService#asymEncrypt(byte[], org.brekka.phalanx.api.model.Principal)
+     */
+    @Override
+    public CryptedData asymEncrypt(byte[] data, Principal recipientPrincipal) {
+        AsymmetricEncryptionRequestDocument requestDocument = AsymmetricEncryptionRequestDocument.Factory.newInstance();
+        AsymmetricEncryptionRequest request = requestDocument.addNewAsymmetricEncryptionRequest();
+        request.setData(data);
+        request.setRecipient(xml(recipientPrincipal));
+        
+        AsymmetricEncryptionResponseDocument responseDocument = marshal(requestDocument, AsymmetricEncryptionResponseDocument.class);
+        AsymmetricEncryptionResponse response = responseDocument.getAsymmetricEncryptionResponse();
+        return identity(response.getCryptedData());
+    }
+    
     @Override
     public byte[] asymDecrypt(CryptedData asymedCryptoData, PrivateKeyToken privateKeyToken) {
         AsymmetricDecryptionRequestDocument requestDocument = AsymmetricDecryptionRequestDocument.Factory.newInstance();

@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>phalanx-web</artifactId>
-	<version>2.0.0</version>
+	<version>2.1.0</version>
 	
 	<packaging>war</packaging>
 
@@ -18,7 +18,7 @@
 		<dependency>
 			<groupId>org.brekka.phalanx</groupId>
 			<artifactId>phalanx-core</artifactId>
-			<version>2.0.0</version>
+			<version>2.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>

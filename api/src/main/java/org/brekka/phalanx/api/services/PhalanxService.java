@@ -26,6 +26,14 @@ public interface PhalanxService {
     CryptedData asymEncrypt(byte[] data, KeyPair keyPairId);
     
     /**
+     * Encrypt and store piece of data using the public key of the principal identified by <code>recipientPrincipal</code>.
+     * @param data the data to encrypt which should be up to a few kilobytes. 
+     * @param recipientPrincipal id of the principal whose public key will be used to encrypt the data.
+     * @return the id of the encrypted data item.
+     */
+    CryptedData asymEncrypt(byte[] data, Principal recipientPrincipal);
+    
+    /**
      * Decrypt the specified data item to reveal the 'plain' bytes originally encrypted, using the specified
      * private key token.
      * 

@@ -10,7 +10,10 @@
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element name="Data" type="px:BinaryDataType" />
-				<xsd:element name="KeyPair" type="px:KeyPairType" />
+                <xsd:choice>
+    				<xsd:element name="KeyPair" type="px:KeyPairType" />
+    				<xsd:element name="Recipient" type="px:PrincipalType" />
+                </xsd:choice>
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>

@@ -49,6 +49,16 @@ public class PhalanxServiceImpl implements PhalanxService {
         AsymedCryptoData asymedCryptoData = asymmetricCryptoService.encrypt(data, asymKeyPair);
         return asymedCryptoData;
     }
+    
+    @Override
+    @Transactional(propagation=Propagation.REQUIRED)
+    public CryptedData asymEncrypt(byte[] data, org.brekka.phalanx.api.model.Principal recipientPrincipal) {
+        Principal principal = principalService.retrieveById(recipientPrincipal.getId());
+        AsymmetricKeyPair defaultKeyPair = principal.getDefaultKeyPair();
+        AsymmetricKeyPair asymKeyPair = asymmetricCryptoService.retrieveKeyPair(defaultKeyPair.getId());
+        AsymedCryptoData asymedCryptoData = asymmetricCryptoService.encrypt(data, asymKeyPair);
+        return asymedCryptoData;
+    }
 
     @Override
     @Transactional(propagation=Propagation.REQUIRED)

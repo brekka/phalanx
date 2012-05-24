@@ -7,6 +7,7 @@ import java.util.Random;
 
 import net.iharder.Base64;
 
+import org.brekka.phalanx.core.PhalanxException;
 import org.brekka.phalanx.core.dao.CryptoDataDAO;
 import org.brekka.phalanx.core.model.PasswordedCryptoData;
 import org.brekka.phalanx.core.services.impl.PasswordBasedCryptoServiceImpl;
@@ -45,6 +46,16 @@ public class PasswordBasedCryptoServiceImplTest {
         
         System.out.printf("%.2f seconds%n", (float) (end - start) / 1000000000);
         assertTrue(Arrays.equals(data, decrypted));
+    }
+    
+    @Test(expected=PhalanxException.class)
+    public void testInvalidPassword() {
+        byte[] data = new byte[58];
+        new Random().nextBytes(data);
+        PasswordedCryptoData encrypt = service.encrypt(data, "password");
+        System.out.printf("Data(%d): %s%n", encrypt.getData().length, Base64.encodeBytes(encrypt.getData()));
+        System.out.printf("Salt(%d): %s%n", encrypt.getSalt().length, Base64.encodeBytes(encrypt.getSalt()));
+        service.decrypt(encrypt, "notthepassword", byte[].class);
     }
 
 }

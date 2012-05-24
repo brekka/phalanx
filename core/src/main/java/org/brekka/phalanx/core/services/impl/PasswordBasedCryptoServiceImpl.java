@@ -1,6 +1,8 @@
 package org.brekka.phalanx.core.services.impl;
 
+import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -8,6 +10,8 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.bouncycastle.util.encoders.Hex;
 import org.brekka.phalanx.core.PhalanxErrorCode;
 import org.brekka.phalanx.core.PhalanxException;
 import org.brekka.phalanx.core.dao.CryptoDataDAO;
@@ -38,6 +42,18 @@ public class PasswordBasedCryptoServiceImpl extends AbstractCryptoService implem
         
         byte[] result = crypt(Cipher.DECRYPT_MODE, data, salt, password.toCharArray(), profile.getPasswordBased());
         
+        MessageDigest digestInstance = profile.getDigestInstance();
+        // Generate a digest for the data
+        int actualDataLength = result.length - digestInstance.getDigestLength();
+        digestInstance.update(result, digestInstance.getDigestLength(), actualDataLength);
+        byte[] digest = digestInstance.digest();
+        for (int i = 0; i < digest.length; i++) {
+            if (digest[i] != result[i]) {
+                throw new PhalanxException(PhalanxErrorCode.CP302, 
+                        "The password is incorrect");
+            }
+        }
+        result = ArrayUtils.subarray(result, digestInstance.getDigestLength(), result.length);
         return toType(result, expectedType, cryptoData.getId(), profile);
     }
 
@@ -49,10 +65,17 @@ public class PasswordBasedCryptoServiceImpl extends AbstractCryptoService implem
         
         byte[] data = toBytes(obj);
         
+        MessageDigest digestInstance = profile.getDigestInstance();
+        byte[] digest = digestInstance.digest(data);
+        
         byte[] salt = new byte[passwordBasedProfile.getSaltLength()];
         profile.getSecureRandom().nextBytes(salt);
+        
+        ByteBuffer dataBuffer = ByteBuffer.allocate(data.length + digest.length);
+        dataBuffer.put(digest);
+        dataBuffer.put(data);
 
-        byte[] result = crypt(Cipher.ENCRYPT_MODE, data, salt, password.toCharArray(), passwordBasedProfile);
+        byte[] result = crypt(Cipher.ENCRYPT_MODE, dataBuffer.array(), salt, password.toCharArray(), passwordBasedProfile);
         
         PasswordedCryptoData encryptedData = new PasswordedCryptoData();
         encryptedData.setData(result);
@@ -62,6 +85,7 @@ public class PasswordBasedCryptoServiceImpl extends AbstractCryptoService implem
         return encryptedData;
     }
     
+
     protected byte[] crypt(int mode, byte[] data, byte[] salt, char[] password, CryptoFactory.PasswordBased passwordBasedProfile) {
         int iterationCount = calculateIterations(password.length, passwordBasedProfile.getIterationFactor());
         PBEParameterSpec pbeParamSpec = new PBEParameterSpec(salt, iterationCount);

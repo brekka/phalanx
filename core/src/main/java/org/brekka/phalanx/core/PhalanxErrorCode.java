@@ -35,6 +35,7 @@ public enum PhalanxErrorCode implements ErrorCode {
     
     CP300,
     CP301,
+    CP302,
     
     CP400,
     

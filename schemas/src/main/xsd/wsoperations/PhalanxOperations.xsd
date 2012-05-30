@@ -151,13 +151,9 @@
 
 	<xsd:element name="DeleteCryptedDataRequest">
 		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="pxws:PrincipalAssertedRequest">
-					<xsd:sequence>
-						<xsd:element name="CryptedData" type="px:CryptedDataType" />
-					</xsd:sequence>
-				</xsd:extension>
-			</xsd:complexContent>
+			<xsd:sequence>
+				<xsd:element name="CryptedData" type="px:CryptedDataType" />
+			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
 
@@ -170,13 +166,9 @@
 
 	<xsd:element name="DeleteKeyPairRequest">
 		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="pxws:PrincipalAssertedRequest">
-					<xsd:sequence>
-						<xsd:element name="KeyPair" type="px:KeyPairType" />
-					</xsd:sequence>
-				</xsd:extension>
-			</xsd:complexContent>
+			<xsd:sequence>
+				<xsd:element name="KeyPair" type="px:KeyPairType" />
+			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
 

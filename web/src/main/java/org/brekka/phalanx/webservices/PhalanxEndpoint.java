@@ -231,30 +231,20 @@ public class PhalanxEndpoint {
     @ResponsePayload
     public DeleteCryptedDataResponseDocument deleteCryptedData(@RequestPayload DeleteCryptedDataRequestDocument requestDocument) {
         DeleteCryptedDataRequest request = requestDocument.getDeleteCryptedDataRequest();
-        return doInSession(request, new SessionCallback<DeleteCryptedDataRequest, DeleteCryptedDataResponseDocument>() {
-            @Override
-            public DeleteCryptedDataResponseDocument inSession(DeleteCryptedDataRequest request) {
-                DeleteCryptedDataResponseDocument responseDocument = DeleteCryptedDataResponseDocument.Factory.newInstance();
-                responseDocument.addNewDeleteCryptedDataResponse();
-                phalanxService.deleteCryptedData(id(request.getCryptedData().xgetId()));
-                return responseDocument;
-            }
-        });
+        DeleteCryptedDataResponseDocument responseDocument = DeleteCryptedDataResponseDocument.Factory.newInstance();
+        responseDocument.addNewDeleteCryptedDataResponse();
+        phalanxService.deleteCryptedData(id(request.getCryptedData().xgetId()));
+        return responseDocument;
     }
 
     @PayloadRoot(localPart = "DeleteKeyPairRequest", namespace = NS)
     @ResponsePayload
     public DeleteKeyPairResponseDocument deleteKeyPair(@RequestPayload DeleteKeyPairRequestDocument requestDocument) {
         DeleteKeyPairRequest request = requestDocument.getDeleteKeyPairRequest();
-        return doInSession(request, new SessionCallback<DeleteKeyPairRequest, DeleteKeyPairResponseDocument>() {
-            @Override
-            public DeleteKeyPairResponseDocument inSession(DeleteKeyPairRequest request) {
-                DeleteKeyPairResponseDocument responseDocument = DeleteKeyPairResponseDocument.Factory.newInstance();
-                responseDocument.addNewDeleteKeyPairResponse();
-                phalanxService.deleteKeyPair(id(request.getKeyPair().xgetId()));
-                return responseDocument;
-            }
-        });
+        DeleteKeyPairResponseDocument responseDocument = DeleteKeyPairResponseDocument.Factory.newInstance();
+        responseDocument.addNewDeleteKeyPairResponse();
+        phalanxService.deleteKeyPair(id(request.getKeyPair().xgetId()));
+        return responseDocument;
     }
 
     @PayloadRoot(localPart = "CreatePrincipalRequest", namespace = NS)

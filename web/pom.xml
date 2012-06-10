@@ -54,7 +54,7 @@
 		<dependency>
 			<groupId>org.brekka</groupId>
 			<artifactId>stillingar-xmlbeans</artifactId>
-			<version>0.2.0</version>
+			<version>0.3.0</version>
 		</dependency>
 
 	</dependencies>

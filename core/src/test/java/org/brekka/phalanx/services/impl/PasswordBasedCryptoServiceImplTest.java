@@ -7,7 +7,7 @@ import java.util.Random;
 
 import net.iharder.Base64;
 
-import org.brekka.phalanx.core.PhalanxException;
+import org.brekka.phalanx.api.PhalanxException;
 import org.brekka.phalanx.core.dao.CryptoDataDAO;
 import org.brekka.phalanx.core.model.PasswordedCryptoData;
 import org.brekka.phalanx.core.services.impl.PasswordBasedCryptoServiceImpl;

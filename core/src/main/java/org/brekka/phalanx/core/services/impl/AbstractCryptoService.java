@@ -16,8 +16,8 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.brekka.phoenix.CryptoFactory;
 import org.brekka.phoenix.CryptoFactoryRegistry;
-import org.brekka.phalanx.core.PhalanxErrorCode;
-import org.brekka.phalanx.core.PhalanxException;
+import org.brekka.phalanx.api.PhalanxErrorCode;
+import org.brekka.phalanx.api.PhalanxException;
 import org.brekka.phalanx.core.model.SymedCryptoData;
 import org.springframework.beans.factory.annotation.Autowired;
 

@@ -25,6 +25,7 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
+    <xsd:element name="AsymmetricEncryptionFault" type="pxws:OperationFault" />
 
 	<xsd:element name="AsymmetricDecryptionRequest">
 		<xsd:complexType>
@@ -46,6 +47,7 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
+    <xsd:element name="AsymmetricDecryptionFault" type="pxws:OperationFault" />
 
 
 	<!-- Password based crypto operations -->
@@ -66,6 +68,7 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
+    <xsd:element name="PasswordBasedEncryptionFault" type="pxws:OperationFault" />
 
 	<xsd:element name="PasswordBasedDecryptionRequest">
 		<xsd:complexType>
@@ -83,6 +86,7 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
+    <xsd:element name="PasswordBasedDecryptionFault" type="pxws:OperationFault" />
 
 
 	<!-- Key pair operations -->
@@ -107,6 +111,7 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
+    <xsd:element name="DecryptKeyPairFault" type="pxws:OperationFault" />
 
 	<xsd:element name="GenerateKeyPairRequest">
 		<xsd:complexType>
@@ -124,6 +129,7 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
+    <xsd:element name="GenerateKeyPairFault" type="pxws:OperationFault" />
 
 	<xsd:element name="AssignKeyPairRequest">
 		<xsd:complexType>
@@ -145,6 +151,7 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
+    <xsd:element name="AssignKeyPairFault" type="pxws:OperationFault" />
 
 
 	<!-- Deletions -->
@@ -163,6 +170,7 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
+    <xsd:element name="DeleteCryptedDataFault" type="pxws:OperationFault" />
 
 	<xsd:element name="DeleteKeyPairRequest">
 		<xsd:complexType>
@@ -178,6 +186,7 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
+    <xsd:element name="DeleteKeyPairFault" type="pxws:OperationFault" />
 
 
 	<!-- Principal -->
@@ -198,6 +207,8 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
+    <xsd:element name="CreatePrincipalFault" type="pxws:OperationFault" />
+    
 
 	<xsd:element name="DeletePrincipalRequest">
 		<xsd:complexType>
@@ -213,6 +224,8 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
+    <xsd:element name="DeletePrincipalFault" type="pxws:OperationFault" />
+    
 
 	<xsd:element name="AuthenticateRequest">
 		<xsd:complexType>
@@ -230,6 +243,7 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
+    <xsd:element name="AuthenticateFault" type="pxws:OperationFault" />
     
     <xsd:element name="LogoutRequest">
 		<xsd:complexType>
@@ -248,6 +262,7 @@
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
+    <xsd:element name="LogoutFault" type="pxws:OperationFault" />
 
 	<xsd:element name="ChangePasswordRequest">
 		<xsd:complexType>
@@ -261,10 +276,11 @@
 
 	<xsd:element name="ChangePasswordResponse">
 		<xsd:complexType>
-			<xsd:sequence>
+			<xsd:sequence>            
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
+    <xsd:element name="ChangePasswordFault" type="pxws:OperationFault" />
 
 
 	<!-- Shared complex types -->
@@ -274,5 +290,19 @@
 			<xsd:element name="SessionID" type="px:SessionIdType" />
 		</xsd:sequence>
 	</xsd:complexType>
+    
+	<xsd:complexType name="OperationFault">
+		<xsd:sequence>
+            <xsd:element name="Code">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:pattern value="[A-Z]{2}[0-9]{3}"></xsd:pattern>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+			<xsd:element name="Message" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+
 
 </xsd:schema>

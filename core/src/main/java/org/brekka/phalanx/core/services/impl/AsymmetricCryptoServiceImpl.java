@@ -10,9 +10,9 @@ import java.util.UUID;
 
 import javax.crypto.Cipher;
 
+import org.brekka.phalanx.api.PhalanxErrorCode;
+import org.brekka.phalanx.api.PhalanxException;
 import org.brekka.phalanx.api.model.PrivateKeyToken;
-import org.brekka.phalanx.core.PhalanxErrorCode;
-import org.brekka.phalanx.core.PhalanxException;
 import org.brekka.phalanx.core.dao.AsymmetricKeyPairDAO;
 import org.brekka.phalanx.core.dao.CryptoDataDAO;
 import org.brekka.phalanx.core.dao.PrincipalDAO;

@@ -45,4 +45,5 @@
             </map>
         </property>
     </bean>
+    <bean class="org.brekka.phalanx.webservices.SoapExceptionResolver" />
 </beans>

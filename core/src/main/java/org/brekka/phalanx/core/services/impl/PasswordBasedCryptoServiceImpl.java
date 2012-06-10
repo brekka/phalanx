@@ -11,9 +11,8 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.bouncycastle.util.encoders.Hex;
-import org.brekka.phalanx.core.PhalanxErrorCode;
-import org.brekka.phalanx.core.PhalanxException;
+import org.brekka.phalanx.api.PhalanxErrorCode;
+import org.brekka.phalanx.api.PhalanxException;
 import org.brekka.phalanx.core.dao.CryptoDataDAO;
 import org.brekka.phalanx.core.model.PasswordedCryptoData;
 import org.brekka.phalanx.core.services.PasswordBasedCryptoService;

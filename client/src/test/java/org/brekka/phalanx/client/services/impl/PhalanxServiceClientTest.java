@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import java.util.Arrays;
 
+import org.brekka.phalanx.api.PhalanxErrorCode;
+import org.brekka.phalanx.api.PhalanxException;
 import org.brekka.phalanx.api.model.AuthenticatedPrincipal;
 import org.brekka.phalanx.api.model.CryptedData;
 import org.brekka.phalanx.api.model.KeyPair;
@@ -66,6 +68,21 @@ public class PhalanxServiceClientTest {
         CryptedData encryptedData = client.pbeEncrypt(data, password);
         byte[] plain = client.pbeDecrypt(encryptedData, password);
         assertTrue(Arrays.equals(data, plain));
+    }
+    
+    @Test
+    public void testIncorrectPassword() {
+        String password = "PasswordPassword";
+        byte[] data = "ThisIsATest".getBytes();
+        CryptedData encryptedData = client.pbeEncrypt(data, password);
+        try {
+            client.pbeDecrypt(encryptedData, "IncorrectPassword");
+            fail();
+        } catch (PhalanxException e) {
+            if (e.getErrorCode() != PhalanxErrorCode.CP302) {
+                fail();
+            }
+        }
     }
 
     @Test

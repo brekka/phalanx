@@ -48,12 +48,6 @@
 			<artifactId>hibernate-core</artifactId>
 			<version>${hibernate-version}</version>
 		</dependency>
-
-		<dependency>
-			<groupId>org.brekka</groupId>
-			<artifactId>brekka-commons</artifactId>
-			<version>1.0.0</version>
-		</dependency>
 		
 		<dependency>
 			<groupId>net.iharder</groupId>

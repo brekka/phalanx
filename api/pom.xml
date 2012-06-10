@@ -13,6 +13,12 @@
 	<version>2.1.0</version>
 
 	<dependencies>
+
+		<dependency>
+			<groupId>org.brekka</groupId>
+			<artifactId>brekka-commons</artifactId>
+			<version>1.1.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>

@@ -1,4 +1,4 @@
-package org.brekka.phalanx.core;
+package org.brekka.phalanx.api;
 
 import org.brekka.commons.lang.ErrorCode;
 
@@ -35,9 +35,15 @@ public enum PhalanxErrorCode implements ErrorCode {
     
     CP300,
     CP301,
+    /**
+     * Incorrect password
+     */
     CP302,
     
     CP400,
+    
+    CP500,
+    CP501,
     
     CP600,
     

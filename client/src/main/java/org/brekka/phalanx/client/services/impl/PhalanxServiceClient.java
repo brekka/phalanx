@@ -2,7 +2,14 @@ package org.brekka.phalanx.client.services.impl;
 
 import java.util.UUID;
 
+import javax.xml.transform.Result;
+import javax.xml.transform.dom.DOMResult;
+
+import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.brekka.phalanx.api.PhalanxErrorCode;
+import org.brekka.phalanx.api.PhalanxException;
 import org.brekka.phalanx.api.beans.IdentityCryptedData;
 import org.brekka.phalanx.api.beans.IdentityKeyPair;
 import org.brekka.phalanx.api.model.AuthenticatedPrincipal;
@@ -36,6 +43,7 @@ import org.brekka.xml.phalanx.v2.wsops.ChangePasswordRequestDocument;
 import org.brekka.xml.phalanx.v2.wsops.ChangePasswordRequestDocument.ChangePasswordRequest;
 import org.brekka.xml.phalanx.v2.wsops.ChangePasswordResponseDocument;
 import org.brekka.xml.phalanx.v2.wsops.CreatePrincipalRequestDocument;
+import org.brekka.xml.phalanx.v2.wsops.OperationFault;
 import org.brekka.xml.phalanx.v2.wsops.CreatePrincipalRequestDocument.CreatePrincipalRequest;
 import org.brekka.xml.phalanx.v2.wsops.CreatePrincipalResponseDocument;
 import org.brekka.xml.phalanx.v2.wsops.CreatePrincipalResponseDocument.CreatePrincipalResponse;
@@ -70,6 +78,8 @@ import org.brekka.xml.phalanx.v2.wsops.PasswordBasedEncryptionResponseDocument.P
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ws.client.core.WebServiceOperations;
+import org.springframework.ws.soap.client.SoapFaultClientException;
+import org.w3c.dom.Node;
 
 @Service
 public class PhalanxServiceClient implements PhalanxService {
@@ -275,14 +285,57 @@ public class PhalanxServiceClient implements PhalanxService {
 
     @SuppressWarnings("unchecked")
     protected <ReqDoc extends XmlObject, RespDoc extends XmlObject> RespDoc marshal(ReqDoc requestDocument, Class<RespDoc> expected) {
-        Object marshalSendAndReceive = phalanxWebServiceOperations.marshalSendAndReceive(requestDocument);
+        Object marshalSendAndReceive;
+        try {
+            marshalSendAndReceive = phalanxWebServiceOperations.marshalSendAndReceive(requestDocument);
+        } catch (SoapFaultClientException e) {
+            identifyFault(e);
+            throw new PhalanxException(PhalanxErrorCode.CP500, e, 
+                    "Request '%s' failed", requestDocument.schemaType().toString());
+        }
         if (!expected.isAssignableFrom(marshalSendAndReceive.getClass())) {
-            // TODO
-            throw new IllegalStateException();
+            throw new PhalanxException(PhalanxErrorCode.CP500, 
+                    "Expected '%s', actual '%s'", expected.getClass().getName(), 
+                    marshalSendAndReceive.getClass().getName());
         }
         return (RespDoc) marshalSendAndReceive;
     }
     
+    /**
+     * @param e
+     */
+    private void identifyFault(SoapFaultClientException e) {
+        Result result = e.getSoapFault().getFaultDetail().getResult();
+        OperationFault fault = null;
+        if (result instanceof DOMResult) {
+            DOMResult domResult = (DOMResult) result;
+            Node node = domResult.getNode().getFirstChild();
+            XmlCursor cursor = null;
+            try {
+                XmlObject object = XmlObject.Factory.parse(node);
+                cursor = object.newCursor();
+                while(cursor.hasNextToken()) {
+                    XmlObject xml = cursor.getObject();
+                    if (xml instanceof OperationFault) {
+                        fault = (OperationFault) xml;
+                        break;
+                    }
+                    cursor.toNextToken();
+                }
+            } catch (XmlException xmlex) {
+                // Never mind
+            } finally {
+                if (cursor != null) {
+                    cursor.dispose();
+                }
+            }
+        }
+        if (fault != null) {
+            PhalanxErrorCode errorCode = PhalanxErrorCode.valueOf(fault.getCode());
+            throw new PhalanxException(errorCode, fault.getMessage());
+        }
+    }
+
     protected PrivateKeyTokenImpl narrow(PrivateKeyToken privateKeyToken) {
         if (privateKeyToken instanceof PrivateKeyTokenImpl == false) {
             

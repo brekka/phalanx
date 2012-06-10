@@ -1,12 +1,12 @@
 package org.brekka.phalanx.core.services.impl;
 
+import org.brekka.phalanx.api.PhalanxErrorCode;
+import org.brekka.phalanx.api.PhalanxException;
 import org.brekka.phalanx.api.model.AuthenticatedPrincipal;
 import org.brekka.phalanx.api.model.CryptedData;
 import org.brekka.phalanx.api.model.KeyPair;
 import org.brekka.phalanx.api.model.PrivateKeyToken;
 import org.brekka.phalanx.api.services.PhalanxService;
-import org.brekka.phalanx.core.PhalanxErrorCode;
-import org.brekka.phalanx.core.PhalanxException;
 import org.brekka.phalanx.core.dao.CryptoDataDAO;
 import org.brekka.phalanx.core.model.AsymedCryptoData;
 import org.brekka.phalanx.core.model.AsymmetricKeyPair;

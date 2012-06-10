@@ -9,8 +9,8 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
-import org.brekka.phalanx.core.PhalanxErrorCode;
-import org.brekka.phalanx.core.PhalanxException;
+import org.brekka.phalanx.api.PhalanxErrorCode;
+import org.brekka.phalanx.api.PhalanxException;
 import org.brekka.phalanx.core.dao.CryptoDataDAO;
 import org.brekka.phalanx.core.model.SecretKeyToken;
 import org.brekka.phalanx.core.model.SymedCryptoData;

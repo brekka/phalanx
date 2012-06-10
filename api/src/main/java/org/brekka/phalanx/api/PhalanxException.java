@@ -1,4 +1,4 @@
-package org.brekka.phalanx.core;
+package org.brekka.phalanx.api;
 
 import org.brekka.commons.lang.BaseException;
 

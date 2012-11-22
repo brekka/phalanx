@@ -5,7 +5,7 @@ import org.brekka.phalanx.core.model.CryptoData;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class CryptoDataHibernateDAO extends AbstractHibernateEntityDAO<CryptoData> implements CryptoDataDAO {
+public class CryptoDataHibernateDAO extends AbstractPhalanxHibernateEntityDAO<CryptoData> implements CryptoDataDAO {
 
     @Override
     protected Class<CryptoData> type() {

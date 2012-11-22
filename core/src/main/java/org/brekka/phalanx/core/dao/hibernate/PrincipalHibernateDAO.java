@@ -5,7 +5,7 @@ import org.brekka.phalanx.core.model.Principal;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class PrincipalHibernateDAO extends AbstractHibernateEntityDAO<Principal> implements PrincipalDAO {
+public class PrincipalHibernateDAO extends AbstractPhalanxHibernateEntityDAO<Principal> implements PrincipalDAO {
 
     @Override
     protected Class<Principal> type() {

@@ -79,7 +79,7 @@ public class PhalanxServiceClientTest {
             client.pbeDecrypt(encryptedData, "IncorrectPassword");
             fail();
         } catch (PhalanxException e) {
-            if (e.getErrorCode() != PhalanxErrorCode.CP302) {
+            if (e.getErrorCode() != PhalanxErrorCode.CP300) {
                 fail();
             }
         }

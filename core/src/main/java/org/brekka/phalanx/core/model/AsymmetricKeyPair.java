@@ -2,13 +2,17 @@ package org.brekka.phalanx.core.model;
 
 import java.util.UUID;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.brekka.commons.persistence.model.IdentifiableEntity;
 import org.brekka.phalanx.api.model.KeyPair;
+import org.hibernate.annotations.Type;
 
 /**
  * Defines the storage of public/private key pair. The private key data will always be unique to a given
@@ -19,13 +23,18 @@ import org.brekka.phalanx.api.model.KeyPair;
  */
 @Entity
 @Table(name="\"AsymmetricKeyPair\"")
-public class AsymmetricKeyPair extends IdentifiableEntity implements KeyPair {
+public class AsymmetricKeyPair implements IdentifiableEntity<UUID>, KeyPair {
 
     /**
      * Serial UID
      */
     private static final long serialVersionUID = 2584665854047069047L;
 
+    @Id
+    @Type(type="pg-uuid")
+    @Column(name="ID")
+    private UUID id;
+    
     /**
      * Id of the principal that owns this key pair.
      */
@@ -56,6 +65,14 @@ public class AsymmetricKeyPair extends IdentifiableEntity implements KeyPair {
     
     public AsymmetricKeyPair(UUID id) {
         setId(id);
+    }
+    
+    public final UUID getId() {
+        return id;
+    }
+    
+    public final void setId(UUID id) {
+        this.id = id;
     }
 
     public Principal getOwner() {

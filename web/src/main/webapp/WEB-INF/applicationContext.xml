@@ -5,12 +5,12 @@
 	xmlns:p="http://www.springframework.org/schema/p"
 	xmlns:jee="http://www.springframework.org/schema/jee" 
 	xmlns:util="http://www.springframework.org/schema/util"
-	xmlns:stil="http://brekka.org/schema/stillingar"
+	xmlns:stil="http://brekka.org/schema/stillingar/v1"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
 		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
-        http://brekka.org/schema/stillingar http://brekka.org/schema/stillingar/brekka-stillingar-1.0.xsd">
+        http://brekka.org/schema/stillingar/v1 http://brekka.org/schema/stillingar/brekka-stillingar-1.0.xsd">
 
 	<import resource="classpath:org/brekka/phalanx/spring/databaseContext.xml"/>
 	<import resource="classpath:org/brekka/phalanx/spring/daoContext.xml"/>
@@ -20,9 +20,9 @@
 	
 	<context:component-scan base-package="org.brekka.phalanx.web.support" />
 
-    <stil:configuration id="phalanx-config" application-name="phalanx" reload-interval="5000" type="xmlbeans"> 
+    <stil:configuration-service id="phalanx-config" name="phalanx" reload-interval="5000" engine="xmlbeans"> 
+        <stil:property-placeholder />
         <stil:namespace prefix="c"     url="http://brekka.org/xml/phoenix/v1/model" />
-        <stil:property-placeholder prefix="$phalanx{" suffix="}" />
-    </stil:configuration> 
+    </stil:configuration-service> 
     
 </beans>

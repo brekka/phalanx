@@ -172,6 +172,10 @@ public class PhalanxServiceImpl implements PhalanxService {
     @SuppressWarnings("unchecked")
     protected <T extends CryptoData> T retrieveDataItem(CryptedData cryptedData, Class<T> expectedType) {
         CryptoData cryptoData = cryptoDataDAO.retrieveById(cryptedData.getId());
+        if (cryptoData == null) {
+            throw new PhalanxException(PhalanxErrorCode.CP601, "Crypted data item with id '%s' does not exist", 
+                    cryptedData.getId());
+        }
         if (!expectedType.isAssignableFrom(cryptoData.getClass())) {
             throw new PhalanxException(PhalanxErrorCode.CP600, "Expected crypto data type %s, found %s", 
                     expectedType.getSimpleName(), cryptoData.getClass().getSimpleName());

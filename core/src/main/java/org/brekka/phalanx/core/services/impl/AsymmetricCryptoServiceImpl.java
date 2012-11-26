@@ -1,14 +1,6 @@
 package org.brekka.phalanx.core.services.impl;
 
-import java.security.GeneralSecurityException;
-import java.security.InvalidKeyException;
-import java.security.Key;
-import java.security.KeyPair;
-import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.util.UUID;
-
-import javax.crypto.Cipher;
 
 import org.brekka.phalanx.api.PhalanxErrorCode;
 import org.brekka.phalanx.api.PhalanxException;
@@ -25,7 +17,13 @@ import org.brekka.phalanx.core.model.SymedCryptoData;
 import org.brekka.phalanx.core.services.AsymmetricCryptoService;
 import org.brekka.phalanx.core.services.PasswordBasedCryptoService;
 import org.brekka.phalanx.core.services.SymmetricCryptoService;
-import org.brekka.phoenix.CryptoFactory;
+import org.brekka.phoenix.PhoenixException;
+import org.brekka.phoenix.api.CryptoProfile;
+import org.brekka.phoenix.api.CryptoResult;
+import org.brekka.phoenix.api.Key;
+import org.brekka.phoenix.api.KeyPair;
+import org.brekka.phoenix.api.PrivateKey;
+import org.brekka.phoenix.api.PublicKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -59,7 +57,7 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
         }
         cryptoData = (AsymedCryptoData) cryptoDataDAO.retrieveById(cryptoData.getId());
         
-        CryptoFactory profile = getCryptoProfileRegistry().getFactory(cryptoData.getProfile());
+        CryptoProfile profile = cryptoProfileService.retrieveProfile(cryptoData.getProfile());
         InternalPrivateKeyToken ipkt = narrow(privateKeyToken);
         PrivateKey privateKey = ipkt.getPrivateKey();
         
@@ -71,11 +69,10 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
 //                    incomingkeyPair.getPrivateKey().getId(), dataKeyPair.getPrivateKey().getId());
 //        }
         
-        Cipher asymmetricCipher = getAsymmetricCipher(Cipher.DECRYPT_MODE, privateKey, profile);
         byte[] data;
         try {
-            data = asymmetricCipher.doFinal(cryptoData.getData());
-        } catch (GeneralSecurityException e) {
+            data = phoenixAsymmetric.decrypt(cryptoData.getData(), privateKey);
+        } catch (PhoenixException e) {
             throw new PhalanxException(PhalanxErrorCode.CP211, e,
                     "Failed to decrypt data for CryptoData '%s'", 
                     cryptoData.getId());
@@ -93,15 +90,6 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
         cryptoDataDAO.delete(originalPrivateKey.getId());
     }
 
-    private InternalPrivateKeyToken narrow(PrivateKeyToken privateKeyToken) {
-        if (privateKeyToken instanceof InternalPrivateKeyToken == false) {
-            throw new PhalanxException(PhalanxErrorCode.CP203, 
-                    "Private key token must be an instance issued previously by this service. Found '%s'.", 
-                    privateKeyToken.getClass().getSimpleName());
-        }
-        return (InternalPrivateKeyToken) privateKeyToken;
-    }
-    
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
     public AsymedCryptoData encrypt(Object obj, AsymmetricKeyPair keyPair) {
@@ -112,13 +100,13 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
         PublicKey publicKey = toPublicKey(publicKeyData);
         byte[] data = toBytes(obj);
         
-        CryptoFactory profile = getCryptoProfileRegistry().getDefault();
+        CryptoProfile profile = publicKey.getCryptoProfile();
         
-        Cipher asymmetricCipher = getAsymmetricCipher(Cipher.ENCRYPT_MODE, publicKey, profile);
         byte[] cipherData;
         try {
-            cipherData = asymmetricCipher.doFinal(data);
-        } catch (GeneralSecurityException e) {
+            CryptoResult<PublicKey> cryptoResult = phoenixAsymmetric.encrypt(data, publicKey);
+            cipherData = cryptoResult.getCipherText();
+        } catch (PhoenixException e) {
             throw new PhalanxException(PhalanxErrorCode.CP212, e,
                     "Failed to encrypt data from object of type '%s' using key pair '%s'", 
                     obj.getClass().getName(), keyPair.getId());
@@ -127,7 +115,7 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
         AsymedCryptoData encryptedData = new AsymedCryptoData();
         encryptedData.setData(cipherData);
         encryptedData.setKeyPair(keyPair);
-        encryptedData.setProfile(profile.getProfileId());
+        encryptedData.setProfile(profile.getNumber());
         cryptoDataDAO.create(encryptedData);
         return encryptedData;
     }
@@ -177,13 +165,11 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
     public AsymmetricKeyPair generateKeyPair(AsymmetricKeyPair protectedWithPublicKeyFrom, Principal owner) {
         // Resolve the key pair from persistent storage (could just be id)
         protectedWithPublicKeyFrom = asymetricKeyPairDAO.retrieveById(protectedWithPublicKeyFrom.getId());
+        CryptoProfile defaultProfile = cryptoProfileService.retrieveDefault();
+        KeyPair keyPair = phoenixAsymmetric.createKeyPair(defaultProfile);
         
-        CryptoFactory profile = getCryptoProfileRegistry().getDefault();
-        CryptoFactory.Asymmetric asynchronousProfile = profile.getAsymmetric();
-        KeyPair keyPair = asynchronousProfile.generateKeyPair();
-        
-        CryptoData publicKeyData = toPublicKey(keyPair.getPublic(), profile.getProfileId());
-        InternalPrivateKeyToken internalPrivateKey = new InternalPrivateKeyToken(keyPair.getPrivate(), profile.getProfileId());
+        CryptoData publicKeyData = toCryptoData(keyPair.getPublicKey());
+        InternalPrivateKeyToken internalPrivateKey = new InternalPrivateKeyToken(keyPair.getPrivateKey());
         InternalSecretKeyToken secretKeyToken = symEncryptPrivateKey(internalPrivateKey);
         
         AsymedCryptoData privateKeyData = encrypt(secretKeyToken, protectedWithPublicKeyFrom);
@@ -199,12 +185,11 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
     public AsymmetricKeyPair generateKeyPair(String passwordToProtectPrivateKey, Principal owner) {
-        CryptoFactory profile = getCryptoProfileRegistry().getDefault();
-        CryptoFactory.Asymmetric asymmetricProfile = profile.getAsymmetric();
-        KeyPair keyPair = asymmetricProfile.generateKeyPair();
+        CryptoProfile defaultProfile = cryptoProfileService.retrieveDefault();
+        KeyPair keyPair = phoenixAsymmetric.createKeyPair(defaultProfile);
         
-        CryptoData publicKeyData = toPublicKey(keyPair.getPublic(), profile.getProfileId());
-        InternalPrivateKeyToken internalPrivateKey = new InternalPrivateKeyToken(keyPair.getPrivate(), profile.getProfileId());
+        CryptoData publicKeyData = toCryptoData(keyPair.getPublicKey());
+        InternalPrivateKeyToken internalPrivateKey = new InternalPrivateKeyToken(keyPair.getPrivateKey());
         InternalSecretKeyToken secretKeyToken = symEncryptPrivateKey(internalPrivateKey);
         
         PasswordedCryptoData privateKeyData = passwordBasedCryptoService.encrypt(secretKeyToken, passwordToProtectPrivateKey);
@@ -247,32 +232,29 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
     }
     
     protected PublicKey toPublicKey(CryptoData publicKeyData) {
-        CryptoFactory profile = getCryptoProfileRegistry().getFactory(publicKeyData.getProfile());
         if (publicKeyData.getClass() != CryptoData.class) {
             throw new PhalanxException(PhalanxErrorCode.CP201, 
                     "CryptoData item '%s' is not plain", publicKeyData.getId());
         }
         byte[] data = publicKeyData.getData();
-        return toType(data, PublicKey.class, publicKeyData.getId(), profile);
+        PublicKey publicKey = phoenixAsymmetric.toPublicKey(data, profileOf(publicKeyData));
+        return publicKey;
     }
     
-    protected CryptoData toPublicKey(PublicKey publicKey, int profileId) {
+    /**
+     * @param publicKeyData
+     * @return
+     */
+    private CryptoProfile profileOf(CryptoData data) {
+        return cryptoProfileService.retrieveProfile(data.getProfile());
+    }
+
+    protected CryptoData toCryptoData(Key key) {
         CryptoData publicKeyData = new CryptoData();
-        publicKeyData.setData(publicKey.getEncoded());
-        publicKeyData.setProfile(profileId);
+        publicKeyData.setData(key.getEncoded());
+        publicKeyData.setProfile(key.getCryptoProfile().getNumber());
         cryptoDataDAO.create(publicKeyData);
         return publicKeyData;
-    }
-    
-    protected Cipher getAsymmetricCipher(int mode, Key key, CryptoFactory cryptoProfile) {
-        Cipher cipher = cryptoProfile.getAsymmetric().getInstance();
-        try {
-            cipher.init(mode, key);
-        } catch (InvalidKeyException e) {
-            throw new PhalanxException(PhalanxErrorCode.CP206, e, 
-                    "Problem initializing asymmetric cipher");
-        }
-        return cipher;
     }
     
     protected SymedCryptoData narrow(CryptoData cryptoData) {
@@ -304,6 +286,16 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
         return secretKeyToken;
     }
     
+    
+
+    private static InternalPrivateKeyToken narrow(PrivateKeyToken privateKeyToken) {
+        if (privateKeyToken instanceof InternalPrivateKeyToken == false) {
+            throw new PhalanxException(PhalanxErrorCode.CP203, 
+                    "Private key token must be an instance issued previously by this service. Found '%s'.", 
+                    privateKeyToken.getClass().getSimpleName());
+        }
+        return (InternalPrivateKeyToken) privateKeyToken;
+    }
     
     
     public void setAsymetricKeyPairDAO(AsymmetricKeyPairDAO asymetricKeyPairDAO) {

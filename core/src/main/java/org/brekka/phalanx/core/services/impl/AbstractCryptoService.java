@@ -1,35 +1,44 @@
 package org.brekka.phalanx.core.services.impl;
 
 import java.nio.ByteBuffer;
-import java.security.Key;
-import java.security.KeyFactory;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.UUID;
 
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-
-import org.brekka.phoenix.CryptoFactory;
-import org.brekka.phoenix.CryptoFactoryRegistry;
 import org.brekka.phalanx.api.PhalanxErrorCode;
 import org.brekka.phalanx.api.PhalanxException;
 import org.brekka.phalanx.core.model.SymedCryptoData;
+import org.brekka.phoenix.api.CryptoProfile;
+import org.brekka.phoenix.api.PrivateKey;
+import org.brekka.phoenix.api.SecretKey;
+import org.brekka.phoenix.api.services.AsymmetricCryptoService;
+import org.brekka.phoenix.api.services.CryptoProfileService;
+import org.brekka.phoenix.api.services.DerivedKeyCryptoService;
+import org.brekka.phoenix.api.services.DigestCryptoService;
+import org.brekka.phoenix.api.services.SymmetricCryptoService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbstractCryptoService {
     private static final byte[] PK_MAGIC_MARKER = "IPKT".getBytes();
     private static final byte[] SK_MAGIC_MARKER = "ISKT".getBytes();
 
+    
     @Autowired
-    private CryptoFactoryRegistry cryptoProfileRegistry;
+    protected CryptoProfileService cryptoProfileService;
+    
+    @Autowired
+    protected AsymmetricCryptoService phoenixAsymmetric;
+    
+    @Autowired
+    protected SymmetricCryptoService phoenixSymmetric;
+    
+    @Autowired
+    protected DerivedKeyCryptoService phoenixDerived;
+    
+    @Autowired
+    protected DigestCryptoService phoenixDigest;
     
     @SuppressWarnings("unchecked")
-    protected <T> T toType(byte[] data, Class<T> expectedType, UUID idOfData, CryptoFactory cryptoProfile) {
+    protected <T> T toType(byte[] data, Class<T> expectedType, UUID idOfData, CryptoProfile cryptoProfile) {
         if (expectedType == null) {
             throw new NullPointerException("An expected type is required");
         }
@@ -37,17 +46,8 @@ public abstract class AbstractCryptoService {
         if (expectedType.isArray() 
                 && expectedType.getComponentType() == Byte.TYPE) {
             retVal = data;
-        } else if (expectedType == PublicKey.class) {
-            X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(data);
-            try {
-                KeyFactory keyFactory = cryptoProfile.getAsymmetric().getKeyFactory();
-                retVal = keyFactory.generatePublic(publicKeySpec);
-            } catch (InvalidKeySpecException e) {
-                throw new PhalanxException(PhalanxErrorCode.CP200, e, 
-                        "Failed to extract public key from CryptoData item '%s'", idOfData);
-            }
         } else if (expectedType == InternalPrivateKeyToken.class) {
-            retVal = decodePrivateKey(data, idOfData);
+            retVal = decodePrivateKey(data, idOfData, cryptoProfile);
         } else if (expectedType == InternalSecretKeyToken.class) {
             retVal = decodeSecretKey(data, idOfData);
         } else {
@@ -71,8 +71,6 @@ public abstract class AbstractCryptoService {
         } else if (obj instanceof InternalSecretKeyToken) {
             InternalSecretKeyToken iskt = (InternalSecretKeyToken) obj;
             retVal = encodeSecretKey(iskt);
-        } else if (obj instanceof Key) {
-            retVal = ((Key) obj).getEncoded();
         } else {
             throw new IllegalArgumentException(String.format("Unsupport type conversion from '%s'", clazz.getName()));
         }
@@ -91,39 +89,20 @@ public abstract class AbstractCryptoService {
         byte[] keyId = new byte[16];
         buffer.get(keyId);
         UUID symCryptoDataId = toUUID(keyId);
-        CryptoFactory cryptoProfile = getCryptoProfileRegistry().getFactory(profileId);
+        CryptoProfile cryptoProfile = cryptoProfileService.retrieveProfile(profileId);
         byte[] data = new byte[encoded.length - (SK_MAGIC_MARKER.length + 20)];
         buffer.get(data);
-        SecretKey secretKey = new SecretKeySpec(data, cryptoProfile.getSymmetric().getKeyGenerator().getAlgorithm());
+        
+        SecretKey secretKey = phoenixSymmetric.toSecretKey(data, cryptoProfile);
         SymedCryptoData symedCryptoData = new SymedCryptoData();
         symedCryptoData.setId(symCryptoDataId);
         symedCryptoData.setProfile(profileId);
         return new InternalSecretKeyToken(secretKey, symedCryptoData);
     }
     
-    private byte[] encodeSecretKey(InternalSecretKeyToken iskt) {
-        int profileId = iskt.getSymedCryptoData().getProfile();
-        byte[] keyId = toBytes(iskt.getSymedCryptoData().getId());
-        byte[] data = iskt.getSecretKey().getEncoded();
-        ByteBuffer buffer = ByteBuffer.allocate(SK_MAGIC_MARKER.length + 20 + data.length)
-                .put(SK_MAGIC_MARKER)
-                .putInt(profileId)
-                .put(keyId)
-                .put(data);
-        return buffer.array();
-    }
 
-    private byte[] encodePrivateKey(InternalPrivateKeyToken pkt) {
-        int profileId = pkt.getKeyPair().getPrivateKey().getProfile();
-        byte[] data = pkt.getPrivateKey().getEncoded();
-        ByteBuffer buffer = ByteBuffer.allocate(PK_MAGIC_MARKER.length + 4 + data.length)
-                .put(PK_MAGIC_MARKER)
-                .putInt(profileId)
-                .put(data);
-        return buffer.array();
-    }
     
-    private InternalPrivateKeyToken decodePrivateKey(byte[] encoded, UUID idOfData) {
+    private InternalPrivateKeyToken decodePrivateKey(byte[] encoded, UUID idOfData, CryptoProfile cryptoProfile) {
         ByteBuffer buffer = ByteBuffer.wrap(encoded);
         byte[] marker = new byte[PK_MAGIC_MARKER.length];
         buffer.get(marker);
@@ -132,29 +111,14 @@ public abstract class AbstractCryptoService {
                     "CryptoData item '%s' does not appear to contain a private key", idOfData);
         }
         int profileId = buffer.getInt();
-        CryptoFactory cryptoProfile = getCryptoProfileRegistry().getFactory(profileId);
+        CryptoProfile profile = cryptoProfileService.retrieveProfile(profileId);
         byte[] data = new byte[encoded.length - (SK_MAGIC_MARKER.length + 4)];
         buffer.get(data);
-        PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(data);
-        try {
-            KeyFactory keyFactory = cryptoProfile.getAsymmetric().getKeyFactory();
-            PrivateKey privateKey =  keyFactory.generatePrivate(privateKeySpec);
-            return new InternalPrivateKeyToken(privateKey);
-        } catch (InvalidKeySpecException e) {
-            throw new PhalanxException(PhalanxErrorCode.CP207, e, 
-                    "Failed to extract private key from CryptoData item '%s'", idOfData);
-        }
+        
+        PrivateKey privateKey = phoenixAsymmetric.toPrivateKey(data, profile);
+        return new InternalPrivateKeyToken(privateKey);
     }
     
-    protected final CryptoFactoryRegistry getCryptoProfileRegistry() {
-        return cryptoProfileRegistry;
-    }
-
-    public void setCryptoProfileRegistry(CryptoFactoryRegistry cryptoProfileRegistry) {
-        this.cryptoProfileRegistry = cryptoProfileRegistry;
-    }
-
-
     /**
      * From http://stackoverflow.com/questions/772802/storing-uuid-as-base64-string.
      * @param uuid
@@ -190,5 +154,27 @@ public abstract class AbstractCryptoService {
         }
         UUID result = new UUID(msb, lsb);
         return result;
+    }
+    
+    private static byte[] encodeSecretKey(InternalSecretKeyToken iskt) {
+        int profileId = iskt.getSymedCryptoData().getProfile();
+        byte[] keyId = toBytes(iskt.getSymedCryptoData().getId());
+        byte[] data = iskt.getSecretKey().getEncoded();
+        ByteBuffer buffer = ByteBuffer.allocate(SK_MAGIC_MARKER.length + 20 + data.length)
+                .put(SK_MAGIC_MARKER)
+                .putInt(profileId)
+                .put(keyId)
+                .put(data);
+        return buffer.array();
+    }
+
+    private static byte[] encodePrivateKey(InternalPrivateKeyToken pkt) {
+        int profileId = pkt.getKeyPair().getPrivateKey().getProfile();
+        byte[] data = pkt.getPrivateKey().getEncoded();
+        ByteBuffer buffer = ByteBuffer.allocate(PK_MAGIC_MARKER.length + 4 + data.length)
+                .put(PK_MAGIC_MARKER)
+                .putInt(profileId)
+                .put(data);
+        return buffer.array();
     }
 }

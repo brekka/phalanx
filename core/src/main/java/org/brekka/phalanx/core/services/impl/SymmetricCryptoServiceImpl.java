@@ -1,21 +1,16 @@
 package org.brekka.phalanx.core.services.impl;
 
-import java.security.GeneralSecurityException;
-import java.security.Key;
-import java.security.spec.AlgorithmParameterSpec;
-
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
-
 import org.brekka.phalanx.api.PhalanxErrorCode;
 import org.brekka.phalanx.api.PhalanxException;
 import org.brekka.phalanx.core.dao.CryptoDataDAO;
 import org.brekka.phalanx.core.model.SecretKeyToken;
 import org.brekka.phalanx.core.model.SymedCryptoData;
 import org.brekka.phalanx.core.services.SymmetricCryptoService;
-import org.brekka.phoenix.CryptoFactory;
+import org.brekka.phoenix.PhoenixException;
+import org.brekka.phoenix.api.CryptoProfile;
+import org.brekka.phoenix.api.CryptoResult;
+import org.brekka.phoenix.api.SecretKey;
+import org.brekka.phoenix.api.SymmetricCryptoSpec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -31,17 +26,12 @@ public class SymmetricCryptoServiceImpl extends AbstractCryptoService implements
     @Override
     @Transactional(propagation=Propagation.SUPPORTS)
     public <T> T decrypt(SymedCryptoData cryptoData, SecretKeyToken secretKeyToken, Class<T> expectedType) {
-        CryptoFactory profile = getCryptoProfileRegistry().getFactory(cryptoData.getProfile());
-        CryptoFactory.Symmetric symmetricProfile = profile.getSymmetric();
+        CryptoProfile profile = cryptoProfileService.retrieveProfile(cryptoData.getProfile());
         InternalSecretKeyToken internalSecretKeyToken = verify(secretKeyToken);
-        SecretKey secretKey = internalSecretKeyToken.getSecretKey();
-        IvParameterSpec initializationVector = new IvParameterSpec(cryptoData.getIv());
-        
-        Cipher cipher = getCipher(Cipher.DECRYPT_MODE, secretKey, initializationVector, symmetricProfile);
         byte[] data;
         try {
-            data = cipher.doFinal(cryptoData.getData());
-        } catch (GeneralSecurityException e) {
+            data = phoenixSymmetric.decrypt(cryptoData.getData(), internalSecretKeyToken);
+        } catch (PhoenixException e) {
             throw new PhalanxException(PhalanxErrorCode.CP106, e, 
                     "Failed to decrypt CryptoData with id '%s'", cryptoData.getId());
         }
@@ -52,26 +42,21 @@ public class SymmetricCryptoServiceImpl extends AbstractCryptoService implements
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
     public SymedCryptoData encrypt(Object obj, SecretKeyToken secretKeyToken) {
-        CryptoFactory profile = getCryptoProfileRegistry().getDefault();
-        CryptoFactory.Symmetric symmetricProfile = profile.getSymmetric();
         InternalSecretKeyToken internalSecretKeyToken = verify(secretKeyToken);
         SecretKey secretKey = internalSecretKeyToken.getSecretKey();
-        IvParameterSpec initializationVector = generateInitializationVector(profile);
         byte[] data = toBytes(obj);
-        
-        Cipher cipher = getCipher(Cipher.ENCRYPT_MODE, secretKey, initializationVector, symmetricProfile);
-        byte[] cipherData;
+        CryptoResult<SymmetricCryptoSpec> cryptoResult;
         try {
-            cipherData = cipher.doFinal(data);
-        } catch (GeneralSecurityException e) {
+            cryptoResult = phoenixSymmetric.encrypt(data, secretKey);
+        } catch (PhoenixException e) {
             throw new PhalanxException(PhalanxErrorCode.CP105, e, 
                     "Failed to symmetric encrypt object");
         }
         
         SymedCryptoData cryptoData = new SymedCryptoData();
-        cryptoData.setIv(initializationVector.getIV());
-        cryptoData.setData(cipherData);
-        cryptoData.setProfile(profile.getProfileId());
+        cryptoData.setIv(cryptoResult.getSpec().getIV());
+        cryptoData.setData(cryptoResult.getCipherText());
+        cryptoData.setProfile(cryptoResult.getSpec().getCryptoProfile().getNumber());
         cryptoDataDAO.create(cryptoData);
         return cryptoData;
     }
@@ -79,10 +64,9 @@ public class SymmetricCryptoServiceImpl extends AbstractCryptoService implements
     @Override
     @Transactional(propagation=Propagation.SUPPORTS)
     public SecretKeyToken generateSecretKey() {
-        CryptoFactory profile = getCryptoProfileRegistry().getDefault();
-        KeyGenerator keyGenerator = profile.getSymmetric().getKeyGenerator();
-        SecretKey generateKey = keyGenerator.generateKey();
-        return new InternalSecretKeyToken(generateKey);
+        CryptoProfile cryptoProfile = cryptoProfileService.retrieveDefault();
+        SecretKey secretKey = phoenixSymmetric.createSecretKey(cryptoProfile);
+        return new InternalSecretKeyToken(secretKey);
     }
     
     
@@ -97,25 +81,6 @@ public class SymmetricCryptoServiceImpl extends AbstractCryptoService implements
         }
         return (InternalSecretKeyToken) secretKey;
     }
-    
-    protected IvParameterSpec generateInitializationVector(CryptoFactory profile) {
-        byte[] ivBytes = new byte[profile.getSymmetric().getIvLength()];
-        profile.getSecureRandom().nextBytes(ivBytes);
-        IvParameterSpec iv = new IvParameterSpec(ivBytes);
-        return iv;
-    }
-    
-    protected Cipher getCipher(int mode, Key key, AlgorithmParameterSpec parameter, CryptoFactory.Symmetric symmetricProfile) {
-        Cipher cipher = symmetricProfile.getInstance();
-        try {
-            cipher.init(mode, key, parameter);
-        } catch (GeneralSecurityException e) {
-            throw new PhalanxException(PhalanxErrorCode.CP102, e, 
-                    "Problem initializing symmetric cipher");
-        }
-        return cipher;
-    }
-    
     
     public void setCryptoDataDAO(CryptoDataDAO cryptoDataDAO) {
         this.cryptoDataDAO = cryptoDataDAO;

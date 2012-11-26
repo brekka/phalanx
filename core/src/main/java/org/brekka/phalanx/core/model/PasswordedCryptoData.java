@@ -26,6 +26,9 @@ public class PasswordedCryptoData extends CryptoData implements CryptedData {
     @Column(name="Salt")
     private byte[] salt;
     
+    @Column(name="Iterations")
+    private Integer iterations;
+    
     public PasswordedCryptoData() {
     }
     
@@ -39,5 +42,19 @@ public class PasswordedCryptoData extends CryptoData implements CryptedData {
 
     public void setSalt(byte[] salt) {
         this.salt = salt;
+    }
+
+    /**
+     * @return the iterations
+     */
+    public Integer getIterations() {
+        return iterations;
+    }
+
+    /**
+     * @param iterations the iterations to set
+     */
+    public void setIterations(Integer iterations) {
+        this.iterations = iterations;
     }
 }

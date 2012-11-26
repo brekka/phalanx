@@ -1,8 +1,8 @@
 package org.brekka.phalanx.web.support;
 
-import org.brekka.phoenix.CryptoFactory;
-import org.brekka.phoenix.CryptoFactoryRegistry;
-import org.brekka.phoenix.impl.CryptoFactoryRegistryImpl;
+import org.brekka.phoenix.config.CryptoFactory;
+import org.brekka.phoenix.config.CryptoFactoryRegistry;
+import org.brekka.phoenix.config.impl.CryptoFactoryRegistryImpl;
 import org.brekka.stillingar.api.annotations.ConfigurationListener;
 import org.brekka.stillingar.api.annotations.Configured;
 import org.brekka.xml.phoenix.v1.model.CryptoProfileRegistryDocument;

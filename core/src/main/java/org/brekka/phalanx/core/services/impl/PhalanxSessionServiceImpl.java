@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.brekka.phalanx.api.model.AuthenticatedPrincipal;
 import org.brekka.phalanx.api.model.PrivateKeyToken;
 import org.brekka.phalanx.core.services.PhalanxSessionService;
-import org.brekka.phoenix.CryptoFactoryRegistry;
+import org.brekka.phoenix.config.CryptoFactoryRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -62,10 +62,8 @@ public class PhalanxSessionServiceImpl implements PhalanxSessionService {
     @Override
     public void bind(byte[] sessionId) {
         CacheKey key = new CacheKey(sessionId);
-        if (key != null) {
-            PrincipalSession cached = cache.get(key);
-            context.set(cached);
-        }
+        PrincipalSession cached = cache.get(key);
+        context.set(cached);
     } 
 
     /* (non-Javadoc)

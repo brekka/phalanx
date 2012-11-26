@@ -12,8 +12,6 @@ import org.brekka.phoenix.api.PrivateKey;
 import org.brekka.phoenix.api.SecretKey;
 import org.brekka.phoenix.api.services.AsymmetricCryptoService;
 import org.brekka.phoenix.api.services.CryptoProfileService;
-import org.brekka.phoenix.api.services.DerivedKeyCryptoService;
-import org.brekka.phoenix.api.services.DigestCryptoService;
 import org.brekka.phoenix.api.services.SymmetricCryptoService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -31,11 +29,7 @@ public abstract class AbstractCryptoService {
     @Autowired
     protected SymmetricCryptoService phoenixSymmetric;
     
-    @Autowired
-    protected DerivedKeyCryptoService phoenixDerived;
     
-    @Autowired
-    protected DigestCryptoService phoenixDigest;
     
     @SuppressWarnings("unchecked")
     protected <T> T toType(byte[] data, Class<T> expectedType, UUID idOfData, CryptoProfile cryptoProfile) {
@@ -154,6 +148,27 @@ public abstract class AbstractCryptoService {
         }
         UUID result = new UUID(msb, lsb);
         return result;
+    }
+    
+    /**
+     * @param cryptoProfileService the cryptoProfileService to set
+     */
+    public void setCryptoProfileService(CryptoProfileService cryptoProfileService) {
+        this.cryptoProfileService = cryptoProfileService;
+    }
+    
+    /**
+     * @param phoenixAsymmetric the phoenixAsymmetric to set
+     */
+    public void setPhoenixAsymmetric(AsymmetricCryptoService phoenixAsymmetric) {
+        this.phoenixAsymmetric = phoenixAsymmetric;
+    }
+    
+    /**
+     * @param phoenixSymmetric the phoenixSymmetric to set
+     */
+    public void setPhoenixSymmetric(SymmetricCryptoService phoenixSymmetric) {
+        this.phoenixSymmetric = phoenixSymmetric;
     }
     
     private static byte[] encodeSecretKey(InternalSecretKeyToken iskt) {

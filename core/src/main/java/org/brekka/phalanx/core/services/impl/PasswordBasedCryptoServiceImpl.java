@@ -15,6 +15,8 @@ import org.brekka.phoenix.api.CryptoResult;
 import org.brekka.phoenix.api.DerivedKey;
 import org.brekka.phoenix.api.DigestResult;
 import org.brekka.phoenix.api.SymmetricCryptoSpec;
+import org.brekka.phoenix.api.services.DerivedKeyCryptoService;
+import org.brekka.phoenix.api.services.DigestCryptoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -26,6 +28,13 @@ public class PasswordBasedCryptoServiceImpl extends AbstractCryptoService implem
 
     @Autowired
     private CryptoDataDAO cryptoDataDAO;
+    
+    @Autowired
+    protected DerivedKeyCryptoService phoenixDerived;
+    
+    @Autowired
+    protected DigestCryptoService phoenixDigest;
+
     
     @Override
     @Transactional(propagation=Propagation.SUPPORTS, noRollbackFor={ PhalanxException.class })
@@ -95,5 +104,18 @@ public class PasswordBasedCryptoServiceImpl extends AbstractCryptoService implem
     public void setCryptoDataDAO(CryptoDataDAO cryptoDataDAO) {
         this.cryptoDataDAO = cryptoDataDAO;
     }
-
+    
+    /**
+     * @param phoenixDerived the phoenixDerived to set
+     */
+    public void setPhoenixDerived(DerivedKeyCryptoService phoenixDerived) {
+        this.phoenixDerived = phoenixDerived;
+    }
+    
+    /**
+     * @param phoenixDigest the phoenixDigest to set
+     */
+    public void setPhoenixDigest(DigestCryptoService phoenixDigest) {
+        this.phoenixDigest = phoenixDigest;
+    }
 }

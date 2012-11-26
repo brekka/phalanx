@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.brekka.phalanx.api.model.AuthenticatedPrincipal;
 import org.brekka.phalanx.api.model.PrivateKeyToken;
 import org.brekka.phalanx.core.services.PhalanxSessionService;
-import org.brekka.phoenix.config.CryptoFactoryRegistry;
+import org.brekka.phoenix.api.services.RandomCryptoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,8 +24,9 @@ public class PhalanxSessionServiceImpl implements PhalanxSessionService {
     
     private final ThreadLocal<PrincipalSession> context = new ThreadLocal<>();
     
+    
     @Autowired
-    private CryptoFactoryRegistry cryptoProfileRegistry;
+    private RandomCryptoService randomCryptoService;
     
     /* (non-Javadoc)
      * @see org.brekka.phalanx.web.support.PhalanxSessionCache#registerPrivateKey(org.brekka.phalanx.model.PrivateKeyToken)
@@ -41,7 +42,7 @@ public class PhalanxSessionServiceImpl implements PhalanxSessionService {
      */
     @Override
     public byte[] allocateAndBind(AuthenticatedPrincipal authenticatedPrincipal) {
-        SecureRandom secureRandom = cryptoProfileRegistry.getDefault().getSecureRandom();
+        SecureRandom secureRandom = randomCryptoService.getSecureRandom();
         byte[] keyBytes = new byte[SESSION_ID_LENGTH];
         secureRandom.nextBytes(keyBytes);
         CacheKey key = new CacheKey(keyBytes);
@@ -104,7 +105,7 @@ public class PhalanxSessionServiceImpl implements PhalanxSessionService {
         }
         
         public byte[] registerPrivateKey(PrivateKeyToken privateKey) {
-            SecureRandom secureRandom = cryptoProfileRegistry.getDefault().getSecureRandom();
+            SecureRandom secureRandom = randomCryptoService.getSecureRandom();
             byte[] keyBytes = new byte[PK_KEY_LENGTH];
             secureRandom.nextBytes(keyBytes);
             CacheKey key = new CacheKey(keyBytes);

@@ -11,9 +11,8 @@ import org.brekka.phalanx.api.PhalanxException;
 import org.brekka.phalanx.core.dao.CryptoDataDAO;
 import org.brekka.phalanx.core.model.PasswordedCryptoData;
 import org.brekka.phalanx.core.services.impl.PasswordBasedCryptoServiceImpl;
-import org.brekka.phoenix.config.CryptoFactoryRegistry;
-import org.brekka.phoenix.config.impl.CryptoFactoryRegistryImpl;
-import org.brekka.xml.phoenix.v1.model.CryptoProfileRegistryDocument;
+import org.brekka.phoenix.services.impl.CryptoProfileServiceImpl;
+import org.brekka.xml.phoenix.v2.model.CryptoProfileRegistryDocument;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,11 +25,11 @@ public class PasswordBasedCryptoServiceImplTest {
         CryptoProfileRegistryDocument regDoc = CryptoProfileRegistryDocument.Factory.parse(
                 PasswordBasedCryptoServiceImpl.class.getClassLoader().getResourceAsStream(
                         "BasicCryptoProfileRegistry.xml"));
-        CryptoFactoryRegistry cryptoProfileRegistry = CryptoFactoryRegistryImpl.createRegistry(regDoc.getCryptoProfileRegistry());
+        CryptoProfileServiceImpl cryptoProfileService = new CryptoProfileServiceImpl(regDoc.getCryptoProfileRegistry());
         service = new PasswordBasedCryptoServiceImpl();
         CryptoDataDAO cryptoDAO = new TestCryptoDataDAO();
         service.setCryptoDataDAO(cryptoDAO);
-        service.setCryptoProfileRegistry(cryptoProfileRegistry);
+        service.setCryptoProfileService(cryptoProfileService);
     }
 
     @Test

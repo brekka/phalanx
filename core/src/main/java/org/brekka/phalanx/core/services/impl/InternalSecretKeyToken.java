@@ -6,7 +6,7 @@ import org.brekka.phoenix.api.CryptoProfile;
 import org.brekka.phoenix.api.SecretKey;
 import org.brekka.phoenix.api.SymmetricCryptoSpec;
 
-class InternalSecretKeyToken implements SecretKeyToken, SymmetricCryptoSpec {
+class InternalSecretKeyToken implements SecretKeyToken {
 
     private final SecretKey secretKey;
     
@@ -24,26 +24,6 @@ class InternalSecretKeyToken implements SecretKeyToken, SymmetricCryptoSpec {
         this.symedCryptoData = symedCryptoData;
     }
     
-    /* (non-Javadoc)
-     * @see org.brekka.phoenix.api.SymmetricCryptoSpec#getIV()
-     */
-    @Override
-    public byte[] getIV() {
-        return symedCryptoData.getIv();
-    }
-    
-    /* (non-Javadoc)
-     * @see org.brekka.phoenix.api.CryptoSpec#getProfile()
-     */
-    @Override
-    public CryptoProfile getCryptoProfile() {
-        return secretKey.getCryptoProfile();
-    }
-    
-    /* (non-Javadoc)
-     * @see org.brekka.phoenix.api.SymmetricCryptoSpec#getKey()
-     */
-    @Override
     public SecretKey getSecretKey() {
         return secretKey;
     }

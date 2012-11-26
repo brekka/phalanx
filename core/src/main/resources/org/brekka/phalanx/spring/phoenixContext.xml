@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:jee="http://www.springframework.org/schema/jee" 
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:stil="http://brekka.org/schema/stillingar/v1"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+        http://brekka.org/schema/stillingar/v1 http://brekka.org/schema/stillingar/brekka-stillingar-1.0.xsd">
+
+	<bean id="cryptoProfileService" class="org.brekka.phalanx.web.support.ConfiguredCryptoProfileService" />
+    
+    <bean id="cryptoServiceSupport" class="org.brekka.phoenix.services.impl.CryptoServiceSupport" abstract="true"
+          p:cryptoProfileService-ref="cryptoProfileService" />
+    
+    <bean id="asymmetricCryptoService" class="org.brekka.phoenix.services.impl.AsymmetricCryptoServiceImpl"
+          parent="cryptoServiceSupport" />
+          
+    <bean id="derivedKeyCryptoService" class="org.brekka.phoenix.services.impl.DerivedKeyCryptoServiceImpl"
+          parent="cryptoServiceSupport" />
+          
+    <bean id="digestCryptoService" class="org.brekka.phoenix.services.impl.DigestCryptoServiceImpl"
+          parent="cryptoServiceSupport" />
+          
+    <bean id="randomCryptoService" class="org.brekka.phoenix.services.impl.RandomCryptoServiceImpl"
+          parent="cryptoServiceSupport" />
+        
+    <bean id="symmetricCryptoService" class="org.brekka.phoenix.services.impl.SymmetricCryptoServiceImpl"
+          parent="cryptoServiceSupport" p:digestCryptoService-ref="digestCryptoService" />
+</beans>

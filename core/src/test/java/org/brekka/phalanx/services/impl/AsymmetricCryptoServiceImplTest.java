@@ -16,9 +16,8 @@ import org.brekka.phalanx.core.model.Principal;
 import org.brekka.phalanx.core.services.impl.AsymmetricCryptoServiceImpl;
 import org.brekka.phalanx.core.services.impl.PasswordBasedCryptoServiceImpl;
 import org.brekka.phalanx.core.services.impl.SymmetricCryptoServiceImpl;
-import org.brekka.phoenix.config.CryptoFactoryRegistry;
-import org.brekka.phoenix.config.impl.CryptoFactoryRegistryImpl;
-import org.brekka.xml.phoenix.v1.model.CryptoProfileRegistryDocument;
+import org.brekka.phoenix.services.impl.CryptoProfileServiceImpl;
+import org.brekka.xml.phoenix.v2.model.CryptoProfileRegistryDocument;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -35,20 +34,23 @@ public class AsymmetricCryptoServiceImplTest {
         CryptoProfileRegistryDocument regDoc = CryptoProfileRegistryDocument.Factory.parse(
                 PasswordBasedCryptoServiceImpl.class.getClassLoader().getResourceAsStream(
                         "BasicCryptoProfileRegistry.xml"));
-        CryptoFactoryRegistry cryptoProfileRegistry = CryptoFactoryRegistryImpl.createRegistry(regDoc.getCryptoProfileRegistry());
+        CryptoProfileServiceImpl cryptoProfileService = new CryptoProfileServiceImpl(regDoc.getCryptoProfileRegistry());
         CryptoDataDAO cryptoDAO = new TestCryptoDataDAO();
         AsymmetricKeyPairDAO asymmetricKeyPairDAO = new TestAsymmetricKeyPairDAO();
         
+        org.brekka.phoenix.services.impl.SymmetricCryptoServiceImpl symCrypSvc = new org.brekka.phoenix.services.impl.SymmetricCryptoServiceImpl();
+        
+        
         symService = new SymmetricCryptoServiceImpl();
         symService.setCryptoDataDAO(cryptoDAO);
-        symService.setCryptoProfileRegistry(cryptoProfileRegistry);
+        symService.setCryptoProfileService(cryptoProfileService);
         
         pbeService = new PasswordBasedCryptoServiceImpl();
         pbeService.setCryptoDataDAO(cryptoDAO);
-        pbeService.setCryptoProfileRegistry(cryptoProfileRegistry);
+        pbeService.setCryptoProfileService(cryptoProfileService);
         
         service = new AsymmetricCryptoServiceImpl();
-        service.setCryptoProfileRegistry(cryptoProfileRegistry);
+        service.setCryptoProfileService(cryptoProfileService);
         service.setCryptoDataDAO(cryptoDAO);
         service.setAsymetricKeyPairDAO(asymmetricKeyPairDAO);
         service.setPasswordBasedCryptoService(pbeService);

@@ -14,6 +14,7 @@
 
 	<import resource="classpath:org/brekka/phalanx/spring/databaseContext.xml"/>
 	<import resource="classpath:org/brekka/phalanx/spring/daoContext.xml"/>
+	<import resource="classpath:org/brekka/phalanx/spring/phoenixContext.xml"/>
 	<import resource="classpath:org/brekka/phalanx/spring/serviceContext.xml"/>
 	
 	<jee:jndi-lookup id="phalanxDataSource" jndi-name="jdbc/PhalanxDS" /> 
@@ -22,7 +23,7 @@
 
     <stil:configuration-service id="phalanx-config" name="phalanx" reload-interval="5000" engine="xmlbeans"> 
         <stil:property-placeholder />
-        <stil:namespace prefix="c"     url="http://brekka.org/xml/phoenix/v1/model" />
+        <stil:namespace prefix="c"     url="http://brekka.org/xml/phoenix/v2/model" />
     </stil:configuration-service> 
     
 </beans>

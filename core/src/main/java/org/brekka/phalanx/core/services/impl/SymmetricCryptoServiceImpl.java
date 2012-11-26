@@ -30,7 +30,8 @@ public class SymmetricCryptoServiceImpl extends AbstractCryptoService implements
         InternalSecretKeyToken internalSecretKeyToken = verify(secretKeyToken);
         byte[] data;
         try {
-            data = phoenixSymmetric.decrypt(cryptoData.getData(), internalSecretKeyToken);
+            DefaultSymmetricCryptoSpec spec = new DefaultSymmetricCryptoSpec(internalSecretKeyToken.getSecretKey(), cryptoData.getIv());
+            data = phoenixSymmetric.decrypt(cryptoData.getData(), spec);
         } catch (PhoenixException e) {
             throw new PhalanxException(PhalanxErrorCode.CP106, e, 
                     "Failed to decrypt CryptoData with id '%s'", cryptoData.getId());

@@ -12,6 +12,7 @@ import javax.persistence.Table;
 
 import org.brekka.commons.persistence.model.IdentifiableEntity;
 import org.brekka.phalanx.api.model.KeyPair;
+import org.brekka.phalanx.core.PhalanxConstants;
 import org.hibernate.annotations.Type;
 
 /**
@@ -22,7 +23,7 @@ import org.hibernate.annotations.Type;
  * @author Andrew Taylor
  */
 @Entity
-@Table(name="\"AsymmetricKeyPair\"")
+@Table(name="\"AsymmetricKeyPair\"", schema=PhalanxConstants.SCHEMA)
 public class AsymmetricKeyPair implements IdentifiableEntity<UUID>, KeyPair {
 
     /**

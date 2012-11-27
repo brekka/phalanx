@@ -10,10 +10,11 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.brekka.commons.persistence.model.IdentifiableEntity;
+import org.brekka.phalanx.core.PhalanxConstants;
 import org.hibernate.annotations.Type;
 
 @Entity
-@Table(name = "\"Principal\"")
+@Table(name = "\"Principal\"", schema=PhalanxConstants.SCHEMA)
 public class Principal implements IdentifiableEntity<UUID>, org.brekka.phalanx.api.model.Principal {
 
     /**

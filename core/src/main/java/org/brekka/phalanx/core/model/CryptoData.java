@@ -13,6 +13,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
 import org.brekka.commons.persistence.model.IdentifiableEntity;
+import org.brekka.phalanx.core.PhalanxConstants;
 import org.hibernate.annotations.Type;
 
 /**
@@ -23,7 +24,7 @@ import org.hibernate.annotations.Type;
 @Entity
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="Type", discriminatorType=DiscriminatorType.STRING, length=8)
-@Table(name="\"CryptoData\"")
+@Table(name="\"CryptoData\"", schema=PhalanxConstants.SCHEMA)
 @DiscriminatorValue("Plain")
 public class CryptoData implements IdentifiableEntity<UUID> {
     

@@ -2,7 +2,7 @@ package org.brekka.phalanx.web.support;
 
 import org.brekka.phoenix.api.CryptoProfile;
 import org.brekka.phoenix.api.services.CryptoProfileService;
-import org.brekka.phoenix.services.impl.CryptoProfileServiceImpl;
+import org.brekka.phoenix.core.services.impl.CryptoProfileServiceImpl;
 import org.brekka.stillingar.api.annotations.ConfigurationListener;
 import org.brekka.stillingar.api.annotations.Configured;
 import org.brekka.xml.phoenix.v2.model.CryptoProfileRegistryDocument.CryptoProfileRegistry;

@@ -11,7 +11,7 @@ import org.brekka.phalanx.api.PhalanxException;
 import org.brekka.phalanx.core.dao.CryptoDataDAO;
 import org.brekka.phalanx.core.model.PasswordedCryptoData;
 import org.brekka.phalanx.core.services.impl.PasswordBasedCryptoServiceImpl;
-import org.brekka.phoenix.services.impl.CryptoProfileServiceImpl;
+import org.brekka.phoenix.core.services.impl.CryptoProfileServiceImpl;
 import org.brekka.xml.phoenix.v2.model.CryptoProfileRegistryDocument;
 import org.junit.Before;
 import org.junit.Test;

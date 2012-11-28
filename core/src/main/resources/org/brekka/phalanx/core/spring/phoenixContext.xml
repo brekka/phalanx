@@ -12,21 +12,21 @@
 		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
         http://brekka.org/schema/stillingar/v1 http://brekka.org/schema/stillingar/brekka-stillingar-1.0.xsd">
 
-    <bean id="cryptoServiceSupport" class="org.brekka.phoenix.services.impl.CryptoServiceSupport" abstract="true"
+    <bean id="cryptoServiceSupport" class="org.brekka.phoenix.core.services.impl.CryptoServiceSupport" abstract="true"
           p:cryptoProfileService-ref="cryptoProfileService" />
     
-    <bean id="asymmetricCryptoService" class="org.brekka.phoenix.services.impl.AsymmetricCryptoServiceImpl"
+    <bean id="asymmetricCryptoService" class="org.brekka.phoenix.core.services.impl.AsymmetricCryptoServiceImpl"
           parent="cryptoServiceSupport" />
           
-    <bean id="derivedKeyCryptoService" class="org.brekka.phoenix.services.impl.DerivedKeyCryptoServiceImpl"
+    <bean id="derivedKeyCryptoService" class="org.brekka.phoenix.core.services.impl.DerivedKeyCryptoServiceImpl"
           parent="cryptoServiceSupport" />
           
-    <bean id="digestCryptoService" class="org.brekka.phoenix.services.impl.DigestCryptoServiceImpl"
+    <bean id="digestCryptoService" class="org.brekka.phoenix.core.services.impl.DigestCryptoServiceImpl"
           parent="cryptoServiceSupport" />
           
-    <bean id="randomCryptoService" class="org.brekka.phoenix.services.impl.RandomCryptoServiceImpl"
+    <bean id="randomCryptoService" class="org.brekka.phoenix.core.services.impl.RandomCryptoServiceImpl"
           parent="cryptoServiceSupport" />
         
-    <bean id="symmetricCryptoService" class="org.brekka.phoenix.services.impl.SymmetricCryptoServiceImpl"
+    <bean id="symmetricCryptoService" class="org.brekka.phoenix.core.services.impl.SymmetricCryptoServiceImpl"
           parent="cryptoServiceSupport" p:digestCryptoService-ref="digestCryptoService" />
 </beans>

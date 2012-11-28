@@ -16,7 +16,7 @@ import org.brekka.phalanx.core.model.Principal;
 import org.brekka.phalanx.core.services.impl.AsymmetricCryptoServiceImpl;
 import org.brekka.phalanx.core.services.impl.PasswordBasedCryptoServiceImpl;
 import org.brekka.phalanx.core.services.impl.SymmetricCryptoServiceImpl;
-import org.brekka.phoenix.services.impl.CryptoProfileServiceImpl;
+import org.brekka.phoenix.core.services.impl.CryptoProfileServiceImpl;
 import org.brekka.xml.phoenix.v2.model.CryptoProfileRegistryDocument;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +38,7 @@ public class AsymmetricCryptoServiceImplTest {
         CryptoDataDAO cryptoDAO = new TestCryptoDataDAO();
         AsymmetricKeyPairDAO asymmetricKeyPairDAO = new TestAsymmetricKeyPairDAO();
         
-        org.brekka.phoenix.services.impl.SymmetricCryptoServiceImpl symCrypSvc = new org.brekka.phoenix.services.impl.SymmetricCryptoServiceImpl();
+        org.brekka.phoenix.core.services.impl.SymmetricCryptoServiceImpl symCrypSvc = new org.brekka.phoenix.core.services.impl.SymmetricCryptoServiceImpl();
         
         
         symService = new SymmetricCryptoServiceImpl();

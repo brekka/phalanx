@@ -208,9 +208,12 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
         InternalPrivateKeyToken internalPrivateKeyToken = narrow(privateKeyToken);
         InternalSecretKeyToken secretKey = internalPrivateKeyToken.getSecretKey();
         
-        owner = principalDAO.retrieveById(owner.getId());
+        AsymedCryptoData privateKeyData = null;
+        if (owner != null) {
+            owner = principalDAO.retrieveById(owner.getId());
+            privateKeyData = encrypt(secretKey, owner.getDefaultKeyPair());
+        }
         
-        AsymedCryptoData privateKeyData = encrypt(secretKey, owner.getDefaultKeyPair());
         AsymmetricKeyPair asymKeyPair = new AsymmetricKeyPair();
         asymKeyPair.setPrivateKey(privateKeyData);
         asymKeyPair.setPublicKey(keyPair.getPublicKey());
@@ -218,6 +221,18 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
         asymetricKeyPairDAO.create(asymKeyPair);
         return asymKeyPair;
     }
+    
+    /* (non-Javadoc)
+     * @see org.brekka.phalanx.core.services.AsymmetricCryptoService#cloneKeyPairPublic(org.brekka.phalanx.core.model.AsymmetricKeyPair)
+     */
+    @Override
+    public AsymmetricKeyPair cloneKeyPairPublic(AsymmetricKeyPair keyPair) {
+        AsymmetricKeyPair asymKeyPair = new AsymmetricKeyPair();
+        asymKeyPair.setPublicKey(keyPair.getPublicKey());
+        asymetricKeyPairDAO.create(asymKeyPair);
+        return asymKeyPair;
+    }
+    
     
     @Override
     @Transactional(propagation=Propagation.REQUIRED)

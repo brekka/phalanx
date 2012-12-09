@@ -42,8 +42,11 @@ import org.brekka.xml.phalanx.v2.wsops.AuthenticateResponseDocument.Authenticate
 import org.brekka.xml.phalanx.v2.wsops.ChangePasswordRequestDocument;
 import org.brekka.xml.phalanx.v2.wsops.ChangePasswordRequestDocument.ChangePasswordRequest;
 import org.brekka.xml.phalanx.v2.wsops.ChangePasswordResponseDocument;
+import org.brekka.xml.phalanx.v2.wsops.CloneKeyPairPublicRequestDocument;
+import org.brekka.xml.phalanx.v2.wsops.CloneKeyPairPublicRequestDocument.CloneKeyPairPublicRequest;
+import org.brekka.xml.phalanx.v2.wsops.CloneKeyPairPublicResponseDocument;
+import org.brekka.xml.phalanx.v2.wsops.CloneKeyPairPublicResponseDocument.CloneKeyPairPublicResponse;
 import org.brekka.xml.phalanx.v2.wsops.CreatePrincipalRequestDocument;
-import org.brekka.xml.phalanx.v2.wsops.OperationFault;
 import org.brekka.xml.phalanx.v2.wsops.CreatePrincipalRequestDocument.CreatePrincipalRequest;
 import org.brekka.xml.phalanx.v2.wsops.CreatePrincipalResponseDocument;
 import org.brekka.xml.phalanx.v2.wsops.CreatePrincipalResponseDocument.CreatePrincipalResponse;
@@ -67,6 +70,7 @@ import org.brekka.xml.phalanx.v2.wsops.GenerateKeyPairResponseDocument.GenerateK
 import org.brekka.xml.phalanx.v2.wsops.LogoutRequestDocument;
 import org.brekka.xml.phalanx.v2.wsops.LogoutRequestDocument.LogoutRequest;
 import org.brekka.xml.phalanx.v2.wsops.LogoutResponseDocument;
+import org.brekka.xml.phalanx.v2.wsops.OperationFault;
 import org.brekka.xml.phalanx.v2.wsops.PasswordBasedDecryptionRequestDocument;
 import org.brekka.xml.phalanx.v2.wsops.PasswordBasedDecryptionRequestDocument.PasswordBasedDecryptionRequest;
 import org.brekka.xml.phalanx.v2.wsops.PasswordBasedDecryptionResponseDocument;
@@ -182,11 +186,35 @@ public class PhalanxServiceClient implements PhalanxService {
         GenerateKeyPairRequestDocument requestDocument = GenerateKeyPairRequestDocument.Factory.newInstance();
         GenerateKeyPairRequest request = requestDocument.addNewGenerateKeyPairRequest();
         request.setKeyPair(xml(protectedByKeyPair));
-        request.setOwner(xml(ownerPrincipal));
+        if (ownerPrincipal != null) {
+            request.setOwner(xml(ownerPrincipal));
+        }
         
         GenerateKeyPairResponseDocument responseDocument = marshal(requestDocument, GenerateKeyPairResponseDocument.class);
         GenerateKeyPairResponse response = responseDocument.getGenerateKeyPairResponse();
         return identity(response.getKeyPair());
+    }
+    
+    /* (non-Javadoc)
+     * @see org.brekka.phalanx.api.services.PhalanxService#generateKeyPair(org.brekka.phalanx.api.model.KeyPair)
+     */
+    @Override
+    public KeyPair generateKeyPair(KeyPair protectedByKeyPair) {
+        CloneKeyPairPublicRequestDocument requestDocument = CloneKeyPairPublicRequestDocument.Factory.newInstance();
+        CloneKeyPairPublicRequest request = requestDocument.addNewCloneKeyPairPublicRequest();
+        request.setKeyPair(xml(protectedByKeyPair));
+        CloneKeyPairPublicResponseDocument responseDocument = marshal(requestDocument, CloneKeyPairPublicResponseDocument.class);
+        CloneKeyPairPublicResponse response = responseDocument.getCloneKeyPairPublicResponse();
+        return identity(response.getKeyPair());
+    }
+    
+    /* (non-Javadoc)
+     * @see org.brekka.phalanx.api.services.PhalanxService#cloneKeyPairPublic(org.brekka.phalanx.api.model.KeyPair)
+     */
+    @Override
+    public KeyPair cloneKeyPairPublic(KeyPair keyPair) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     @Override

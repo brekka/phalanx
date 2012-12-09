@@ -45,10 +45,11 @@ public class AsymmetricKeyPair implements IdentifiableEntity<UUID>, KeyPair {
     
     /**
      * The private key data. This should always be an instance of on the {@link CryptoData} sub-types as private keys
-     * need to be protected.
+     * need to be protected. Can be null which indicates that this is an an anonymous key pair containing only a 
+     * public key.
      */
     @OneToOne
-    @JoinColumn(name="PrivateKeyID", nullable=false)
+    @JoinColumn(name="PrivateKeyID")
     private CryptoData privateKey;
     
     /**

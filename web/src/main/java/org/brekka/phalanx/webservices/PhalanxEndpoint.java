@@ -38,6 +38,10 @@ import org.brekka.xml.phalanx.v2.wsops.AuthenticateResponseDocument.Authenticate
 import org.brekka.xml.phalanx.v2.wsops.ChangePasswordRequestDocument;
 import org.brekka.xml.phalanx.v2.wsops.ChangePasswordRequestDocument.ChangePasswordRequest;
 import org.brekka.xml.phalanx.v2.wsops.ChangePasswordResponseDocument;
+import org.brekka.xml.phalanx.v2.wsops.CloneKeyPairPublicRequestDocument;
+import org.brekka.xml.phalanx.v2.wsops.CloneKeyPairPublicRequestDocument.CloneKeyPairPublicRequest;
+import org.brekka.xml.phalanx.v2.wsops.CloneKeyPairPublicResponseDocument;
+import org.brekka.xml.phalanx.v2.wsops.CloneKeyPairPublicResponseDocument.CloneKeyPairPublicResponse;
 import org.brekka.xml.phalanx.v2.wsops.CreatePrincipalRequestDocument;
 import org.brekka.xml.phalanx.v2.wsops.CreatePrincipalRequestDocument.CreatePrincipalRequest;
 import org.brekka.xml.phalanx.v2.wsops.CreatePrincipalResponseDocument;
@@ -202,8 +206,12 @@ public class PhalanxEndpoint {
     @ResponsePayload
     public GenerateKeyPairResponseDocument generateKeyPair(@RequestPayload GenerateKeyPairRequestDocument requestDocument) {
         GenerateKeyPairRequest request = requestDocument.getGenerateKeyPairRequest();
-        KeyPair keyPair = phalanxService.generateKeyPair(id(request.getKeyPair().xgetId()), id(request.getOwner().xgetId()));
-        
+        KeyPair keyPair;
+        if (request.isSetOwner()) {
+            keyPair = phalanxService.generateKeyPair(id(request.getKeyPair().xgetId()), id(request.getOwner().xgetId()));
+        } else {
+            keyPair = phalanxService.generateKeyPair(id(request.getKeyPair().xgetId()));
+        }
         GenerateKeyPairResponseDocument responseDocument = GenerateKeyPairResponseDocument.Factory.newInstance();
         GenerateKeyPairResponse response = responseDocument.addNewGenerateKeyPairResponse();
         response.addNewKeyPair().setId(id(keyPair.getId()));
@@ -225,6 +233,17 @@ public class PhalanxEndpoint {
                 return responseDocument;
             }
         });
+    }
+    
+    @PayloadRoot(localPart = "CloneKeyPairPublicRequest", namespace = NS)
+    @ResponsePayload
+    public CloneKeyPairPublicResponseDocument cloneKeyPairPublic(@RequestPayload CloneKeyPairPublicRequestDocument requestDocument) {
+        CloneKeyPairPublicRequest request = requestDocument.getCloneKeyPairPublicRequest();
+        CloneKeyPairPublicResponseDocument responseDocument = CloneKeyPairPublicResponseDocument.Factory.newInstance();
+        CloneKeyPairPublicResponse response = responseDocument.addNewCloneKeyPairPublicResponse();
+        KeyPair keyPair = phalanxService.cloneKeyPairPublic(id(request.getKeyPair().xgetId()));
+        response.addNewKeyPair().setId(id(keyPair.getId()));
+        return responseDocument;
     }
 
     @PayloadRoot(localPart = "DeleteCryptedDataRequest", namespace = NS)

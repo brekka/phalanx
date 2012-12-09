@@ -79,6 +79,14 @@ public interface PhalanxService {
     PrivateKeyToken decryptKeyPair(KeyPair keyPair, PrivateKeyToken privateKeyToken);
     
     /**
+     * Create a new key pair which will be protected using the public key from the key pair <code>protectedByKeyPairId</code>. It will not be
+     * assigned to any principal.
+     * @param protectedByKeyPair the key pair that will protect the new key pair.
+     * @return the new key pair.
+     */
+    KeyPair generateKeyPair(KeyPair protectedByKeyPair);
+    
+    /**
      * Create a new key pair which will be protected using the public key from the key pair <code>protectedByKeyPairId</code>.
      * @param protectedByKeyPair the key pair that will protect the new key pair.
      * @param ownerPrincipal the owner of the keyPair
@@ -95,7 +103,13 @@ public interface PhalanxService {
      */
     KeyPair assignKeyPair(PrivateKeyToken privateKeyToken, Principal assignToPrincipal);
     
-
+    /**
+     * Create a copy of the specfied keypair containing only the public key.
+     * 
+     * @param associateDivisionKeyPair
+     * @return
+     */
+    KeyPair cloneKeyPairPublic(KeyPair keyPair);
     
     /*
      * Deletions

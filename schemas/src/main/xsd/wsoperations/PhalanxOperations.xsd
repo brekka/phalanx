@@ -117,7 +117,7 @@
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element name="KeyPair" type="px:KeyPairType" />
-				<xsd:element name="Owner" type="px:PrincipalType" />
+				<xsd:element name="Owner" type="px:PrincipalType" minOccurs="0" />
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
@@ -130,6 +130,23 @@
 		</xsd:complexType>
 	</xsd:element>
     <xsd:element name="GenerateKeyPairFault" type="pxws:OperationFault" />
+    
+    <xsd:element name="CloneKeyPairPublicRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="KeyPair" type="px:KeyPairType" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="CloneKeyPairPublicResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="KeyPair" type="px:KeyPairType" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="CloneKeyPairPublicFault" type="pxws:OperationFault" />
 
 	<xsd:element name="AssignKeyPairRequest">
 		<xsd:complexType>

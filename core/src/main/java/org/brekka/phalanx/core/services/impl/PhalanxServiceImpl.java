@@ -99,8 +99,29 @@ public class PhalanxServiceImpl implements PhalanxService {
     @Transactional(propagation=Propagation.REQUIRED)
     public KeyPair generateKeyPair(KeyPair protectedByKeyPair, org.brekka.phalanx.api.model.Principal ownerPrincipal) {
         AsymmetricKeyPair keyPair = asymmetricCryptoService.retrieveKeyPair(protectedByKeyPair.getId());
-        Principal principal = principalService.retrieveById(ownerPrincipal.getId());
+        Principal principal = null;
+        if (ownerPrincipal != null) {
+            principal = principalService.retrieveById(ownerPrincipal.getId());
+        }
         AsymmetricKeyPair newKeyPair = asymmetricCryptoService.generateKeyPair(keyPair, principal);
+        return newKeyPair;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.brekka.phalanx.api.services.PhalanxService#generateKeyPair(org.brekka.phalanx.api.model.KeyPair)
+     */
+    @Override
+    public KeyPair generateKeyPair(KeyPair protectedByKeyPair) {
+        return generateKeyPair(protectedByKeyPair, null);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.brekka.phalanx.api.services.PhalanxService#cloneKeyPairPublic(org.brekka.phalanx.api.model.KeyPair)
+     */
+    @Override
+    public KeyPair cloneKeyPairPublic(KeyPair protectedByKeyPair) {
+        AsymmetricKeyPair keyPair = asymmetricCryptoService.retrieveKeyPair(protectedByKeyPair.getId());
+        AsymmetricKeyPair newKeyPair = asymmetricCryptoService.cloneKeyPairPublic(keyPair);
         return newKeyPair;
     }
 

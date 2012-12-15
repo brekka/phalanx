@@ -111,6 +111,7 @@ public class PhalanxServiceImpl implements PhalanxService {
      * @see org.brekka.phalanx.api.services.PhalanxService#generateKeyPair(org.brekka.phalanx.api.model.KeyPair)
      */
     @Override
+    @Transactional(propagation=Propagation.REQUIRED)
     public KeyPair generateKeyPair(KeyPair protectedByKeyPair) {
         return generateKeyPair(protectedByKeyPair, null);
     }
@@ -119,6 +120,7 @@ public class PhalanxServiceImpl implements PhalanxService {
      * @see org.brekka.phalanx.api.services.PhalanxService#cloneKeyPairPublic(org.brekka.phalanx.api.model.KeyPair)
      */
     @Override
+    @Transactional(propagation=Propagation.REQUIRED)
     public KeyPair cloneKeyPairPublic(KeyPair protectedByKeyPair) {
         AsymmetricKeyPair keyPair = asymmetricCryptoService.retrieveKeyPair(protectedByKeyPair.getId());
         AsymmetricKeyPair newKeyPair = asymmetricCryptoService.cloneKeyPairPublic(keyPair);
@@ -130,6 +132,17 @@ public class PhalanxServiceImpl implements PhalanxService {
     public KeyPair assignKeyPair(PrivateKeyToken privateKeyToken, org.brekka.phalanx.api.model.Principal assignToPrincipalIn) {
         Principal assignToPrincipal = principalService.retrieveById(assignToPrincipalIn.getId());
         AsymmetricKeyPair newKeyPair = asymmetricCryptoService.assignKeyPair(privateKeyToken, assignToPrincipal);
+        return newKeyPair;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.brekka.phalanx.api.services.PhalanxService#assignKeyPair(org.brekka.phalanx.api.model.PrivateKeyToken, org.brekka.phalanx.api.model.KeyPair)
+     */
+    @Override
+    @Transactional(propagation=Propagation.REQUIRED)
+    public KeyPair assignKeyPair(PrivateKeyToken privateKeyToken, KeyPair assignToKeyPair) {
+        AsymmetricKeyPair keyPair = asymmetricCryptoService.retrieveKeyPair(assignToKeyPair.getId());
+        AsymmetricKeyPair newKeyPair = asymmetricCryptoService.assignKeyPair(privateKeyToken, keyPair);
         return newKeyPair;
     }
 

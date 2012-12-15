@@ -154,7 +154,10 @@
 				<xsd:extension base="pxws:PrincipalAssertedRequest">
 					<xsd:sequence>
 						<xsd:element name="PrivateKey" type="px:PrivateKeyTokenType" />
-						<xsd:element name="AssignTo" type="px:PrincipalType" />
+                        <xsd:choice>
+    						<xsd:element name="AssignToPrincipal" type="px:PrincipalType" />
+                            <xsd:element name="AssignToKeyPair" type="px:KeyPairType" />
+                        </xsd:choice>
 					</xsd:sequence>
 				</xsd:extension>
 			</xsd:complexContent>

@@ -56,6 +56,13 @@ public interface AsymmetricCryptoService {
     AsymmetricKeyPair assignKeyPair(PrivateKeyToken privateKeyToken, Principal owner);
 
     /**
+     * @param privateKeyToken
+     * @param assignToKeyPair
+     * @return
+     */
+    AsymmetricKeyPair assignKeyPair(PrivateKeyToken privateKeyToken, AsymmetricKeyPair assignToKeyPair);
+    
+    /**
      * @param keyPair
      * @return
      */

@@ -104,6 +104,15 @@ public interface PhalanxService {
     KeyPair assignKeyPair(PrivateKeyToken privateKeyToken, Principal assignToPrincipal);
     
     /**
+     * Create a new key pair assignment that will be protected by the specified key pair
+     * 
+     * @param privateKeyToken the token to assign access to
+     * @param assignToKeyPair the key pair to assign to.
+     * @return the id of the new key pair that gives the specified principal access to any resources protected by this private key.
+     */
+    KeyPair assignKeyPair(PrivateKeyToken privateKeyToken, KeyPair assignToKeyPair);
+    
+    /**
      * Create a copy of the specfied keypair containing only the public key.
      * 
      * @param associateDivisionKeyPair

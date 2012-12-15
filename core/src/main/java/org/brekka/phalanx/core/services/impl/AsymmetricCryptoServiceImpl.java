@@ -214,12 +214,20 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
             privateKeyData = encrypt(secretKey, owner.getDefaultKeyPair());
         }
         
-        AsymmetricKeyPair asymKeyPair = new AsymmetricKeyPair();
-        asymKeyPair.setPrivateKey(privateKeyData);
-        asymKeyPair.setPublicKey(keyPair.getPublicKey());
-        asymKeyPair.setOwner(owner);
-        asymetricKeyPairDAO.create(asymKeyPair);
-        return asymKeyPair;
+        return prepareKeyPair(owner, keyPair, privateKeyData);
+    }
+
+    
+    /* (non-Javadoc)
+     * @see org.brekka.phalanx.core.services.AsymmetricCryptoService#assignKeyPair(org.brekka.phalanx.api.model.PrivateKeyToken, org.brekka.phalanx.core.model.AsymmetricKeyPair)
+     */
+    @Override
+    public AsymmetricKeyPair assignKeyPair(PrivateKeyToken privateKeyToken, AsymmetricKeyPair assignToKeyPair) {
+        AsymmetricKeyPair keyPair = (AsymmetricKeyPair) privateKeyToken.getKeyPair();
+        InternalPrivateKeyToken internalPrivateKeyToken = narrow(privateKeyToken);
+        InternalSecretKeyToken secretKey = internalPrivateKeyToken.getSecretKey();
+        AsymedCryptoData privateKeyData = encrypt(secretKey, assignToKeyPair);
+        return prepareKeyPair(null, keyPair, privateKeyData);
     }
     
     /* (non-Javadoc)
@@ -301,7 +309,20 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
         return secretKeyToken;
     }
     
-    
+    /**
+     * @param owner
+     * @param keyPair
+     * @param privateKeyData
+     * @return
+     */
+    protected AsymmetricKeyPair prepareKeyPair(Principal owner, AsymmetricKeyPair keyPair, AsymedCryptoData privateKeyData) {
+        AsymmetricKeyPair asymKeyPair = new AsymmetricKeyPair();
+        asymKeyPair.setPrivateKey(privateKeyData);
+        asymKeyPair.setPublicKey(keyPair.getPublicKey());
+        asymKeyPair.setOwner(owner);
+        asymetricKeyPairDAO.create(asymKeyPair);
+        return asymKeyPair;
+    }
 
     private static InternalPrivateKeyToken narrow(PrivateKeyToken privateKeyToken) {
         if (privateKeyToken instanceof InternalPrivateKeyToken == false) {

@@ -228,7 +228,12 @@ public class PhalanxEndpoint {
                 AssignKeyPairResponseDocument responseDocument = AssignKeyPairResponseDocument.Factory.newInstance();
                 AssignKeyPairResponse response = responseDocument.addNewAssignKeyPairResponse();
                 PrivateKeyToken privateKeyToken = sessionService.retrievePrivateKey(request.getPrivateKey());
-                KeyPair keyPair = phalanxService.assignKeyPair(privateKeyToken, id(request.getAssignTo().xgetId()));
+                KeyPair keyPair;
+                if (request.isSetAssignToPrincipal()) {
+                    keyPair = phalanxService.assignKeyPair(privateKeyToken, id(request.getAssignToPrincipal().xgetId()));
+                } else {
+                    keyPair = phalanxService.assignKeyPair(privateKeyToken, id(request.getAssignToKeyPair().xgetId()));
+                }
                 response.addNewKeyPair().setId(id(keyPair.getId()));
                 return responseDocument;
             }

@@ -224,7 +224,24 @@ public class PhalanxServiceClient implements PhalanxService {
         PrivateKeyTokenImpl privateKey = narrow(privateKeyToken);
         request.setSessionID(privateKey.getAuthenticatedPrincipal().getSessionId());
         request.setPrivateKey(privateKey.getId());
-        request.setAssignTo(xml(assignToPrincipal));
+        request.setAssignToPrincipal(xml(assignToPrincipal));
+        
+        AssignKeyPairResponseDocument responseDocument = marshal(requestDocument, AssignKeyPairResponseDocument.class);
+        AssignKeyPairResponse response = responseDocument.getAssignKeyPairResponse();
+        return identity(response.getKeyPair());
+    }
+    
+    /* (non-Javadoc)
+     * @see org.brekka.phalanx.api.services.PhalanxService#assignKeyPair(org.brekka.phalanx.api.model.PrivateKeyToken, org.brekka.phalanx.api.model.KeyPair)
+     */
+    @Override
+    public KeyPair assignKeyPair(PrivateKeyToken privateKeyToken, KeyPair assignToKeyPair) {
+        AssignKeyPairRequestDocument requestDocument = AssignKeyPairRequestDocument.Factory.newInstance();
+        AssignKeyPairRequest request = requestDocument.addNewAssignKeyPairRequest();
+        PrivateKeyTokenImpl privateKey = narrow(privateKeyToken);
+        request.setSessionID(privateKey.getAuthenticatedPrincipal().getSessionId());
+        request.setPrivateKey(privateKey.getId());
+        request.setAssignToKeyPair(xml(assignToKeyPair));
         
         AssignKeyPairResponseDocument responseDocument = marshal(requestDocument, AssignKeyPairResponseDocument.class);
         AssignKeyPairResponse response = responseDocument.getAssignKeyPairResponse();

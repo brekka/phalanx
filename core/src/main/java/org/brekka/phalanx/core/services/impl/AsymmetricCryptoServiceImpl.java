@@ -61,13 +61,14 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
         InternalPrivateKeyToken ipkt = narrow(privateKeyToken);
         PrivateKey privateKey = ipkt.getPrivateKey();
         
-//        AsymmetricKeyPair dataKeyPair = cryptoData.getKeyPair();
-//        AsymmetricKeyPair incomingkeyPair = ipkt.getKeyPair();
-//        if (!dataKeyPair.getId().equals(incomingkeyPair.getId())) {
-//            throw new PhalanxException(PhalanxErrorCode.CP204, 
-//                    "The supplied private key '%s' does not match that required to decrypt the key '%s'", 
-//                    incomingkeyPair.getPrivateKey().getId(), dataKeyPair.getPrivateKey().getId());
-//        }
+        AsymmetricKeyPair dataKeyPair = cryptoData.getKeyPair();
+        AsymmetricKeyPair incomingkeyPair = ipkt.getKeyPair();
+        // Public keys should always match, even if it is not the same keyPair.
+        if (!dataKeyPair.getPublicKey().getId().equals(incomingkeyPair.getPublicKey().getId())) {
+            throw new PhalanxException(PhalanxErrorCode.CP204, 
+                    "The supplied private key '%s' (public key '%s') does not match that required to decrypt the keyPair '%s' (public key '%s').", 
+                    incomingkeyPair.getPrivateKey().getId(), incomingkeyPair.getPublicKey().getId(), dataKeyPair.getId(), dataKeyPair.getPublicKey().getId());
+        }
         
         byte[] data;
         try {
@@ -318,6 +319,7 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
     protected AsymmetricKeyPair prepareKeyPair(Principal owner, AsymmetricKeyPair keyPair, AsymedCryptoData privateKeyData) {
         AsymmetricKeyPair asymKeyPair = new AsymmetricKeyPair();
         asymKeyPair.setPrivateKey(privateKeyData);
+        // Keep the public key the same
         asymKeyPair.setPublicKey(keyPair.getPublicKey());
         asymKeyPair.setOwner(owner);
         asymetricKeyPairDAO.create(asymKeyPair);

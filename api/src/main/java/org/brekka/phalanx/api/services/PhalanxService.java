@@ -120,6 +120,13 @@ public interface PhalanxService {
      */
     KeyPair cloneKeyPairPublic(KeyPair keyPair);
     
+    /**
+     * Retrieve the actual public key in its standard byte array representation.
+     * @param keyPair the key pair from which to return the public key
+     * @return the public key part of the key pair in its standard byte array form.
+     */
+    byte[] retrievePublicKey(KeyPair keyPair);
+    
     /*
      * Deletions
      */

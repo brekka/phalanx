@@ -145,6 +145,15 @@ public class PhalanxServiceImpl implements PhalanxService {
         AsymmetricKeyPair newKeyPair = asymmetricCryptoService.assignKeyPair(privateKeyToken, keyPair);
         return newKeyPair;
     }
+    
+    /* (non-Javadoc)
+     * @see org.brekka.phalanx.api.services.PhalanxService#retrievePublicKey(org.brekka.phalanx.api.model.KeyPair)
+     */
+    @Override
+    public byte[] retrievePublicKey(KeyPair keyPair) {
+        AsymmetricKeyPair asymKeyPair = asymmetricCryptoService.retrieveKeyPair(keyPair.getId());
+        return asymKeyPair.getPublicKey().getData();
+    }
 
     @Override
     @Transactional(propagation=Propagation.REQUIRED)

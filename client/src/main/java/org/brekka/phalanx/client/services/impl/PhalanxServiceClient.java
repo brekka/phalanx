@@ -79,6 +79,10 @@ import org.brekka.xml.phalanx.v2.wsops.PasswordBasedEncryptionRequestDocument;
 import org.brekka.xml.phalanx.v2.wsops.PasswordBasedEncryptionRequestDocument.PasswordBasedEncryptionRequest;
 import org.brekka.xml.phalanx.v2.wsops.PasswordBasedEncryptionResponseDocument;
 import org.brekka.xml.phalanx.v2.wsops.PasswordBasedEncryptionResponseDocument.PasswordBasedEncryptionResponse;
+import org.brekka.xml.phalanx.v2.wsops.RetrievePublicKeyRequestDocument;
+import org.brekka.xml.phalanx.v2.wsops.RetrievePublicKeyRequestDocument.RetrievePublicKeyRequest;
+import org.brekka.xml.phalanx.v2.wsops.RetrievePublicKeyResponseDocument;
+import org.brekka.xml.phalanx.v2.wsops.RetrievePublicKeyResponseDocument.RetrievePublicKeyResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ws.client.core.WebServiceOperations;
@@ -200,12 +204,7 @@ public class PhalanxServiceClient implements PhalanxService {
      */
     @Override
     public KeyPair generateKeyPair(KeyPair protectedByKeyPair) {
-        CloneKeyPairPublicRequestDocument requestDocument = CloneKeyPairPublicRequestDocument.Factory.newInstance();
-        CloneKeyPairPublicRequest request = requestDocument.addNewCloneKeyPairPublicRequest();
-        request.setKeyPair(xml(protectedByKeyPair));
-        CloneKeyPairPublicResponseDocument responseDocument = marshal(requestDocument, CloneKeyPairPublicResponseDocument.class);
-        CloneKeyPairPublicResponse response = responseDocument.getCloneKeyPairPublicResponse();
-        return identity(response.getKeyPair());
+        return generateKeyPair(protectedByKeyPair, null);
     }
     
     /* (non-Javadoc)
@@ -213,8 +212,12 @@ public class PhalanxServiceClient implements PhalanxService {
      */
     @Override
     public KeyPair cloneKeyPairPublic(KeyPair keyPair) {
-        // TODO Auto-generated method stub
-        return null;
+        CloneKeyPairPublicRequestDocument requestDocument = CloneKeyPairPublicRequestDocument.Factory.newInstance();
+        CloneKeyPairPublicRequest request = requestDocument.addNewCloneKeyPairPublicRequest();
+        request.setKeyPair(xml(keyPair));
+        CloneKeyPairPublicResponseDocument responseDocument = marshal(requestDocument, CloneKeyPairPublicResponseDocument.class);
+        CloneKeyPairPublicResponse response = responseDocument.getCloneKeyPairPublicResponse();
+        return identity(response.getKeyPair());
     }
 
     @Override
@@ -247,6 +250,20 @@ public class PhalanxServiceClient implements PhalanxService {
         AssignKeyPairResponse response = responseDocument.getAssignKeyPairResponse();
         return identity(response.getKeyPair());
     }
+    
+    /* (non-Javadoc)
+     * @see org.brekka.phalanx.api.services.PhalanxService#retrievePublicKey(org.brekka.phalanx.api.model.KeyPair)
+     */
+    @Override
+    public byte[] retrievePublicKey(KeyPair keyPair) {
+        RetrievePublicKeyRequestDocument requestDocument = RetrievePublicKeyRequestDocument.Factory.newInstance();
+        RetrievePublicKeyRequest request = requestDocument.addNewRetrievePublicKeyRequest();
+        request.setKeyPair(xml(keyPair));
+        RetrievePublicKeyResponseDocument responseDocument = marshal(requestDocument, RetrievePublicKeyResponseDocument.class);
+        RetrievePublicKeyResponse response = responseDocument.getRetrievePublicKeyResponse();
+        return response.getPublicKeyBytes();
+    }
+    
 
     @Override
     public void deleteCryptedData(CryptedData cryptedDataItem) {
@@ -345,41 +362,6 @@ public class PhalanxServiceClient implements PhalanxService {
         }
         return (RespDoc) marshalSendAndReceive;
     }
-    
-    /**
-     * @param e
-     */
-    private void identifyFault(SoapFaultClientException e) {
-        Result result = e.getSoapFault().getFaultDetail().getResult();
-        OperationFault fault = null;
-        if (result instanceof DOMResult) {
-            DOMResult domResult = (DOMResult) result;
-            Node node = domResult.getNode().getFirstChild();
-            XmlCursor cursor = null;
-            try {
-                XmlObject object = XmlObject.Factory.parse(node);
-                cursor = object.newCursor();
-                while(cursor.hasNextToken()) {
-                    XmlObject xml = cursor.getObject();
-                    if (xml instanceof OperationFault) {
-                        fault = (OperationFault) xml;
-                        break;
-                    }
-                    cursor.toNextToken();
-                }
-            } catch (XmlException xmlex) {
-                // Never mind
-            } finally {
-                if (cursor != null) {
-                    cursor.dispose();
-                }
-            }
-        }
-        if (fault != null) {
-            PhalanxErrorCode errorCode = PhalanxErrorCode.valueOf(fault.getCode());
-            throw new PhalanxException(errorCode, fault.getMessage());
-        }
-    }
 
     protected PrivateKeyTokenImpl narrow(PrivateKeyToken privateKeyToken) {
         if (privateKeyToken instanceof PrivateKeyTokenImpl == false) {
@@ -425,5 +407,40 @@ public class PhalanxServiceClient implements PhalanxService {
     
     private static UUID uuid(UUIDType uuid) {
         return UUID.fromString(uuid.getStringValue());
+    }
+    
+    /**
+     * @param e
+     */
+    private static void identifyFault(SoapFaultClientException e) {
+        Result result = e.getSoapFault().getFaultDetail().getResult();
+        OperationFault fault = null;
+        if (result instanceof DOMResult) {
+            DOMResult domResult = (DOMResult) result;
+            Node node = domResult.getNode().getFirstChild();
+            XmlCursor cursor = null;
+            try {
+                XmlObject object = XmlObject.Factory.parse(node);
+                cursor = object.newCursor();
+                while(cursor.hasNextToken()) {
+                    XmlObject xml = cursor.getObject();
+                    if (xml instanceof OperationFault) {
+                        fault = (OperationFault) xml;
+                        break;
+                    }
+                    cursor.toNextToken();
+                }
+            } catch (XmlException xmlex) {
+                // Never mind
+            } finally {
+                if (cursor != null) {
+                    cursor.dispose();
+                }
+            }
+        }
+        if (fault != null) {
+            PhalanxErrorCode errorCode = PhalanxErrorCode.valueOf(fault.getCode());
+            throw new PhalanxException(errorCode, fault.getMessage());
+        }
     }
 }

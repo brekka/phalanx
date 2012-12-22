@@ -75,6 +75,10 @@ import org.brekka.xml.phalanx.v2.wsops.PasswordBasedEncryptionRequestDocument.Pa
 import org.brekka.xml.phalanx.v2.wsops.PasswordBasedEncryptionResponseDocument;
 import org.brekka.xml.phalanx.v2.wsops.PasswordBasedEncryptionResponseDocument.PasswordBasedEncryptionResponse;
 import org.brekka.xml.phalanx.v2.wsops.PrincipalAssertedRequest;
+import org.brekka.xml.phalanx.v2.wsops.RetrievePublicKeyRequestDocument;
+import org.brekka.xml.phalanx.v2.wsops.RetrievePublicKeyRequestDocument.RetrievePublicKeyRequest;
+import org.brekka.xml.phalanx.v2.wsops.RetrievePublicKeyResponseDocument;
+import org.brekka.xml.phalanx.v2.wsops.RetrievePublicKeyResponseDocument.RetrievePublicKeyResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
@@ -248,6 +252,17 @@ public class PhalanxEndpoint {
         CloneKeyPairPublicResponse response = responseDocument.addNewCloneKeyPairPublicResponse();
         KeyPair keyPair = phalanxService.cloneKeyPairPublic(id(request.getKeyPair().xgetId()));
         response.addNewKeyPair().setId(id(keyPair.getId()));
+        return responseDocument;
+    }
+    
+    @PayloadRoot(localPart = "RetrievePublicKeyRequest", namespace = NS)
+    @ResponsePayload
+    public RetrievePublicKeyResponseDocument RetrievePublicKey(@RequestPayload RetrievePublicKeyRequestDocument requestDocument) {
+        RetrievePublicKeyRequest request = requestDocument.getRetrievePublicKeyRequest();
+        RetrievePublicKeyResponseDocument responseDocument = RetrievePublicKeyResponseDocument.Factory.newInstance();
+        RetrievePublicKeyResponse response = responseDocument.addNewRetrievePublicKeyResponse();
+        byte[] publicKeyBytes = phalanxService.retrievePublicKey(id(request.getKeyPair().xgetId()));
+        response.setPublicKeyBytes(publicKeyBytes);
         return responseDocument;
     }
 

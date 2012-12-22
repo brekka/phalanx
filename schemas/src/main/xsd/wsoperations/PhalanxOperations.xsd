@@ -172,6 +172,25 @@
 		</xsd:complexType>
 	</xsd:element>
     <xsd:element name="AssignKeyPairFault" type="pxws:OperationFault" />
+    
+    
+    <xsd:element name="RetrievePublicKeyRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="KeyPair" type="px:KeyPairType" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="RetrievePublicKeyResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="PublicKeyBytes" type="xsd:base64Binary" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="RetrievePublicKeyFault" type="pxws:OperationFault" />
+
 
 
 	<!-- Deletions -->

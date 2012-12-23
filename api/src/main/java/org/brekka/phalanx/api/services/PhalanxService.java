@@ -2,6 +2,7 @@ package org.brekka.phalanx.api.services;
 
 import org.brekka.phalanx.api.model.AuthenticatedPrincipal;
 import org.brekka.phalanx.api.model.CryptedData;
+import org.brekka.phalanx.api.model.ExportedPublicKey;
 import org.brekka.phalanx.api.model.KeyPair;
 import org.brekka.phalanx.api.model.Principal;
 import org.brekka.phalanx.api.model.PrivateKeyToken;
@@ -125,7 +126,7 @@ public interface PhalanxService {
      * @param keyPair the key pair from which to return the public key
      * @return the public key part of the key pair in its standard byte array form.
      */
-    byte[] retrievePublicKey(KeyPair keyPair);
+    ExportedPublicKey retrievePublicKey(KeyPair keyPair);
     
     /*
      * Deletions

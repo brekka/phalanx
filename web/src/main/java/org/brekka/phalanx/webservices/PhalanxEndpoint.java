@@ -8,6 +8,7 @@ import org.brekka.phalanx.api.beans.IdentityKeyPair;
 import org.brekka.phalanx.api.beans.IdentityPrincipal;
 import org.brekka.phalanx.api.model.AuthenticatedPrincipal;
 import org.brekka.phalanx.api.model.CryptedData;
+import org.brekka.phalanx.api.model.ExportedPublicKey;
 import org.brekka.phalanx.api.model.KeyPair;
 import org.brekka.phalanx.api.model.Principal;
 import org.brekka.phalanx.api.model.PrivateKeyToken;
@@ -79,6 +80,7 @@ import org.brekka.xml.phalanx.v2.wsops.RetrievePublicKeyRequestDocument;
 import org.brekka.xml.phalanx.v2.wsops.RetrievePublicKeyRequestDocument.RetrievePublicKeyRequest;
 import org.brekka.xml.phalanx.v2.wsops.RetrievePublicKeyResponseDocument;
 import org.brekka.xml.phalanx.v2.wsops.RetrievePublicKeyResponseDocument.RetrievePublicKeyResponse;
+import org.brekka.xml.phalanx.v2.wsops.RetrievePublicKeyResponseDocument.RetrievePublicKeyResponse.PublicKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
@@ -261,8 +263,10 @@ public class PhalanxEndpoint {
         RetrievePublicKeyRequest request = requestDocument.getRetrievePublicKeyRequest();
         RetrievePublicKeyResponseDocument responseDocument = RetrievePublicKeyResponseDocument.Factory.newInstance();
         RetrievePublicKeyResponse response = responseDocument.addNewRetrievePublicKeyResponse();
-        byte[] publicKeyBytes = phalanxService.retrievePublicKey(id(request.getKeyPair().xgetId()));
-        response.setPublicKeyBytes(publicKeyBytes);
+        ExportedPublicKey exportedPublicKey = phalanxService.retrievePublicKey(id(request.getKeyPair().xgetId()));
+        PublicKey publicKey = response.addNewPublicKey();
+        publicKey.setEncoded(exportedPublicKey.getEncoded());
+        publicKey.setProfile(exportedPublicKey.getCryptoProfile());
         return responseDocument;
     }
 

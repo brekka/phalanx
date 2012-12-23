@@ -185,7 +185,14 @@
     <xsd:element name="RetrievePublicKeyResponse">
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element name="PublicKeyBytes" type="xsd:base64Binary" />
+                <xsd:element name="PublicKey">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Encoded" type="xsd:base64Binary" />
+                            <xsd:element name="Profile" type="xsd:int" />
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>

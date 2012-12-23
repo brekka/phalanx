@@ -14,6 +14,7 @@ import org.brekka.phalanx.api.beans.IdentityCryptedData;
 import org.brekka.phalanx.api.beans.IdentityKeyPair;
 import org.brekka.phalanx.api.model.AuthenticatedPrincipal;
 import org.brekka.phalanx.api.model.CryptedData;
+import org.brekka.phalanx.api.model.ExportedPublicKey;
 import org.brekka.phalanx.api.model.KeyPair;
 import org.brekka.phalanx.api.model.Principal;
 import org.brekka.phalanx.api.model.PrivateKeyToken;
@@ -83,6 +84,7 @@ import org.brekka.xml.phalanx.v2.wsops.RetrievePublicKeyRequestDocument;
 import org.brekka.xml.phalanx.v2.wsops.RetrievePublicKeyRequestDocument.RetrievePublicKeyRequest;
 import org.brekka.xml.phalanx.v2.wsops.RetrievePublicKeyResponseDocument;
 import org.brekka.xml.phalanx.v2.wsops.RetrievePublicKeyResponseDocument.RetrievePublicKeyResponse;
+import org.brekka.xml.phalanx.v2.wsops.RetrievePublicKeyResponseDocument.RetrievePublicKeyResponse.PublicKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ws.client.core.WebServiceOperations;
@@ -255,13 +257,14 @@ public class PhalanxServiceClient implements PhalanxService {
      * @see org.brekka.phalanx.api.services.PhalanxService#retrievePublicKey(org.brekka.phalanx.api.model.KeyPair)
      */
     @Override
-    public byte[] retrievePublicKey(KeyPair keyPair) {
+    public ExportedPublicKey retrievePublicKey(KeyPair keyPair) {
         RetrievePublicKeyRequestDocument requestDocument = RetrievePublicKeyRequestDocument.Factory.newInstance();
         RetrievePublicKeyRequest request = requestDocument.addNewRetrievePublicKeyRequest();
         request.setKeyPair(xml(keyPair));
         RetrievePublicKeyResponseDocument responseDocument = marshal(requestDocument, RetrievePublicKeyResponseDocument.class);
         RetrievePublicKeyResponse response = responseDocument.getRetrievePublicKeyResponse();
-        return response.getPublicKeyBytes();
+        PublicKey publicKey = response.getPublicKey();
+        return new ExportedPublicKeyImpl(publicKey.getEncoded(), publicKey.getProfile());
     }
     
 

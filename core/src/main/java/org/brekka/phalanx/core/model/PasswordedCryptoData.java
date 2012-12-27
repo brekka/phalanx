@@ -23,10 +23,10 @@ public class PasswordedCryptoData extends CryptoData implements CryptedData {
     private static final long serialVersionUID = 7900986833181045388L;
     
     
-    @Column(name="Salt")
+    @Column(name="`Salt`")
     private byte[] salt;
     
-    @Column(name="Iterations")
+    @Column(name="`Iterations`")
     private Integer iterations;
     
     public PasswordedCryptoData() {

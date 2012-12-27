@@ -128,6 +128,13 @@ public interface PhalanxService {
      */
     ExportedPublicKey retrievePublicKey(KeyPair keyPair);
     
+    /**
+     * Retrieve the actual public key in its standard byte array representation of the specified principals default key pair.
+     * @param principal the principal from whom to extract the public key based on their default key pair.
+     * @return the public key part of the default key pair in its standard byte array form.
+     */
+    ExportedPublicKey retrievePublicKey(Principal principal);
+    
     /*
      * Deletions
      */

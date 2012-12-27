@@ -28,7 +28,7 @@ public class AsymedCryptoData extends CryptoData implements CryptedData {
      * The key pair that protects this content
      */
     @OneToOne
-    @JoinColumn(name="KeyPairID")
+    @JoinColumn(name="`KeyPairID`")
     private AsymmetricKeyPair keyPair;
     
     

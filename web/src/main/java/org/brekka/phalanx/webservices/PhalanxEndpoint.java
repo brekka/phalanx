@@ -139,8 +139,10 @@ public class PhalanxEndpoint {
         CryptedData cryptedData;
         if (request.isSetKeyPair()) {
             cryptedData = phalanxService.asymEncrypt(request.getData(), id(request.getKeyPair().xgetId()));
-        } else {
+        } else if (request.isSetRecipient()) {
             cryptedData = phalanxService.asymEncrypt(request.getData(), id(request.getRecipient().xgetId()));
+        } else {
+            throw new IllegalStateException("Invalid XML, one of KeyPair or Recipient must be set");
         }
         
         AsymmetricEncryptionResponseDocument responseDocument = AsymmetricEncryptionResponseDocument.Factory.newInstance();
@@ -237,8 +239,10 @@ public class PhalanxEndpoint {
                 KeyPair keyPair;
                 if (request.isSetAssignToPrincipal()) {
                     keyPair = phalanxService.assignKeyPair(privateKeyToken, id(request.getAssignToPrincipal().xgetId()));
-                } else {
+                } else if (request.isSetAssignToKeyPair()) {
                     keyPair = phalanxService.assignKeyPair(privateKeyToken, id(request.getAssignToKeyPair().xgetId()));
+                } else {
+                    throw new IllegalStateException("Invalid XML, one of AssignToKeyPair or AssignToPrincipal must be set");
                 }
                 response.addNewKeyPair().setId(id(keyPair.getId()));
                 return responseDocument;
@@ -263,7 +267,14 @@ public class PhalanxEndpoint {
         RetrievePublicKeyRequest request = requestDocument.getRetrievePublicKeyRequest();
         RetrievePublicKeyResponseDocument responseDocument = RetrievePublicKeyResponseDocument.Factory.newInstance();
         RetrievePublicKeyResponse response = responseDocument.addNewRetrievePublicKeyResponse();
-        ExportedPublicKey exportedPublicKey = phalanxService.retrievePublicKey(id(request.getKeyPair().xgetId()));
+        ExportedPublicKey exportedPublicKey;
+        if (request.isSetKeyPair()) {
+            exportedPublicKey = phalanxService.retrievePublicKey(id(request.getKeyPair().xgetId()));
+        } else if (request.isSetPrincipal()) {
+            exportedPublicKey = phalanxService.retrievePublicKey(id(request.getPrincipal().xgetId()));
+        } else {
+            throw new IllegalStateException("Invalid XML, one of KeyPair or Principal must be set");
+        }
         PublicKey publicKey = response.addNewPublicKey();
         publicKey.setEncoded(exportedPublicKey.getEncoded());
         publicKey.setProfile(exportedPublicKey.getCryptoProfile());

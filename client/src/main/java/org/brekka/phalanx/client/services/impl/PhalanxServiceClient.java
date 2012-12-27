@@ -267,6 +267,20 @@ public class PhalanxServiceClient implements PhalanxService {
         return new ExportedPublicKeyImpl(publicKey.getEncoded(), publicKey.getProfile());
     }
     
+    /* (non-Javadoc)
+     * @see org.brekka.phalanx.api.services.PhalanxService#retrievePublicKey(org.brekka.phalanx.api.model.Principal)
+     */
+    @Override
+    public ExportedPublicKey retrievePublicKey(Principal principal) {
+        RetrievePublicKeyRequestDocument requestDocument = RetrievePublicKeyRequestDocument.Factory.newInstance();
+        RetrievePublicKeyRequest request = requestDocument.addNewRetrievePublicKeyRequest();
+        request.setPrincipal(xml(principal));
+        RetrievePublicKeyResponseDocument responseDocument = marshal(requestDocument, RetrievePublicKeyResponseDocument.class);
+        RetrievePublicKeyResponse response = responseDocument.getRetrievePublicKeyResponse();
+        PublicKey publicKey = response.getPublicKey();
+        return new ExportedPublicKeyImpl(publicKey.getEncoded(), publicKey.getProfile());
+    }
+    
 
     @Override
     public void deleteCryptedData(CryptedData cryptedDataItem) {

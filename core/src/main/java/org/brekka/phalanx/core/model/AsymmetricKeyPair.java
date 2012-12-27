@@ -23,7 +23,7 @@ import org.hibernate.annotations.Type;
  * @author Andrew Taylor
  */
 @Entity
-@Table(name="\"AsymmetricKeyPair\"", schema=PhalanxConstants.SCHEMA)
+@Table(name="`AsymmetricKeyPair`", schema=PhalanxConstants.SCHEMA)
 public class AsymmetricKeyPair implements IdentifiableEntity<UUID>, KeyPair {
 
     /**
@@ -33,14 +33,14 @@ public class AsymmetricKeyPair implements IdentifiableEntity<UUID>, KeyPair {
 
     @Id
     @Type(type="pg-uuid")
-    @Column(name="ID")
+    @Column(name="`ID`")
     private UUID id;
     
     /**
      * Id of the principal that owns this key pair.
      */
     @ManyToOne
-    @JoinColumn(name="OwnerID")
+    @JoinColumn(name="`OwnerID`")
     private Principal owner;
     
     /**
@@ -49,14 +49,14 @@ public class AsymmetricKeyPair implements IdentifiableEntity<UUID>, KeyPair {
      * public key.
      */
     @OneToOne
-    @JoinColumn(name="PrivateKeyID")
+    @JoinColumn(name="`PrivateKeyID`")
     private CryptoData privateKey;
     
     /**
      * The public key data, which should just be a plain {@link CryptoData} as it does not need to be encrypted.
      */
     @ManyToOne
-    @JoinColumn(name="PublicKeyID", nullable=false)
+    @JoinColumn(name="`PublicKeyID`", nullable=false)
     private CryptoData publicKey;
 
     

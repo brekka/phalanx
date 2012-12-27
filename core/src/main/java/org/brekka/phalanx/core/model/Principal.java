@@ -14,7 +14,7 @@ import org.brekka.phalanx.core.PhalanxConstants;
 import org.hibernate.annotations.Type;
 
 @Entity
-@Table(name = "\"Principal\"", schema=PhalanxConstants.SCHEMA)
+@Table(name = "`Principal`", schema=PhalanxConstants.SCHEMA)
 public class Principal implements IdentifiableEntity<UUID>, org.brekka.phalanx.api.model.Principal {
 
     /**
@@ -24,11 +24,11 @@ public class Principal implements IdentifiableEntity<UUID>, org.brekka.phalanx.a
     
     @Id
     @Type(type="pg-uuid")
-    @Column(name="ID")
+    @Column(name="`ID`")
     private UUID id;
     
     @OneToOne
-    @JoinColumn(name = "DefaultKeyPair")
+    @JoinColumn(name = "`DefaultKeyPair`")
     private AsymmetricKeyPair defaultKeyPair;
     public Principal() {
         

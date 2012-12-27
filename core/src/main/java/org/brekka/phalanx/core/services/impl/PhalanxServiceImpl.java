@@ -156,6 +156,16 @@ public class PhalanxServiceImpl implements PhalanxService {
         CryptoData publicKey = asymKeyPair.getPublicKey();
         return new ExportedPublicKeyImpl(publicKey.getData(), publicKey.getProfile());
     }
+    
+    /* (non-Javadoc)
+     * @see org.brekka.phalanx.api.services.PhalanxService#retrievePublicKey(org.brekka.phalanx.api.model.Principal)
+     */
+    @Override
+    public ExportedPublicKey retrievePublicKey(org.brekka.phalanx.api.model.Principal principal) {
+        Principal thePrincipal = principalService.retrieveById(principal.getId());
+        AsymmetricKeyPair keyPair = thePrincipal.getDefaultKeyPair();
+        return retrievePublicKey(keyPair);
+    }
 
     @Override
     @Transactional(propagation=Propagation.REQUIRED)

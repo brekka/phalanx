@@ -23,8 +23,8 @@ import org.hibernate.annotations.Type;
  */
 @Entity
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name="Type", discriminatorType=DiscriminatorType.STRING, length=8)
-@Table(name="\"CryptoData\"", schema=PhalanxConstants.SCHEMA)
+@DiscriminatorColumn(name="`Type`", discriminatorType=DiscriminatorType.STRING, length=8)
+@Table(name="`CryptoData`", schema=PhalanxConstants.SCHEMA)
 @DiscriminatorValue("Plain")
 public class CryptoData implements IdentifiableEntity<UUID> {
     
@@ -35,13 +35,13 @@ public class CryptoData implements IdentifiableEntity<UUID> {
     
     @Id
     @Type(type="pg-uuid")
-    @Column(name="ID")
+    @Column(name="`ID`")
     private UUID id;
 
-    @Column(name="Data", nullable=false)
+    @Column(name="`Data`", nullable=false)
     private byte[] data;
     
-    @Column(name="Profile")
+    @Column(name="`Profile`")
     private int profile;
 
     public final UUID getId() {

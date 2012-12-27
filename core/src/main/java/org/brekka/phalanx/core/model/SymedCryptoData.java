@@ -21,14 +21,14 @@ public class SymedCryptoData extends CryptoData {
      */
     private static final long serialVersionUID = -1121467573145122568L;
 
-    @Column(name="IV")
+    @Column(name="`IV`")
     private byte[] iv;
     
     /**
      * The thing that is protecting this data
      */
     @OneToOne
-    @JoinColumn(name="KeyDataID")
+    @JoinColumn(name="`KeyDataID`")
     private CryptoData key;
 
     public byte[] getIv() {

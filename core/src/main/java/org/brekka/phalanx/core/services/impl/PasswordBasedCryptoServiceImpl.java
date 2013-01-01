@@ -4,6 +4,8 @@ import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
+import javax.crypto.BadPaddingException;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.brekka.phalanx.api.PhalanxErrorCode;
 import org.brekka.phalanx.api.PhalanxException;
@@ -17,6 +19,7 @@ import org.brekka.phoenix.api.DigestResult;
 import org.brekka.phoenix.api.SymmetricCryptoSpec;
 import org.brekka.phoenix.api.services.DerivedKeyCryptoService;
 import org.brekka.phoenix.api.services.DigestCryptoService;
+import org.brekka.phoenix.core.PhoenixException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -50,7 +53,16 @@ public class PasswordBasedCryptoServiceImpl extends AbstractCryptoService implem
         DerivedKey derivedKey = phoenixDerived.apply(key, salt, iterations, cryptoProfile);
         SymmetricCryptoSpec symmetricCryptoSpec = phoenixSymmetric.toSymmetricCryptoSpec(derivedKey);
         
-        byte[] result = phoenixSymmetric.decrypt(cipherText, symmetricCryptoSpec);
+        byte[] result;
+        try {
+            result = phoenixSymmetric.decrypt(cipherText, symmetricCryptoSpec);
+        } catch (PhoenixException e) {
+            if (e.getCause() instanceof BadPaddingException) {
+                throw new PhalanxException(PhalanxErrorCode.CP302, 
+                        "The password is incorrect");
+            }
+            throw e;
+        }
         int digestLength = phoenixDigest.getDigestLength(cryptoProfile);
         
         byte[] digest = ArrayUtils.subarray(result, 0, digestLength);

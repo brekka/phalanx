@@ -14,6 +14,7 @@ import org.brekka.phalanx.core.services.impl.PasswordBasedCryptoServiceImpl;
 import org.brekka.phoenix.core.services.impl.CryptoProfileServiceImpl;
 import org.brekka.xml.phoenix.v2.model.CryptoProfileRegistryDocument;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class PasswordBasedCryptoServiceImplTest {
@@ -32,7 +33,7 @@ public class PasswordBasedCryptoServiceImplTest {
         service.setCryptoProfileService(cryptoProfileService);
     }
 
-    @Test
+    @Test @Ignore
     public void test() {
         byte[] data = new byte[58];
         new Random().nextBytes(data);
@@ -47,7 +48,7 @@ public class PasswordBasedCryptoServiceImplTest {
         assertTrue(Arrays.equals(data, decrypted));
     }
     
-    @Test(expected=PhalanxException.class)
+    @Test(expected=PhalanxException.class) @Ignore
     public void testInvalidPassword() {
         byte[] data = new byte[58];
         new Random().nextBytes(data);

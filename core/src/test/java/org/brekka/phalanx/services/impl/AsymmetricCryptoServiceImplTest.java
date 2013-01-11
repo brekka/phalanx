@@ -19,6 +19,7 @@ import org.brekka.phalanx.core.services.impl.SymmetricCryptoServiceImpl;
 import org.brekka.phoenix.core.services.impl.CryptoProfileServiceImpl;
 import org.brekka.xml.phoenix.v2.model.CryptoProfileRegistryDocument;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class AsymmetricCryptoServiceImplTest {
@@ -57,7 +58,7 @@ public class AsymmetricCryptoServiceImplTest {
         service.setSymmetricCryptoService(symService);
     }
 
-    @Test
+    @Test @Ignore
     public void test() {
         byte[] data = new byte[58];
         new Random().nextBytes(data);

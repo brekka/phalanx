@@ -30,6 +30,8 @@ public class Principal implements IdentifiableEntity<UUID>, org.brekka.phalanx.a
     @OneToOne
     @JoinColumn(name = "`DefaultKeyPair`")
     private AsymmetricKeyPair defaultKeyPair;
+    
+    
     public Principal() {
         
     }

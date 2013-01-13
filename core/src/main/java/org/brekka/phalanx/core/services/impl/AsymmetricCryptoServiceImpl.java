@@ -177,7 +177,6 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
         AsymmetricKeyPair asymKeyPair = new AsymmetricKeyPair();
         asymKeyPair.setPrivateKey(privateKeyData);
         asymKeyPair.setPublicKey(publicKeyData);
-        asymKeyPair.setOwner(owner);
         asymetricKeyPairDAO.create(asymKeyPair);
         
         return asymKeyPair;
@@ -197,7 +196,6 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
         AsymmetricKeyPair asymKeyPair = new AsymmetricKeyPair();
         asymKeyPair.setPrivateKey(privateKeyData);
         asymKeyPair.setPublicKey(publicKeyData);
-        asymKeyPair.setOwner(owner);
         asymetricKeyPairDAO.create(asymKeyPair);
         
         return asymKeyPair;
@@ -215,7 +213,7 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
             privateKeyData = encrypt(secretKey, owner.getDefaultKeyPair());
         }
         
-        return prepareKeyPair(owner, keyPair, privateKeyData);
+        return prepareKeyPair(keyPair, privateKeyData);
     }
 
     
@@ -228,7 +226,7 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
         InternalPrivateKeyToken internalPrivateKeyToken = narrow(privateKeyToken);
         InternalSecretKeyToken secretKey = internalPrivateKeyToken.getSecretKey();
         AsymedCryptoData privateKeyData = encrypt(secretKey, assignToKeyPair);
-        return prepareKeyPair(null, keyPair, privateKeyData);
+        return prepareKeyPair(keyPair, privateKeyData);
     }
     
     /* (non-Javadoc)
@@ -316,12 +314,11 @@ public class AsymmetricCryptoServiceImpl extends AbstractCryptoService implement
      * @param privateKeyData
      * @return
      */
-    protected AsymmetricKeyPair prepareKeyPair(Principal owner, AsymmetricKeyPair keyPair, AsymedCryptoData privateKeyData) {
+    protected AsymmetricKeyPair prepareKeyPair(AsymmetricKeyPair keyPair, AsymedCryptoData privateKeyData) {
         AsymmetricKeyPair asymKeyPair = new AsymmetricKeyPair();
         asymKeyPair.setPrivateKey(privateKeyData);
         // Keep the public key the same
         asymKeyPair.setPublicKey(keyPair.getPublicKey());
-        asymKeyPair.setOwner(owner);
         asymetricKeyPairDAO.create(asymKeyPair);
         return asymKeyPair;
     }

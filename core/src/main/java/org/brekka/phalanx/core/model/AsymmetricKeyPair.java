@@ -37,13 +37,6 @@ public class AsymmetricKeyPair implements IdentifiableEntity<UUID>, KeyPair {
     private UUID id;
     
     /**
-     * Id of the principal that owns this key pair.
-     */
-    @ManyToOne
-    @JoinColumn(name="`OwnerID`")
-    private Principal owner;
-    
-    /**
      * The private key data. This should always be an instance of on the {@link CryptoData} sub-types as private keys
      * need to be protected. Can be null which indicates that this is an an anonymous key pair containing only a 
      * public key.
@@ -75,14 +68,6 @@ public class AsymmetricKeyPair implements IdentifiableEntity<UUID>, KeyPair {
     
     public final void setId(UUID id) {
         this.id = id;
-    }
-
-    public Principal getOwner() {
-        return owner;
-    }
-
-    public void setOwner(Principal owner) {
-        this.owner = owner;
     }
 
     public CryptoData getPrivateKey() {

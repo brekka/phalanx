@@ -17,8 +17,6 @@
 package org.brekka.phalanx.api.model;
 
 /**
- * TODO Description of ExportedPublicKey
- *
  * @author Andrew Taylor (andrew@brekka.org)
  */
 public interface ExportedPublicKey {

@@ -3,15 +3,33 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.brekka.phalanx</groupId>
 	<artifactId>phalanx</artifactId>
-	<version>2.2</version>
+	<version>2.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<description>
-        Phalanx crypto service
+        A repository of cryptographic keys that can be embedded or accessed remotely.
     </description>
-    
-	<inceptionYear>2012</inceptionYear>
 
+    <inceptionYear>2012</inceptionYear>
+
+    <scm>
+        <url>https://github.com/brekka/phalanx.git</url>
+        <connection>https://github.com/brekka/phalanx.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/brekka/phalanx.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>brekka.org</id>
+            <url>https://brekka.org/maven/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>brekka.org</id>
+            <url>https://brekka.org/maven/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+    
     <developers>
        <developer>
            <name>Andrew Taylor</name>

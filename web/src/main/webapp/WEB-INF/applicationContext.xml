@@ -23,7 +23,7 @@
 
     <stil:configuration-service id="phalanx-config" name="phalanx" reload-interval="5000" engine="xmlbeans"> 
         <stil:property-placeholder />
-        <stil:namespace prefix="c"     url="http://brekka.org/xml/phoenix/v2/model" />
+        <stil:namespace prefix="c"     uri="http://brekka.org/xml/phoenix/v2/model" />
     </stil:configuration-service> 
     
     <bean id="cryptoProfileService" class="org.brekka.phalanx.web.support.ConfiguredCryptoProfileService" />

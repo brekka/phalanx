@@ -51,16 +51,16 @@ public class AsymmetricKeyPair implements IdentifiableEntity<UUID>, KeyPair {
     @Type(type="pg-uuid")
     @Column(name="`ID`")
     private UUID id;
-    
+
     /**
      * The private key data. This should always be an instance of on the {@link CryptoData} sub-types as private keys
-     * need to be protected. Can be null which indicates that this is an an anonymous key pair containing only a 
+     * need to be protected. Can be null which indicates that this is an an anonymous key pair containing only a
      * public key.
      */
     @OneToOne
     @JoinColumn(name="`PrivateKeyID`")
     private CryptoData privateKey;
-    
+
     /**
      * The public key data, which should just be a plain {@link CryptoData} as it does not need to be encrypted.
      */
@@ -68,21 +68,23 @@ public class AsymmetricKeyPair implements IdentifiableEntity<UUID>, KeyPair {
     @JoinColumn(name="`PublicKeyID`", nullable=false)
     private CryptoData publicKey;
 
-    
-    
+
+
 
     public AsymmetricKeyPair() {
     }
-    
-    public AsymmetricKeyPair(UUID id) {
+
+    public AsymmetricKeyPair(final UUID id) {
         setId(id);
     }
-    
-    public final UUID getId() {
+
+    @Override
+    public UUID getId() {
         return id;
     }
-    
-    public final void setId(UUID id) {
+
+    @Override
+    public void setId(final UUID id) {
         this.id = id;
     }
 
@@ -90,7 +92,7 @@ public class AsymmetricKeyPair implements IdentifiableEntity<UUID>, KeyPair {
         return privateKey;
     }
 
-    public void setPrivateKey(CryptoData privateKey) {
+    public void setPrivateKey(final CryptoData privateKey) {
         this.privateKey = privateKey;
     }
 
@@ -98,7 +100,7 @@ public class AsymmetricKeyPair implements IdentifiableEntity<UUID>, KeyPair {
         return publicKey;
     }
 
-    public void setPublicKey(CryptoData publicKey) {
+    public void setPublicKey(final CryptoData publicKey) {
         this.publicKey = publicKey;
     }
 }

@@ -37,34 +37,36 @@ public class Principal implements IdentifiableEntity<UUID>, org.brekka.phalanx.a
      * Serial UID
      */
     private static final long serialVersionUID = -4900201815422671490L;
-    
+
     @Id
     @Type(type="pg-uuid")
     @Column(name="`ID`")
     private UUID id;
-    
+
     @OneToOne
     @JoinColumn(name = "`DefaultKeyPair`")
     private AsymmetricKeyPair defaultKeyPair;
-    
-    
+
+
     public Principal() {
-        
+
     }
-    
-    public Principal(UUID uuid) {
+
+    public Principal(final UUID uuid) {
         setId(uuid);
     }
 
-    
-    public final UUID getId() {
+
+    @Override
+    public UUID getId() {
         return id;
     }
-    
-    public final void setId(UUID id) {
+
+    @Override
+    public void setId(final UUID id) {
         this.id = id;
     }
-    
+
     /* (non-Javadoc)
      * @see org.brekka.phalanx.model.IPrincipal#getDefaultKeyPair()
      */
@@ -73,7 +75,7 @@ public class Principal implements IdentifiableEntity<UUID>, org.brekka.phalanx.a
         return defaultKeyPair;
     }
 
-    public void setDefaultKeyPair(AsymmetricKeyPair defaultKeyPair) {
+    public void setDefaultKeyPair(final AsymmetricKeyPair defaultKeyPair) {
         this.defaultKeyPair = defaultKeyPair;
     }
 

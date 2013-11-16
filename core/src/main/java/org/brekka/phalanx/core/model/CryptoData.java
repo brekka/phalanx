@@ -43,12 +43,12 @@ import org.hibernate.annotations.Type;
 @Table(name="`CryptoData`", schema=PhalanxConstants.SCHEMA)
 @DiscriminatorValue("Plain")
 public class CryptoData implements IdentifiableEntity<UUID> {
-    
+
     /**
      * Serial UID
      */
     private static final long serialVersionUID = 118372503696946797L;
-    
+
     @Id
     @Type(type="pg-uuid")
     @Column(name="`ID`")
@@ -56,23 +56,25 @@ public class CryptoData implements IdentifiableEntity<UUID> {
 
     @Column(name="`Data`", nullable=false)
     private byte[] data;
-    
+
     @Column(name="`Profile`")
     private int profile;
 
-    public final UUID getId() {
+    @Override
+    public UUID getId() {
         return id;
     }
 
-    public final void setId(UUID id) {
+    @Override
+    public void setId(final UUID id) {
         this.id = id;
     }
-    
+
     public byte[] getData() {
         return data;
     }
 
-    public void setData(byte[] data) {
+    public void setData(final byte[] data) {
         this.data = data;
     }
 
@@ -80,7 +82,7 @@ public class CryptoData implements IdentifiableEntity<UUID> {
         return profile;
     }
 
-    public void setProfile(int profile) {
+    public void setProfile(final int profile) {
         this.profile = profile;
     }
 }

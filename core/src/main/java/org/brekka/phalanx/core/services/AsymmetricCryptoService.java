@@ -23,13 +23,14 @@ import org.brekka.phalanx.core.model.AsymedCryptoData;
 import org.brekka.phalanx.core.model.AsymmetricKeyPair;
 import org.brekka.phalanx.core.model.PasswordedCryptoData;
 import org.brekka.phalanx.core.model.Principal;
+import org.w3c.dom.Document;
 
 public interface AsymmetricCryptoService {
-    
+
     <T> T decrypt(AsymedCryptoData cryptoKey, PrivateKeyToken privateKeyToken, Class<T> expectedType);
-    
+
     PrivateKeyToken decrypt(AsymmetricKeyPair keyPair, String password);
-    
+
     /**
      * Decrypt a keyPair private key using another private key.
      * @param keyPair
@@ -37,15 +38,23 @@ public interface AsymmetricCryptoService {
      * @return
      */
     PrivateKeyToken decrypt(AsymmetricKeyPair keyPair, PrivateKeyToken privateKeyToken);
-    
+
     /**
-     * Encrypt an object 
+     * Sign the specified document using the private key
+     *
+     * @param document
+     * @param privateKeyToken
+     */
+    Document sign(Document document, PrivateKeyToken privateKeyToken);
+
+    /**
+     * Encrypt an object
      * @param data
      * @param keyPair
      * @return
      */
     AsymedCryptoData encrypt(Object data, AsymmetricKeyPair keyPair);
-    
+
     /**
      * Generate a new key pair using the public key of the specified key pair to protect
      * the private key of that being generated.
@@ -53,7 +62,7 @@ public interface AsymmetricCryptoService {
      * @return
      */
     AsymmetricKeyPair generateKeyPair(AsymmetricKeyPair protectedWithPublicKeyFrom, Principal owner);
-    
+
 
     /**
      * Generate a new key pair using a password to protect the private key.
@@ -61,7 +70,7 @@ public interface AsymmetricCryptoService {
      * @return
      */
     AsymmetricKeyPair generateKeyPair(String password, Principal owner);
-    
+
     /**
      * Assign access to the private key identified by <code>privateKeyToken</code> to the specified
      * user.
@@ -77,13 +86,13 @@ public interface AsymmetricCryptoService {
      * @return
      */
     AsymmetricKeyPair assignKeyPair(PrivateKeyToken privateKeyToken, AsymmetricKeyPair assignToKeyPair);
-    
+
     /**
      * @param keyPair
      * @return
      */
     AsymmetricKeyPair cloneKeyPairPublic(AsymmetricKeyPair keyPair);
-    
+
 
     /**
      * Delete the specified key

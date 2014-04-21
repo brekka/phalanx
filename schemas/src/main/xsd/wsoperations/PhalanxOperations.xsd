@@ -1,134 +1,155 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-	targetNamespace="http://brekka.org/xml/phalanx/v2/wsops" xmlns:px="http://brekka.org/xml/phalanx/v2/model"
-	xmlns:pxws="http://brekka.org/xml/phalanx/v2/wsops" elementFormDefault="qualified">
+    targetNamespace="http://brekka.org/xml/phalanx/v2/wsops" xmlns:px="http://brekka.org/xml/phalanx/v2/model"
+    xmlns:pxws="http://brekka.org/xml/phalanx/v2/wsops" elementFormDefault="qualified">
 
-	<xsd:import namespace="http://brekka.org/xml/phalanx/v2/model"
-		schemaLocation="../PhalanxModel.xsd" />
+    <xsd:import namespace="http://brekka.org/xml/phalanx/v2/model" schemaLocation="http://brekka.org/schema/phalanx/phalanx-model-2.4.xsd" />
 
-	<xsd:element name="AsymmetricEncryptionRequest">
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element name="Data" type="px:BinaryDataType" />
+    <xsd:element name="AsymmetricEncryptionRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Data" type="px:BinaryDataType" />
                 <xsd:choice>
-    				<xsd:element name="KeyPair" type="px:KeyPairType" />
-    				<xsd:element name="Recipient" type="px:PrincipalType" />
+                    <xsd:element name="KeyPair" type="px:KeyPairType" />
+                    <xsd:element name="Recipient" type="px:PrincipalType" />
                 </xsd:choice>
-			</xsd:sequence>
-		</xsd:complexType>
-	</xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
 
-	<xsd:element name="AsymmetricEncryptionResponse">
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element name="CryptedData" type="px:CryptedDataType" />
-			</xsd:sequence>
-		</xsd:complexType>
-	</xsd:element>
+    <xsd:element name="AsymmetricEncryptionResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="CryptedData" type="px:CryptedDataType" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
     <xsd:element name="AsymmetricEncryptionFault" type="pxws:OperationFault" />
 
-	<xsd:element name="AsymmetricDecryptionRequest">
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="pxws:PrincipalAssertedRequest">
-					<xsd:sequence>
-						<xsd:element name="CryptedData" type="px:CryptedDataType" />
-						<xsd:element name="PrivateKey" type="px:PrivateKeyTokenType" />
-					</xsd:sequence>
-				</xsd:extension>
-			</xsd:complexContent>
-		</xsd:complexType>
-	</xsd:element>
+    <xsd:element name="AsymmetricDecryptionRequest">
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="pxws:PrincipalAssertedRequest">
+                    <xsd:sequence>
+                        <xsd:element name="CryptedData" type="px:CryptedDataType" />
+                        <xsd:element name="PrivateKey" type="px:PrivateKeyTokenType" />
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
 
-	<xsd:element name="AsymmetricDecryptionResponse">
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element name="Data" type="px:BinaryDataType" />
-			</xsd:sequence>
-		</xsd:complexType>
-	</xsd:element>
+    <xsd:element name="AsymmetricDecryptionResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Data" type="px:BinaryDataType" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
     <xsd:element name="AsymmetricDecryptionFault" type="pxws:OperationFault" />
+    
+    <xsd:element name="AsymmetricSignRequest">
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="pxws:PrincipalAssertedRequest">
+                    <xsd:sequence>
+                        <xsd:element name="PrivateKey" type="px:PrivateKeyTokenType" />
+                        <xsd:any processContents="strict" namespace="##other" />
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="AsymmetricSignResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:any processContents="strict" namespace="##other" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="AsymmetricSignFault" type="pxws:OperationFault" />
 
 
-	<!-- Password based crypto operations -->
+    <!-- Password based crypto operations -->
 
-	<xsd:element name="PasswordBasedEncryptionRequest">
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element name="Data" type="px:BinaryDataType" />
-				<xsd:element name="Password" type="px:PasswordType" />
-			</xsd:sequence>
-		</xsd:complexType>
-	</xsd:element>
+    <xsd:element name="PasswordBasedEncryptionRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Data" type="px:BinaryDataType" />
+                <xsd:element name="Password" type="px:PasswordType" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
 
-	<xsd:element name="PasswordBasedEncryptionResponse">
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element name="CryptedData" type="px:CryptedDataType" />
-			</xsd:sequence>
-		</xsd:complexType>
-	</xsd:element>
+    <xsd:element name="PasswordBasedEncryptionResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="CryptedData" type="px:CryptedDataType" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
     <xsd:element name="PasswordBasedEncryptionFault" type="pxws:OperationFault" />
 
-	<xsd:element name="PasswordBasedDecryptionRequest">
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element name="CryptedData" type="px:CryptedDataType" />
-				<xsd:element name="Password" type="px:PasswordType" />
-			</xsd:sequence>
-		</xsd:complexType>
-	</xsd:element>
+    <xsd:element name="PasswordBasedDecryptionRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="CryptedData" type="px:CryptedDataType" />
+                <xsd:element name="Password" type="px:PasswordType" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
 
-	<xsd:element name="PasswordBasedDecryptionResponse">
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element name="Data" type="px:BinaryDataType" />
-			</xsd:sequence>
-		</xsd:complexType>
-	</xsd:element>
+    <xsd:element name="PasswordBasedDecryptionResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Data" type="px:BinaryDataType" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
     <xsd:element name="PasswordBasedDecryptionFault" type="pxws:OperationFault" />
 
 
-	<!-- Key pair operations -->
+    <!-- Key pair operations -->
 
-	<xsd:element name="DecryptKeyPairRequest">
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="pxws:PrincipalAssertedRequest">
-					<xsd:sequence>
-						<xsd:element name="KeyPair" type="px:KeyPairType" />
-						<xsd:element name="PrivateKey" type="px:PrivateKeyTokenType" />
-					</xsd:sequence>
-				</xsd:extension>
-			</xsd:complexContent>
-		</xsd:complexType>
-	</xsd:element>
+    <xsd:element name="DecryptKeyPairRequest">
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="pxws:PrincipalAssertedRequest">
+                    <xsd:sequence>
+                        <xsd:element name="KeyPair" type="px:KeyPairType" />
+                        <xsd:element name="PrivateKey" type="px:PrivateKeyTokenType" />
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
 
-	<xsd:element name="DecryptKeyPairResponse">
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element name="PrivateKey" type="px:PrivateKeyTokenType" />
-			</xsd:sequence>
-		</xsd:complexType>
-	</xsd:element>
+    <xsd:element name="DecryptKeyPairResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="PrivateKey" type="px:PrivateKeyTokenType" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
     <xsd:element name="DecryptKeyPairFault" type="pxws:OperationFault" />
 
-	<xsd:element name="GenerateKeyPairRequest">
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element name="KeyPair" type="px:KeyPairType" />
-				<xsd:element name="Owner" type="px:PrincipalType" minOccurs="0" />
-			</xsd:sequence>
-		</xsd:complexType>
-	</xsd:element>
+    <xsd:element name="GenerateKeyPairRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="KeyPair" type="px:KeyPairType" />
+                <xsd:element name="Owner" type="px:PrincipalType" minOccurs="0" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
 
-	<xsd:element name="GenerateKeyPairResponse">
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element name="KeyPair" type="px:KeyPairType" />
-			</xsd:sequence>
-		</xsd:complexType>
-	</xsd:element>
+    <xsd:element name="GenerateKeyPairResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="KeyPair" type="px:KeyPairType" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
     <xsd:element name="GenerateKeyPairFault" type="pxws:OperationFault" />
     
     <xsd:element name="CloneKeyPairPublicRequest">
@@ -148,29 +169,29 @@
     </xsd:element>
     <xsd:element name="CloneKeyPairPublicFault" type="pxws:OperationFault" />
 
-	<xsd:element name="AssignKeyPairRequest">
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="pxws:PrincipalAssertedRequest">
-					<xsd:sequence>
-						<xsd:element name="PrivateKey" type="px:PrivateKeyTokenType" />
+    <xsd:element name="AssignKeyPairRequest">
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="pxws:PrincipalAssertedRequest">
+                    <xsd:sequence>
+                        <xsd:element name="PrivateKey" type="px:PrivateKeyTokenType" />
                         <xsd:choice>
-    						<xsd:element name="AssignToPrincipal" type="px:PrincipalType" />
+                            <xsd:element name="AssignToPrincipal" type="px:PrincipalType" />
                             <xsd:element name="AssignToKeyPair" type="px:KeyPairType" />
                         </xsd:choice>
-					</xsd:sequence>
-				</xsd:extension>
-			</xsd:complexContent>
-		</xsd:complexType>
-	</xsd:element>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
 
-	<xsd:element name="AssignKeyPairResponse">
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element name="KeyPair" type="px:KeyPairType" />
-			</xsd:sequence>
-		</xsd:complexType>
-	</xsd:element>
+    <xsd:element name="AssignKeyPairResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="KeyPair" type="px:KeyPairType" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
     <xsd:element name="AssignKeyPairFault" type="pxws:OperationFault" />
     
     
@@ -201,106 +222,106 @@
 
 
 
-	<!-- Deletions -->
+    <!-- Deletions -->
 
-	<xsd:element name="DeleteCryptedDataRequest">
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element name="CryptedData" type="px:CryptedDataType" />
-			</xsd:sequence>
-		</xsd:complexType>
-	</xsd:element>
+    <xsd:element name="DeleteCryptedDataRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="CryptedData" type="px:CryptedDataType" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
 
-	<xsd:element name="DeleteCryptedDataResponse">
-		<xsd:complexType>
-			<xsd:sequence>
-			</xsd:sequence>
-		</xsd:complexType>
-	</xsd:element>
+    <xsd:element name="DeleteCryptedDataResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
     <xsd:element name="DeleteCryptedDataFault" type="pxws:OperationFault" />
 
-	<xsd:element name="DeleteKeyPairRequest">
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element name="KeyPair" type="px:KeyPairType" />
-			</xsd:sequence>
-		</xsd:complexType>
-	</xsd:element>
+    <xsd:element name="DeleteKeyPairRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="KeyPair" type="px:KeyPairType" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
 
-	<xsd:element name="DeleteKeyPairResponse">
-		<xsd:complexType>
-			<xsd:sequence>
-			</xsd:sequence>
-		</xsd:complexType>
-	</xsd:element>
+    <xsd:element name="DeleteKeyPairResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
     <xsd:element name="DeleteKeyPairFault" type="pxws:OperationFault" />
 
 
-	<!-- Principal -->
+    <!-- Principal -->
 
 
-	<xsd:element name="CreatePrincipalRequest">
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element name="Password" type="px:PasswordType" />
-			</xsd:sequence>
-		</xsd:complexType>
-	</xsd:element>
+    <xsd:element name="CreatePrincipalRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Password" type="px:PasswordType" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
 
-	<xsd:element name="CreatePrincipalResponse">
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element name="Principal" type="px:PrincipalType" />
-			</xsd:sequence>
-		</xsd:complexType>
-	</xsd:element>
+    <xsd:element name="CreatePrincipalResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Principal" type="px:PrincipalType" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
     <xsd:element name="CreatePrincipalFault" type="pxws:OperationFault" />
     
 
-	<xsd:element name="DeletePrincipalRequest">
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element name="Principal" type="px:PrincipalType" />
-			</xsd:sequence>
-		</xsd:complexType>
-	</xsd:element>
+    <xsd:element name="DeletePrincipalRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Principal" type="px:PrincipalType" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
 
-	<xsd:element name="DeletePrincipalResponse">
-		<xsd:complexType>
-			<xsd:sequence>
-			</xsd:sequence>
-		</xsd:complexType>
-	</xsd:element>
+    <xsd:element name="DeletePrincipalResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
     <xsd:element name="DeletePrincipalFault" type="pxws:OperationFault" />
     
 
-	<xsd:element name="AuthenticateRequest">
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element name="Principal" type="px:PrincipalType" />
-				<xsd:element name="Password" type="px:PasswordType" />
-			</xsd:sequence>
-		</xsd:complexType>
-	</xsd:element>
+    <xsd:element name="AuthenticateRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Principal" type="px:PrincipalType" />
+                <xsd:element name="Password" type="px:PasswordType" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
 
-	<xsd:element name="AuthenticateResponse">
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element name="AuthenticatedPrincipal" type="px:AuthenticatedPrincipalType" />
-			</xsd:sequence>
-		</xsd:complexType>
-	</xsd:element>
+    <xsd:element name="AuthenticateResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="AuthenticatedPrincipal" type="px:AuthenticatedPrincipalType" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
     <xsd:element name="AuthenticateFault" type="pxws:OperationFault" />
     
     <xsd:element name="LogoutRequest">
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="pxws:PrincipalAssertedRequest">
-					<xsd:sequence>
-					</xsd:sequence>
-				</xsd:extension>
-			</xsd:complexContent>
-		</xsd:complexType>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="pxws:PrincipalAssertedRequest">
+                    <xsd:sequence>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
     </xsd:element>
 
     <xsd:element name="LogoutResponse">
@@ -311,35 +332,35 @@
     </xsd:element>
     <xsd:element name="LogoutFault" type="pxws:OperationFault" />
 
-	<xsd:element name="ChangePasswordRequest">
-		<xsd:complexType>
-			<xsd:sequence>
+    <xsd:element name="ChangePasswordRequest">
+        <xsd:complexType>
+            <xsd:sequence>
                 <xsd:element name="Principal" type="px:PrincipalType" />
-				<xsd:element name="CurrentPassword" type="px:PasswordType" />
-				<xsd:element name="NewPassword" type="px:PasswordType" />
-			</xsd:sequence>
-		</xsd:complexType>
-	</xsd:element>
+                <xsd:element name="CurrentPassword" type="px:PasswordType" />
+                <xsd:element name="NewPassword" type="px:PasswordType" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
 
-	<xsd:element name="ChangePasswordResponse">
-		<xsd:complexType>
-			<xsd:sequence>            
-			</xsd:sequence>
-		</xsd:complexType>
-	</xsd:element>
+    <xsd:element name="ChangePasswordResponse">
+        <xsd:complexType>
+            <xsd:sequence>            
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
     <xsd:element name="ChangePasswordFault" type="pxws:OperationFault" />
 
 
-	<!-- Shared complex types -->
+    <!-- Shared complex types -->
 
-	<xsd:complexType name="PrincipalAssertedRequest">
-		<xsd:sequence>
-			<xsd:element name="SessionID" type="px:SessionIdType" />
-		</xsd:sequence>
-	</xsd:complexType>
+    <xsd:complexType name="PrincipalAssertedRequest">
+        <xsd:sequence>
+            <xsd:element name="SessionID" type="px:SessionIdType" />
+        </xsd:sequence>
+    </xsd:complexType>
     
-	<xsd:complexType name="OperationFault">
-		<xsd:sequence>
+    <xsd:complexType name="OperationFault">
+        <xsd:sequence>
             <xsd:element name="Code">
                 <xsd:simpleType>
                     <xsd:restriction base="xsd:string">
@@ -347,9 +368,7 @@
                     </xsd:restriction>
                 </xsd:simpleType>
             </xsd:element>
-			<xsd:element name="Message" type="xsd:string" />
-		</xsd:sequence>
-	</xsd:complexType>
-
-
+            <xsd:element name="Message" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
 </xsd:schema>

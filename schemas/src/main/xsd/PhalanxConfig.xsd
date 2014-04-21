@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://brekka.org/xml/phalanx/v2/config"
-	xmlns:plxc="http://brekka.org/xml/phalanx/v2/config" xmlns:pnxm="http://brekka.org/xml/phoenix/v2/model" 
-	elementFormDefault="qualified" attributeFormDefault="unqualified">
-	
-	<xsd:import namespace="http://brekka.org/xml/phoenix/v2/model" />
-	
-	<xsd:element name="Phalanx">
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element ref="pnxm:CryptoProfileRegistry" />
-			</xsd:sequence>
-		</xsd:complexType>
-	</xsd:element>
+    xmlns:plxc="http://brekka.org/xml/phalanx/v2/config" xmlns:pnxm="http://brekka.org/xml/phoenix/v2/model" 
+    elementFormDefault="qualified" attributeFormDefault="unqualified">
+    
+    <xsd:import namespace="http://brekka.org/xml/phoenix/v2/model" schemaLocation="http://brekka.org/schema/phoenix/phoenix-model-2.3.xsd" />
+    
+    <xsd:element name="Phalanx">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="pnxm:CryptoProfileRegistry" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
 </xsd:schema>

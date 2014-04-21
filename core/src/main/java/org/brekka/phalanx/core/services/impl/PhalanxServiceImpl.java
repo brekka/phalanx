@@ -37,9 +37,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.w3c.dom.Document;
 
 /**
- * 
+ *
  * @author Andrew Taylor
  */
 @Service
@@ -48,40 +49,40 @@ public class PhalanxServiceImpl implements PhalanxService {
 
     @Autowired
     private PasswordBasedCryptoService passwordBasedCryptoService;
-    
+
     @Autowired
     private AsymmetricCryptoService asymmetricCryptoService;
-    
+
     @Autowired
     private PrincipalService principalService;
-    
+
     @Autowired
     private CryptoDataDAO cryptoDataDAO;
-    
-    
+
+
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
-    public CryptedData asymEncrypt(byte[] data, KeyPair keyPair) {
-        AsymmetricKeyPair asymKeyPair = asymmetricCryptoService.retrieveKeyPair(keyPair.getId());
-        AsymedCryptoData asymedCryptoData = asymmetricCryptoService.encrypt(data, asymKeyPair);
-        return asymedCryptoData;
-    }
-    
-    @Override
-    @Transactional(propagation=Propagation.REQUIRED)
-    public CryptedData asymEncrypt(byte[] data, org.brekka.phalanx.api.model.Principal recipientPrincipal) {
-        Principal principal = principalService.retrieveById(recipientPrincipal.getId());
-        AsymmetricKeyPair defaultKeyPair = principal.getDefaultKeyPair();
-        AsymmetricKeyPair asymKeyPair = asymmetricCryptoService.retrieveKeyPair(defaultKeyPair.getId());
-        AsymedCryptoData asymedCryptoData = asymmetricCryptoService.encrypt(data, asymKeyPair);
+    public CryptedData asymEncrypt(final byte[] data, final KeyPair keyPair) {
+        AsymmetricKeyPair asymKeyPair = this.asymmetricCryptoService.retrieveKeyPair(keyPair.getId());
+        AsymedCryptoData asymedCryptoData = this.asymmetricCryptoService.encrypt(data, asymKeyPair);
         return asymedCryptoData;
     }
 
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
-    public byte[] asymDecrypt(CryptedData asymedCryptoDataId, PrivateKeyToken privateKeyToken) {
+    public CryptedData asymEncrypt(final byte[] data, final org.brekka.phalanx.api.model.Principal recipientPrincipal) {
+        Principal principal = this.principalService.retrieveById(recipientPrincipal.getId());
+        AsymmetricKeyPair defaultKeyPair = principal.getDefaultKeyPair();
+        AsymmetricKeyPair asymKeyPair = this.asymmetricCryptoService.retrieveKeyPair(defaultKeyPair.getId());
+        AsymedCryptoData asymedCryptoData = this.asymmetricCryptoService.encrypt(data, asymKeyPair);
+        return asymedCryptoData;
+    }
+
+    @Override
+    @Transactional(propagation=Propagation.REQUIRED)
+    public byte[] asymDecrypt(final CryptedData asymedCryptoDataId, final PrivateKeyToken privateKeyToken) {
         AsymedCryptoData dataItem = retrieveDataItem(asymedCryptoDataId, AsymedCryptoData.class);
-        byte[] data = asymmetricCryptoService.decrypt(dataItem, privateKeyToken, byte[].class);
+        byte[] data = this.asymmetricCryptoService.decrypt(dataItem, privateKeyToken, byte[].class);
         return data;
     }
 
@@ -89,170 +90,178 @@ public class PhalanxServiceImpl implements PhalanxService {
 
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
-    public CryptedData pbeEncrypt(byte[] data, String password) {
-        PasswordedCryptoData cryptoData = passwordBasedCryptoService.encrypt(data, password);
+    public CryptedData pbeEncrypt(final byte[] data, final String password) {
+        PasswordedCryptoData cryptoData = this.passwordBasedCryptoService.encrypt(data, password);
         return cryptoData;
     }
 
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
-    public byte[] pbeDecrypt(CryptedData passwordedCryptoData, String password) {
+    public byte[] pbeDecrypt(final CryptedData passwordedCryptoData, final String password) {
         PasswordedCryptoData dataItem = retrieveDataItem(passwordedCryptoData, PasswordedCryptoData.class);
-        byte[] data = passwordBasedCryptoService.decrypt(dataItem, password, byte[].class);
+        byte[] data = this.passwordBasedCryptoService.decrypt(dataItem, password, byte[].class);
         return data;
     }
 
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
-    public PrivateKeyToken decryptKeyPair(KeyPair keyPairIn, PrivateKeyToken privateKeyToken) {
-        AsymmetricKeyPair keyPair = asymmetricCryptoService.retrieveKeyPair(keyPairIn.getId());
-        PrivateKeyToken nextPrivateKeyToken = asymmetricCryptoService.decrypt(keyPair, privateKeyToken);
+    public PrivateKeyToken decryptKeyPair(final KeyPair keyPairIn, final PrivateKeyToken privateKeyToken) {
+        AsymmetricKeyPair keyPair = this.asymmetricCryptoService.retrieveKeyPair(keyPairIn.getId());
+        PrivateKeyToken nextPrivateKeyToken = this.asymmetricCryptoService.decrypt(keyPair, privateKeyToken);
         return nextPrivateKeyToken;
     }
-    
-    
+
+
 
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
-    public KeyPair generateKeyPair(KeyPair protectedByKeyPair, org.brekka.phalanx.api.model.Principal ownerPrincipal) {
-        AsymmetricKeyPair keyPair = asymmetricCryptoService.retrieveKeyPair(protectedByKeyPair.getId());
+    public KeyPair generateKeyPair(final KeyPair protectedByKeyPair, final org.brekka.phalanx.api.model.Principal ownerPrincipal) {
+        AsymmetricKeyPair keyPair = this.asymmetricCryptoService.retrieveKeyPair(protectedByKeyPair.getId());
         Principal principal = null;
         if (ownerPrincipal != null) {
-            principal = principalService.retrieveById(ownerPrincipal.getId());
+            principal = this.principalService.retrieveById(ownerPrincipal.getId());
         }
-        AsymmetricKeyPair newKeyPair = asymmetricCryptoService.generateKeyPair(keyPair, principal);
+        AsymmetricKeyPair newKeyPair = this.asymmetricCryptoService.generateKeyPair(keyPair, principal);
         return newKeyPair;
     }
-    
+
     /* (non-Javadoc)
      * @see org.brekka.phalanx.api.services.PhalanxService#generateKeyPair(org.brekka.phalanx.api.model.KeyPair)
      */
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
-    public KeyPair generateKeyPair(KeyPair protectedByKeyPair) {
+    public KeyPair generateKeyPair(final KeyPair protectedByKeyPair) {
         return generateKeyPair(protectedByKeyPair, null);
     }
-    
+
     /* (non-Javadoc)
      * @see org.brekka.phalanx.api.services.PhalanxService#cloneKeyPairPublic(org.brekka.phalanx.api.model.KeyPair)
      */
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
-    public KeyPair cloneKeyPairPublic(KeyPair protectedByKeyPair) {
-        AsymmetricKeyPair keyPair = asymmetricCryptoService.retrieveKeyPair(protectedByKeyPair.getId());
-        AsymmetricKeyPair newKeyPair = asymmetricCryptoService.cloneKeyPairPublic(keyPair);
+    public KeyPair cloneKeyPairPublic(final KeyPair protectedByKeyPair) {
+        AsymmetricKeyPair keyPair = this.asymmetricCryptoService.retrieveKeyPair(protectedByKeyPair.getId());
+        AsymmetricKeyPair newKeyPair = this.asymmetricCryptoService.cloneKeyPairPublic(keyPair);
         return newKeyPair;
     }
 
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
-    public KeyPair assignKeyPair(PrivateKeyToken privateKeyToken, org.brekka.phalanx.api.model.Principal assignToPrincipalIn) {
-        Principal assignToPrincipal = principalService.retrieveById(assignToPrincipalIn.getId());
-        AsymmetricKeyPair newKeyPair = asymmetricCryptoService.assignKeyPair(privateKeyToken, assignToPrincipal);
+    public KeyPair assignKeyPair(final PrivateKeyToken privateKeyToken, final org.brekka.phalanx.api.model.Principal assignToPrincipalIn) {
+        Principal assignToPrincipal = this.principalService.retrieveById(assignToPrincipalIn.getId());
+        AsymmetricKeyPair newKeyPair = this.asymmetricCryptoService.assignKeyPair(privateKeyToken, assignToPrincipal);
         return newKeyPair;
     }
-    
+
     /* (non-Javadoc)
      * @see org.brekka.phalanx.api.services.PhalanxService#assignKeyPair(org.brekka.phalanx.api.model.PrivateKeyToken, org.brekka.phalanx.api.model.KeyPair)
      */
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
-    public KeyPair assignKeyPair(PrivateKeyToken privateKeyToken, KeyPair assignToKeyPair) {
-        AsymmetricKeyPair keyPair = asymmetricCryptoService.retrieveKeyPair(assignToKeyPair.getId());
-        AsymmetricKeyPair newKeyPair = asymmetricCryptoService.assignKeyPair(privateKeyToken, keyPair);
+    public KeyPair assignKeyPair(final PrivateKeyToken privateKeyToken, final KeyPair assignToKeyPair) {
+        AsymmetricKeyPair keyPair = this.asymmetricCryptoService.retrieveKeyPair(assignToKeyPair.getId());
+        AsymmetricKeyPair newKeyPair = this.asymmetricCryptoService.assignKeyPair(privateKeyToken, keyPair);
         return newKeyPair;
     }
-    
+
     /* (non-Javadoc)
      * @see org.brekka.phalanx.api.services.PhalanxService#retrievePublicKey(org.brekka.phalanx.api.model.KeyPair)
      */
     @Override
-    public ExportedPublicKey retrievePublicKey(KeyPair keyPair) {
-        AsymmetricKeyPair asymKeyPair = asymmetricCryptoService.retrieveKeyPair(keyPair.getId());
+    public ExportedPublicKey retrievePublicKey(final KeyPair keyPair) {
+        AsymmetricKeyPair asymKeyPair = this.asymmetricCryptoService.retrieveKeyPair(keyPair.getId());
         CryptoData publicKey = asymKeyPair.getPublicKey();
         return new ExportedPublicKeyImpl(publicKey.getData(), publicKey.getProfile());
     }
-    
+
     /* (non-Javadoc)
      * @see org.brekka.phalanx.api.services.PhalanxService#retrievePublicKey(org.brekka.phalanx.api.model.Principal)
      */
     @Override
-    public ExportedPublicKey retrievePublicKey(org.brekka.phalanx.api.model.Principal principal) {
-        Principal thePrincipal = principalService.retrieveById(principal.getId());
+    public ExportedPublicKey retrievePublicKey(final org.brekka.phalanx.api.model.Principal principal) {
+        Principal thePrincipal = this.principalService.retrieveById(principal.getId());
         AsymmetricKeyPair keyPair = thePrincipal.getDefaultKeyPair();
         return retrievePublicKey(keyPair);
     }
 
+    /* (non-Javadoc)
+     * @see org.brekka.phalanx.api.services.PhalanxService#sign(org.w3c.dom.Document, org.brekka.phalanx.api.model.PrivateKeyToken)
+     */
     @Override
-    @Transactional(propagation=Propagation.REQUIRED)
-    public void deleteCryptedData(CryptedData cryptoDataItem) {
-        cryptoDataDAO.delete(cryptoDataItem.getId());
+    public Document sign(final Document document, final PrivateKeyToken privateKeyToken) {
+        return this.asymmetricCryptoService.sign(document, privateKeyToken);
     }
 
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
-    public void deleteKeyPair(KeyPair keyPair) {
-        asymmetricCryptoService.deleteKeyPair(keyPair.getId());
+    public void deleteCryptedData(final CryptedData cryptoDataItem) {
+        this.cryptoDataDAO.delete(cryptoDataItem.getId());
     }
 
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
-    public org.brekka.phalanx.api.model.Principal createPrincipal(String password) {
-        Principal principal = principalService.createPrincipal(password);
+    public void deleteKeyPair(final KeyPair keyPair) {
+        this.asymmetricCryptoService.deleteKeyPair(keyPair.getId());
+    }
+
+    @Override
+    @Transactional(propagation=Propagation.REQUIRED)
+    public org.brekka.phalanx.api.model.Principal createPrincipal(final String password) {
+        Principal principal = this.principalService.createPrincipal(password);
         return principal;
     }
 
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
-    public void deletePrincipal(org.brekka.phalanx.api.model.Principal principal) {
-        principalService.deletePrincipal(principal.getId());
+    public void deletePrincipal(final org.brekka.phalanx.api.model.Principal principal) {
+        this.principalService.deletePrincipal(principal.getId());
     }
 
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
-    public AuthenticatedPrincipal authenticate(org.brekka.phalanx.api.model.Principal principal, String password) {
-        Principal corePrincipal = principalService.retrieveById(principal.getId());
-        AuthenticatedPrincipal authenticatedPrincipal = principalService.authenticate(corePrincipal, password);
+    public AuthenticatedPrincipal authenticate(final org.brekka.phalanx.api.model.Principal principal, final String password) {
+        Principal corePrincipal = this.principalService.retrieveById(principal.getId());
+        AuthenticatedPrincipal authenticatedPrincipal = this.principalService.authenticate(corePrincipal, password);
         return authenticatedPrincipal;
     }
-    
+
     @Override
-    public void logout(AuthenticatedPrincipal authenticatedPrincipal) {
+    public void logout(final AuthenticatedPrincipal authenticatedPrincipal) {
         // Don't need to do anything, maybe log something
     }
 
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
-    public void changePassword(org.brekka.phalanx.api.model.Principal principalIn, String currentPassword, String newPassword) {
-        Principal principal = principalService.retrieveById(principalIn.getId());
+    public void changePassword(final org.brekka.phalanx.api.model.Principal principalIn, final String currentPassword, final String newPassword) {
+        Principal principal = this.principalService.retrieveById(principalIn.getId());
         AsymmetricKeyPair keyPair = principal.getDefaultKeyPair();
         CryptoData privateKey = keyPair.getPrivateKey();
         if (privateKey instanceof PasswordedCryptoData == false) {
-            throw new PhalanxException(PhalanxErrorCode.CP209, 
+            throw new PhalanxException(PhalanxErrorCode.CP209,
                     "Key pair '%s' private key is not password protected", keyPair.getId());
         }
         PasswordedCryptoData passwordedCryptoData = (PasswordedCryptoData) privateKey;
-        InternalSecretKeyToken secretKeyToken = passwordBasedCryptoService.decrypt(
+        InternalSecretKeyToken secretKeyToken = this.passwordBasedCryptoService.decrypt(
                 passwordedCryptoData, currentPassword, InternalSecretKeyToken.class);
-        
-        PasswordedCryptoData privateKeyData = passwordBasedCryptoService.encrypt(secretKeyToken, newPassword);
-        
-        asymmetricCryptoService.replacePrivateKey(keyPair, privateKeyData);
+
+        PasswordedCryptoData privateKeyData = this.passwordBasedCryptoService.encrypt(secretKeyToken, newPassword);
+
+        this.asymmetricCryptoService.replacePrivateKey(keyPair, privateKeyData);
     }
-    
+
     @SuppressWarnings("unchecked")
-    protected <T extends CryptoData> T retrieveDataItem(CryptedData cryptedData, Class<T> expectedType) {
-        CryptoData cryptoData = cryptoDataDAO.retrieveById(cryptedData.getId());
+    protected <T extends CryptoData> T retrieveDataItem(final CryptedData cryptedData, final Class<T> expectedType) {
+        CryptoData cryptoData = this.cryptoDataDAO.retrieveById(cryptedData.getId());
         if (cryptoData == null) {
-            throw new PhalanxException(PhalanxErrorCode.CP601, "Crypted data item with id '%s' does not exist", 
+            throw new PhalanxException(PhalanxErrorCode.CP601, "Crypted data item with id '%s' does not exist",
                     cryptedData.getId());
         }
         if (!expectedType.isAssignableFrom(cryptoData.getClass())) {
-            throw new PhalanxException(PhalanxErrorCode.CP600, "Expected crypto data type %s, found %s", 
+            throw new PhalanxException(PhalanxErrorCode.CP600, "Expected crypto data type %s, found %s",
                     expectedType.getSimpleName(), cryptoData.getClass().getSimpleName());
         }
         return (T) cryptoData;
     }
 
-    
+
 }

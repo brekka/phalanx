@@ -1,80 +1,80 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://brekka.org/xml/phalanx/v2/model"
-	xmlns:plxm="http://brekka.org/xml/phalanx/v2/model" elementFormDefault="qualified"
-	attributeFormDefault="unqualified">
-	
-	<xsd:complexType name="CryptedDataType">
-		<xsd:sequence>
-		</xsd:sequence>
-		<xsd:attribute name="id" type="plxm:CryptedDataIdType" />
-	</xsd:complexType>
-	
-	<xsd:complexType name="KeyPairType">
-		<xsd:sequence>
-		</xsd:sequence>
-		<xsd:attribute name="id" type="plxm:KeyPairIdType" />
-	</xsd:complexType>
-	
-	<xsd:complexType name="AuthenticatedPrincipalType">
-		<xsd:complexContent>
-			<xsd:extension base="plxm:PrincipalType">
-				<xsd:sequence>
-					<xsd:element name="SessionID" type="plxm:SessionIdType" />
-					<xsd:element name="DefaultPrivateKey" type="plxm:PrivateKeyTokenType" />
-				</xsd:sequence>
-			</xsd:extension>
-		</xsd:complexContent>
-	</xsd:complexType>
+    xmlns:plxm="http://brekka.org/xml/phalanx/v2/model" elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+    
+    <xsd:complexType name="CryptedDataType">
+        <xsd:sequence>
+        </xsd:sequence>
+        <xsd:attribute name="id" type="plxm:CryptedDataIdType" />
+    </xsd:complexType>
+    
+    <xsd:complexType name="KeyPairType">
+        <xsd:sequence>
+        </xsd:sequence>
+        <xsd:attribute name="id" type="plxm:KeyPairIdType" />
+    </xsd:complexType>
+    
+    <xsd:complexType name="AuthenticatedPrincipalType">
+        <xsd:complexContent>
+            <xsd:extension base="plxm:PrincipalType">
+                <xsd:sequence>
+                    <xsd:element name="SessionID" type="plxm:SessionIdType" />
+                    <xsd:element name="DefaultPrivateKey" type="plxm:PrivateKeyTokenType" />
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
 
-	<xsd:complexType name="PrincipalType">
-		<xsd:sequence>
+    <xsd:complexType name="PrincipalType">
+        <xsd:sequence>
             <xsd:element name="DefaultKeyPair" type="plxm:KeyPairType" minOccurs="0" maxOccurs="1" />
-		</xsd:sequence>
-		<xsd:attribute name="id" type="plxm:PrincipalIdType" />
-	</xsd:complexType>
+        </xsd:sequence>
+        <xsd:attribute name="id" type="plxm:PrincipalIdType" />
+    </xsd:complexType>
 
 
 
-	<xsd:simpleType name="PrivateKeyTokenType">
-		<xsd:restriction base="xsd:base64Binary">
-			<xsd:length value="3" />
-		</xsd:restriction>
-	</xsd:simpleType>
-
-	<xsd:simpleType name="CryptedDataIdType">
-    	<xsd:restriction base="plxm:UUIDType" />
+    <xsd:simpleType name="PrivateKeyTokenType">
+        <xsd:restriction base="xsd:base64Binary">
+            <xsd:length value="3" />
+        </xsd:restriction>
     </xsd:simpleType>
-	
+
+    <xsd:simpleType name="CryptedDataIdType">
+        <xsd:restriction base="plxm:UUIDType" />
+    </xsd:simpleType>
+    
     <xsd:simpleType name="KeyPairIdType">
-    	<xsd:restriction base="plxm:UUIDType">
-    	</xsd:restriction>
+        <xsd:restriction base="plxm:UUIDType">
+        </xsd:restriction>
     </xsd:simpleType>
-	
+    
     <xsd:simpleType name="PrincipalIdType">
-    	<xsd:restriction base="plxm:UUIDType">
-    	</xsd:restriction>
+        <xsd:restriction base="plxm:UUIDType">
+        </xsd:restriction>
     </xsd:simpleType>
     
     <xsd:simpleType name="SessionIdType">
-    	<xsd:restriction base="xsd:base64Binary">
-    		<xsd:length value="24" />
-    	</xsd:restriction>
+        <xsd:restriction base="xsd:base64Binary">
+            <xsd:length value="24" />
+        </xsd:restriction>
     </xsd:simpleType>
 
     <xsd:simpleType name="PasswordType">
-    	<xsd:restriction base="xsd:string">
-    	</xsd:restriction>
+        <xsd:restriction base="xsd:string">
+        </xsd:restriction>
     </xsd:simpleType>
 
     <xsd:simpleType name="UUIDType">
-    	<xsd:restriction base="xsd:string">
-    		<xsd:pattern value="[a-f0-9]{8}\-[a-f0-9]{4}\-[a-f0-9]{4}\-[a-f0-9]{4}\-[a-f0-9]{12}" />
-    	</xsd:restriction>
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="[a-f0-9]{8}\-[a-f0-9]{4}\-[a-f0-9]{4}\-[a-f0-9]{4}\-[a-f0-9]{12}" />
+        </xsd:restriction>
     </xsd:simpleType>
     
     <xsd:simpleType name="BinaryDataType">
-    	<xsd:restriction base="xsd:base64Binary">
-    		<xsd:maxLength value="8096" />
-    	</xsd:restriction>
+        <xsd:restriction base="xsd:base64Binary">
+            <xsd:maxLength value="8096" />
+        </xsd:restriction>
     </xsd:simpleType>
 </xsd:schema>

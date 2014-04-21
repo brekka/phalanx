@@ -105,6 +105,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ws.client.core.WebServiceOperations;
 import org.springframework.ws.soap.client.SoapFaultClientException;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 @Service
@@ -112,124 +113,143 @@ public class PhalanxServiceClient implements PhalanxService {
 
     @Autowired
     private WebServiceOperations phalanxWebServiceOperations;
-    
-    
+
+
     public PhalanxServiceClient() {
         super();
     }
-    
-    public PhalanxServiceClient(WebServiceOperations phalanxWebServiceOperations) {
+
+    public PhalanxServiceClient(final WebServiceOperations phalanxWebServiceOperations) {
         this();
         this.phalanxWebServiceOperations = phalanxWebServiceOperations;
     }
-    
+
     @Override
-    public CryptedData asymEncrypt(byte[] data, KeyPair keyPair) {
+    public CryptedData asymEncrypt(final byte[] data, final KeyPair keyPair) {
         AsymmetricEncryptionRequestDocument requestDocument = AsymmetricEncryptionRequestDocument.Factory.newInstance();
         AsymmetricEncryptionRequest request = requestDocument.addNewAsymmetricEncryptionRequest();
         request.setData(data);
         request.setKeyPair(xml(keyPair));
-        
+
         AsymmetricEncryptionResponseDocument responseDocument = marshal(requestDocument, AsymmetricEncryptionResponseDocument.class);
         AsymmetricEncryptionResponse response = responseDocument.getAsymmetricEncryptionResponse();
         return identity(response.getCryptedData());
     }
-    
+
     /* (non-Javadoc)
      * @see org.brekka.phalanx.api.services.PhalanxService#asymEncrypt(byte[], org.brekka.phalanx.api.model.Principal)
      */
     @Override
-    public CryptedData asymEncrypt(byte[] data, Principal recipientPrincipal) {
+    public CryptedData asymEncrypt(final byte[] data, final Principal recipientPrincipal) {
         AsymmetricEncryptionRequestDocument requestDocument = AsymmetricEncryptionRequestDocument.Factory.newInstance();
         AsymmetricEncryptionRequest request = requestDocument.addNewAsymmetricEncryptionRequest();
         request.setData(data);
         request.setRecipient(xml(recipientPrincipal));
-        
+
         AsymmetricEncryptionResponseDocument responseDocument = marshal(requestDocument, AsymmetricEncryptionResponseDocument.class);
         AsymmetricEncryptionResponse response = responseDocument.getAsymmetricEncryptionResponse();
         return identity(response.getCryptedData());
     }
-    
+
     @Override
-    public byte[] asymDecrypt(CryptedData asymedCryptoData, PrivateKeyToken privateKeyToken) {
+    public byte[] asymDecrypt(final CryptedData asymedCryptoData, final PrivateKeyToken privateKeyToken) {
         AsymmetricDecryptionRequestDocument requestDocument = AsymmetricDecryptionRequestDocument.Factory.newInstance();
         AsymmetricDecryptionRequest request = requestDocument.addNewAsymmetricDecryptionRequest();
-        
+
         PrivateKeyTokenImpl privateKey = narrow(privateKeyToken);
         request.setSessionID(privateKey.getAuthenticatedPrincipal().getSessionId());
         request.setPrivateKey(privateKey.getId());
         request.setCryptedData(xml(asymedCryptoData));
-        
+
         AsymmetricDecryptionResponseDocument responseDocument = marshal(requestDocument, AsymmetricDecryptionResponseDocument.class);
         AsymmetricDecryptionResponse response = responseDocument.getAsymmetricDecryptionResponse();
         return response.getData();
     }
 
     @Override
-    public CryptedData pbeEncrypt(byte[] data, String password) {
+    public CryptedData pbeEncrypt(final byte[] data, final String password) {
         PasswordBasedEncryptionRequestDocument requestDocument = PasswordBasedEncryptionRequestDocument.Factory.newInstance();
         PasswordBasedEncryptionRequest request = requestDocument.addNewPasswordBasedEncryptionRequest();
         request.setData(data);
         request.setPassword(password);
-        
+
         PasswordBasedEncryptionResponseDocument responseDocument = marshal(requestDocument, PasswordBasedEncryptionResponseDocument.class);
         PasswordBasedEncryptionResponse response = responseDocument.getPasswordBasedEncryptionResponse();
         return identity(response.getCryptedData());
     }
 
     @Override
-    public byte[] pbeDecrypt(CryptedData passwordedCryptoData, String password) {
+    public byte[] pbeDecrypt(final CryptedData passwordedCryptoData, final String password) {
         PasswordBasedDecryptionRequestDocument requestDocument = PasswordBasedDecryptionRequestDocument.Factory.newInstance();
         PasswordBasedDecryptionRequest request = requestDocument.addNewPasswordBasedDecryptionRequest();
         request.setCryptedData(xml(passwordedCryptoData));
         request.setPassword(password);
-        
+
         PasswordBasedDecryptionResponseDocument responseDocument = marshal(requestDocument, PasswordBasedDecryptionResponseDocument.class);
         PasswordBasedDecryptionResponse response = responseDocument.getPasswordBasedDecryptionResponse();
         return response.getData();
     }
 
     @Override
-    public PrivateKeyToken decryptKeyPair(KeyPair keyPair, PrivateKeyToken privateKeyToken) {
+    public PrivateKeyToken decryptKeyPair(final KeyPair keyPair, final PrivateKeyToken privateKeyToken) {
         DecryptKeyPairRequestDocument requestDocument = DecryptKeyPairRequestDocument.Factory.newInstance();
         DecryptKeyPairRequest request = requestDocument.addNewDecryptKeyPairRequest();
         PrivateKeyTokenImpl privateKey = narrow(privateKeyToken);
         request.setKeyPair(xml(keyPair));
         request.setSessionID(privateKey.getAuthenticatedPrincipal().getSessionId());
         request.setPrivateKey(privateKey.getId());
-        
+
         DecryptKeyPairResponseDocument responseDocument = marshal(requestDocument, DecryptKeyPairResponseDocument.class);
         DecryptKeyPairResponse response = responseDocument.getDecryptKeyPairResponse();
         return new PrivateKeyTokenImpl(response.getPrivateKey(), keyPair, privateKey.getAuthenticatedPrincipal());
     }
 
     @Override
-    public KeyPair generateKeyPair(KeyPair protectedByKeyPair, Principal ownerPrincipal) {
+    public KeyPair generateKeyPair(final KeyPair protectedByKeyPair, final Principal ownerPrincipal) {
         GenerateKeyPairRequestDocument requestDocument = GenerateKeyPairRequestDocument.Factory.newInstance();
         GenerateKeyPairRequest request = requestDocument.addNewGenerateKeyPairRequest();
         request.setKeyPair(xml(protectedByKeyPair));
         if (ownerPrincipal != null) {
             request.setOwner(xml(ownerPrincipal));
         }
-        
+
         GenerateKeyPairResponseDocument responseDocument = marshal(requestDocument, GenerateKeyPairResponseDocument.class);
         GenerateKeyPairResponse response = responseDocument.getGenerateKeyPairResponse();
         return identity(response.getKeyPair());
     }
-    
+
     /* (non-Javadoc)
      * @see org.brekka.phalanx.api.services.PhalanxService#generateKeyPair(org.brekka.phalanx.api.model.KeyPair)
      */
     @Override
-    public KeyPair generateKeyPair(KeyPair protectedByKeyPair) {
+    public KeyPair generateKeyPair(final KeyPair protectedByKeyPair) {
         return generateKeyPair(protectedByKeyPair, null);
     }
-    
+
+    /* (non-Javadoc)
+     * @see org.brekka.phalanx.api.services.PhalanxService#sign(org.w3c.dom.Document, org.brekka.phalanx.api.model.PrivateKeyToken)
+     */
+    @Override
+    public Document sign(final Document document, final PrivateKeyToken privateKeyToken) {
+        throw new UnsupportedOperationException();
+//        AsymmetricSignRequestDocument requestDocument = AsymmetricSignRequestDocument.Factory.newInstance();
+//        AsymmetricSignRequest request = requestDocument.addNewAsymmetricSignRequest();
+//        PrivateKeyTokenImpl privateKey = narrow(privateKeyToken);
+//        request.setPrivateKey(privateKey.getId());
+//        XmlCursor cursor = request.newCursor();
+//        cursor.
+//
+//        AsymmetricSignResponseDocument responseDocument = marshal(requestDocument, AsymmetricSignResponseDocument.class);
+//        AsymmetricSignResponse asymmetricSignResponse = responseDocument.getAsymmetricSignResponse();
+//        Node domNode = asymmetricSignResponse.
+//        return
+    }
+
     /* (non-Javadoc)
      * @see org.brekka.phalanx.api.services.PhalanxService#cloneKeyPairPublic(org.brekka.phalanx.api.model.KeyPair)
      */
     @Override
-    public KeyPair cloneKeyPairPublic(KeyPair keyPair) {
+    public KeyPair cloneKeyPairPublic(final KeyPair keyPair) {
         CloneKeyPairPublicRequestDocument requestDocument = CloneKeyPairPublicRequestDocument.Factory.newInstance();
         CloneKeyPairPublicRequest request = requestDocument.addNewCloneKeyPairPublicRequest();
         request.setKeyPair(xml(keyPair));
@@ -239,41 +259,41 @@ public class PhalanxServiceClient implements PhalanxService {
     }
 
     @Override
-    public KeyPair assignKeyPair(PrivateKeyToken privateKeyToken, Principal assignToPrincipal) {
+    public KeyPair assignKeyPair(final PrivateKeyToken privateKeyToken, final Principal assignToPrincipal) {
         AssignKeyPairRequestDocument requestDocument = AssignKeyPairRequestDocument.Factory.newInstance();
         AssignKeyPairRequest request = requestDocument.addNewAssignKeyPairRequest();
         PrivateKeyTokenImpl privateKey = narrow(privateKeyToken);
         request.setSessionID(privateKey.getAuthenticatedPrincipal().getSessionId());
         request.setPrivateKey(privateKey.getId());
         request.setAssignToPrincipal(xml(assignToPrincipal));
-        
+
         AssignKeyPairResponseDocument responseDocument = marshal(requestDocument, AssignKeyPairResponseDocument.class);
         AssignKeyPairResponse response = responseDocument.getAssignKeyPairResponse();
         return identity(response.getKeyPair());
     }
-    
+
     /* (non-Javadoc)
      * @see org.brekka.phalanx.api.services.PhalanxService#assignKeyPair(org.brekka.phalanx.api.model.PrivateKeyToken, org.brekka.phalanx.api.model.KeyPair)
      */
     @Override
-    public KeyPair assignKeyPair(PrivateKeyToken privateKeyToken, KeyPair assignToKeyPair) {
+    public KeyPair assignKeyPair(final PrivateKeyToken privateKeyToken, final KeyPair assignToKeyPair) {
         AssignKeyPairRequestDocument requestDocument = AssignKeyPairRequestDocument.Factory.newInstance();
         AssignKeyPairRequest request = requestDocument.addNewAssignKeyPairRequest();
         PrivateKeyTokenImpl privateKey = narrow(privateKeyToken);
         request.setSessionID(privateKey.getAuthenticatedPrincipal().getSessionId());
         request.setPrivateKey(privateKey.getId());
         request.setAssignToKeyPair(xml(assignToKeyPair));
-        
+
         AssignKeyPairResponseDocument responseDocument = marshal(requestDocument, AssignKeyPairResponseDocument.class);
         AssignKeyPairResponse response = responseDocument.getAssignKeyPairResponse();
         return identity(response.getKeyPair());
     }
-    
+
     /* (non-Javadoc)
      * @see org.brekka.phalanx.api.services.PhalanxService#retrievePublicKey(org.brekka.phalanx.api.model.KeyPair)
      */
     @Override
-    public ExportedPublicKey retrievePublicKey(KeyPair keyPair) {
+    public ExportedPublicKey retrievePublicKey(final KeyPair keyPair) {
         RetrievePublicKeyRequestDocument requestDocument = RetrievePublicKeyRequestDocument.Factory.newInstance();
         RetrievePublicKeyRequest request = requestDocument.addNewRetrievePublicKeyRequest();
         request.setKeyPair(xml(keyPair));
@@ -282,12 +302,12 @@ public class PhalanxServiceClient implements PhalanxService {
         PublicKey publicKey = response.getPublicKey();
         return new ExportedPublicKeyImpl(publicKey.getEncoded(), publicKey.getProfile());
     }
-    
+
     /* (non-Javadoc)
      * @see org.brekka.phalanx.api.services.PhalanxService#retrievePublicKey(org.brekka.phalanx.api.model.Principal)
      */
     @Override
-    public ExportedPublicKey retrievePublicKey(Principal principal) {
+    public ExportedPublicKey retrievePublicKey(final Principal principal) {
         RetrievePublicKeyRequestDocument requestDocument = RetrievePublicKeyRequestDocument.Factory.newInstance();
         RetrievePublicKeyRequest request = requestDocument.addNewRetrievePublicKeyRequest();
         request.setPrincipal(xml(principal));
@@ -296,32 +316,32 @@ public class PhalanxServiceClient implements PhalanxService {
         PublicKey publicKey = response.getPublicKey();
         return new ExportedPublicKeyImpl(publicKey.getEncoded(), publicKey.getProfile());
     }
-    
+
 
     @Override
-    public void deleteCryptedData(CryptedData cryptedDataItem) {
+    public void deleteCryptedData(final CryptedData cryptedDataItem) {
         DeleteCryptedDataRequestDocument requestDocument = DeleteCryptedDataRequestDocument.Factory.newInstance();
         DeleteCryptedDataRequest request = requestDocument.addNewDeleteCryptedDataRequest();
         request.setCryptedData(xml(cryptedDataItem));
-        
+
         marshal(requestDocument, DeleteCryptedDataResponseDocument.class);
     }
 
     @Override
-    public void deleteKeyPair(KeyPair keyPair) {
+    public void deleteKeyPair(final KeyPair keyPair) {
         DeleteKeyPairRequestDocument requestDocument = DeleteKeyPairRequestDocument.Factory.newInstance();
         DeleteKeyPairRequest request = requestDocument.addNewDeleteKeyPairRequest();
         request.setKeyPair(xml(keyPair));
-        
+
         marshal(requestDocument, DeleteKeyPairResponseDocument.class);
     }
 
     @Override
-    public Principal createPrincipal(String password) {
+    public Principal createPrincipal(final String password) {
         CreatePrincipalRequestDocument requestDocument = CreatePrincipalRequestDocument.Factory.newInstance();
         CreatePrincipalRequest request = requestDocument.addNewCreatePrincipalRequest();
         request.setPassword(password);
-        
+
         CreatePrincipalResponseDocument responseDocument = marshal(requestDocument, CreatePrincipalResponseDocument.class);
         CreatePrincipalResponse response = responseDocument.getCreatePrincipalResponse();
         PrincipalType principal = response.getPrincipal();
@@ -330,21 +350,21 @@ public class PhalanxServiceClient implements PhalanxService {
     }
 
     @Override
-    public void deletePrincipal(Principal principal) {
+    public void deletePrincipal(final Principal principal) {
         DeletePrincipalRequestDocument requestDocument = DeletePrincipalRequestDocument.Factory.newInstance();
         DeletePrincipalRequest request = requestDocument.addNewDeletePrincipalRequest();
         request.setPrincipal(xml(principal));
-        
+
         marshal(requestDocument, DeletePrincipalResponseDocument.class);
     }
 
     @Override
-    public AuthenticatedPrincipal authenticate(Principal principal, String password) {
+    public AuthenticatedPrincipal authenticate(final Principal principal, final String password) {
         AuthenticateRequestDocument requestDocument = AuthenticateRequestDocument.Factory.newInstance();
         AuthenticateRequest request = requestDocument.addNewAuthenticateRequest();
         request.addNewPrincipal().setId(principal.getId().toString());
         request.setPassword(password);
-        
+
         AuthenticateResponseDocument responseDocument = marshal(requestDocument, AuthenticateResponseDocument.class);
         AuthenticateResponse response = responseDocument.getAuthenticateResponse();
         AuthenticatedPrincipalType authenticatedPrincipal = response.getAuthenticatedPrincipal();
@@ -354,9 +374,9 @@ public class PhalanxServiceClient implements PhalanxService {
                 principalImpl, authenticatedPrincipal.getSessionID(), authenticatedPrincipal.getDefaultPrivateKey());
         return authenticatedPrincipalImpl;
     }
-    
+
     @Override
-    public void logout(AuthenticatedPrincipal authenticatedPrincipal) {
+    public void logout(final AuthenticatedPrincipal authenticatedPrincipal) {
         LogoutRequestDocument requestDocument = LogoutRequestDocument.Factory.newInstance();
         LogoutRequest request = requestDocument.addNewLogoutRequest();
         AuthenticatedPrincipalImpl principal = narrow(authenticatedPrincipal);
@@ -367,7 +387,7 @@ public class PhalanxServiceClient implements PhalanxService {
 
 
     @Override
-    public void changePassword(Principal principal, String currentPassword, String newPassword) {
+    public void changePassword(final Principal principal, final String currentPassword, final String newPassword) {
         ChangePasswordRequestDocument requestDocument = ChangePasswordRequestDocument.Factory.newInstance();
         ChangePasswordRequest request = requestDocument.addNewChangePasswordRequest();
         request.setPrincipal(xml(principal));
@@ -379,73 +399,73 @@ public class PhalanxServiceClient implements PhalanxService {
 
 
     @SuppressWarnings("unchecked")
-    protected <ReqDoc extends XmlObject, RespDoc extends XmlObject> RespDoc marshal(ReqDoc requestDocument, Class<RespDoc> expected) {
+    protected <ReqDoc extends XmlObject, RespDoc extends XmlObject> RespDoc marshal(final ReqDoc requestDocument, final Class<RespDoc> expected) {
         Object marshalSendAndReceive;
         try {
-            marshalSendAndReceive = phalanxWebServiceOperations.marshalSendAndReceive(requestDocument);
+            marshalSendAndReceive = this.phalanxWebServiceOperations.marshalSendAndReceive(requestDocument);
         } catch (SoapFaultClientException e) {
             identifyFault(e);
-            throw new PhalanxException(PhalanxErrorCode.CP500, e, 
+            throw new PhalanxException(PhalanxErrorCode.CP500, e,
                     "Request '%s' failed", requestDocument.schemaType().toString());
         }
         if (!expected.isAssignableFrom(marshalSendAndReceive.getClass())) {
-            throw new PhalanxException(PhalanxErrorCode.CP500, 
-                    "Expected '%s', actual '%s'", expected.getClass().getName(), 
+            throw new PhalanxException(PhalanxErrorCode.CP500,
+                    "Expected '%s', actual '%s'", expected.getClass().getName(),
                     marshalSendAndReceive.getClass().getName());
         }
         return (RespDoc) marshalSendAndReceive;
     }
 
-    protected PrivateKeyTokenImpl narrow(PrivateKeyToken privateKeyToken) {
+    protected PrivateKeyTokenImpl narrow(final PrivateKeyToken privateKeyToken) {
         if (privateKeyToken instanceof PrivateKeyTokenImpl == false) {
-            
+
             // TODO
             throw new IllegalStateException();
         }
         return (PrivateKeyTokenImpl) privateKeyToken;
     }
-    protected AuthenticatedPrincipalImpl narrow(AuthenticatedPrincipal authenticatedPrincipal) {
+    protected AuthenticatedPrincipalImpl narrow(final AuthenticatedPrincipal authenticatedPrincipal) {
         if (authenticatedPrincipal instanceof AuthenticatedPrincipalImpl == false) {
             // TODO
             throw new IllegalStateException();
         }
         return (AuthenticatedPrincipalImpl) authenticatedPrincipal;
     }
-    
-    private static IdentityCryptedData identity(CryptedDataType cryptedData) {
+
+    private static IdentityCryptedData identity(final CryptedDataType cryptedData) {
         return new IdentityCryptedData(UUID.fromString(cryptedData.getId()));
     }
-    
-    private static IdentityKeyPair identity(KeyPairType keyPair) {
+
+    private static IdentityKeyPair identity(final KeyPairType keyPair) {
         return new IdentityKeyPair(UUID.fromString(keyPair.getId()));
     }
-    
-    private static KeyPairType xml(KeyPair keyPair) {
+
+    private static KeyPairType xml(final KeyPair keyPair) {
         KeyPairType keyPairType = KeyPairType.Factory.newInstance();
         keyPairType.setId(keyPair.getId().toString());
         return keyPairType;
     }
-    
-    private static PrincipalType xml(Principal principal) {
+
+    private static PrincipalType xml(final Principal principal) {
         PrincipalType principalType = PrincipalType.Factory.newInstance();
         principalType.setId(principal.getId().toString());
         return principalType;
     }
 
-    private static CryptedDataType xml(CryptedData asymedCryptoData) {
+    private static CryptedDataType xml(final CryptedData asymedCryptoData) {
         CryptedDataType cryptedDataType = CryptedDataType.Factory.newInstance();
         cryptedDataType.setId(asymedCryptoData.getId().toString());
         return cryptedDataType;
     }
-    
-    private static UUID uuid(UUIDType uuid) {
+
+    private static UUID uuid(final UUIDType uuid) {
         return UUID.fromString(uuid.getStringValue());
     }
-    
+
     /**
      * @param e
      */
-    private static void identifyFault(SoapFaultClientException e) {
+    private static void identifyFault(final SoapFaultClientException e) {
         Result result = e.getSoapFault().getFaultDetail().getResult();
         OperationFault fault = null;
         if (result instanceof DOMResult) {

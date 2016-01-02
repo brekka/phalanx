@@ -20,6 +20,7 @@ import org.brekka.phalanx.api.PhalanxErrorCode;
 import org.brekka.phalanx.api.PhalanxException;
 import org.brekka.phalanx.api.model.AuthenticatedPrincipal;
 import org.brekka.phalanx.api.model.CryptedData;
+import org.brekka.phalanx.api.model.ExportedPrincipal;
 import org.brekka.phalanx.api.model.ExportedPublicKey;
 import org.brekka.phalanx.api.model.KeyPair;
 import org.brekka.phalanx.api.model.PrivateKeyToken;
@@ -125,18 +126,12 @@ public class PhalanxServiceImpl implements PhalanxService {
         return newKeyPair;
     }
 
-    /* (non-Javadoc)
-     * @see org.brekka.phalanx.api.services.PhalanxService#generateKeyPair(org.brekka.phalanx.api.model.KeyPair)
-     */
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
     public KeyPair generateKeyPair(final KeyPair protectedByKeyPair) {
         return generateKeyPair(protectedByKeyPair, null);
     }
 
-    /* (non-Javadoc)
-     * @see org.brekka.phalanx.api.services.PhalanxService#cloneKeyPairPublic(org.brekka.phalanx.api.model.KeyPair)
-     */
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
     public KeyPair cloneKeyPairPublic(final KeyPair protectedByKeyPair) {
@@ -153,9 +148,6 @@ public class PhalanxServiceImpl implements PhalanxService {
         return newKeyPair;
     }
 
-    /* (non-Javadoc)
-     * @see org.brekka.phalanx.api.services.PhalanxService#assignKeyPair(org.brekka.phalanx.api.model.PrivateKeyToken, org.brekka.phalanx.api.model.KeyPair)
-     */
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
     public KeyPair assignKeyPair(final PrivateKeyToken privateKeyToken, final KeyPair assignToKeyPair) {
@@ -164,9 +156,6 @@ public class PhalanxServiceImpl implements PhalanxService {
         return newKeyPair;
     }
 
-    /* (non-Javadoc)
-     * @see org.brekka.phalanx.api.services.PhalanxService#retrievePublicKey(org.brekka.phalanx.api.model.KeyPair)
-     */
     @Override
     public ExportedPublicKey retrievePublicKey(final KeyPair keyPair) {
         AsymmetricKeyPair asymKeyPair = this.asymmetricCryptoService.retrieveKeyPair(keyPair.getId());
@@ -174,9 +163,6 @@ public class PhalanxServiceImpl implements PhalanxService {
         return new ExportedPublicKeyImpl(publicKey.getData(), publicKey.getProfile());
     }
 
-    /* (non-Javadoc)
-     * @see org.brekka.phalanx.api.services.PhalanxService#retrievePublicKey(org.brekka.phalanx.api.model.Principal)
-     */
     @Override
     public ExportedPublicKey retrievePublicKey(final org.brekka.phalanx.api.model.Principal principal) {
         Principal thePrincipal = this.principalService.retrieveById(principal.getId());
@@ -184,9 +170,6 @@ public class PhalanxServiceImpl implements PhalanxService {
         return retrievePublicKey(keyPair);
     }
 
-    /* (non-Javadoc)
-     * @see org.brekka.phalanx.api.services.PhalanxService#sign(org.w3c.dom.Document, org.brekka.phalanx.api.model.PrivateKeyToken)
-     */
     @Override
     public Document sign(final Document document, final PrivateKeyToken privateKeyToken) {
         return this.asymmetricCryptoService.sign(document, privateKeyToken);
@@ -249,8 +232,20 @@ public class PhalanxServiceImpl implements PhalanxService {
         this.asymmetricCryptoService.replacePrivateKey(keyPair, privateKeyData);
     }
 
+    @Override
+    @Transactional
+    public ExportedPrincipal exportPrincipal(final AuthenticatedPrincipal principal, final byte[] secret) {
+        return principalService.export(principal, secret);
+    }
+
+    @Override
+    @Transactional
+    public AuthenticatedPrincipal importPrincipal(final ExportedPrincipal exportedPrincipal, final byte[] secret) {
+        return principalService.restore(exportedPrincipal, secret);
+    }
+
     @SuppressWarnings("unchecked")
-    protected <T extends CryptoData> T retrieveDataItem(final CryptedData cryptedData, final Class<T> expectedType) {
+    private <T extends CryptoData> T retrieveDataItem(final CryptedData cryptedData, final Class<T> expectedType) {
         CryptoData cryptoData = this.cryptoDataDAO.retrieveById(cryptedData.getId());
         if (cryptoData == null) {
             throw new PhalanxException(PhalanxErrorCode.CP601, "Crypted data item with id '%s' does not exist",
@@ -262,6 +257,4 @@ public class PhalanxServiceImpl implements PhalanxService {
         }
         return (T) cryptoData;
     }
-
-
 }

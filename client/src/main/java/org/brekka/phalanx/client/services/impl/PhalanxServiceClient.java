@@ -21,6 +21,7 @@ import java.util.UUID;
 import javax.xml.transform.Result;
 import javax.xml.transform.dom.DOMResult;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -30,6 +31,7 @@ import org.brekka.phalanx.api.beans.IdentityCryptedData;
 import org.brekka.phalanx.api.beans.IdentityKeyPair;
 import org.brekka.phalanx.api.model.AuthenticatedPrincipal;
 import org.brekka.phalanx.api.model.CryptedData;
+import org.brekka.phalanx.api.model.ExportedPrincipal;
 import org.brekka.phalanx.api.model.ExportedPublicKey;
 import org.brekka.phalanx.api.model.KeyPair;
 import org.brekka.phalanx.api.model.Principal;
@@ -394,6 +396,16 @@ public class PhalanxServiceClient implements PhalanxService {
         request.setCurrentPassword(currentPassword);
         request.setNewPassword(newPassword);
         marshal(requestDocument, ChangePasswordResponseDocument.class);
+    }
+
+    @Override
+    public ExportedPrincipal exportPrincipal(final AuthenticatedPrincipal principal, final byte[] secret) {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public AuthenticatedPrincipal importPrincipal(final ExportedPrincipal exportedPrincipal, final byte[] secret) {
+        throw new NotImplementedException();
     }
 
 

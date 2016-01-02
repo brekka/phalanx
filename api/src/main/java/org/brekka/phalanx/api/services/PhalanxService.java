@@ -18,6 +18,7 @@ package org.brekka.phalanx.api.services;
 
 import org.brekka.phalanx.api.model.AuthenticatedPrincipal;
 import org.brekka.phalanx.api.model.CryptedData;
+import org.brekka.phalanx.api.model.ExportedPrincipal;
 import org.brekka.phalanx.api.model.ExportedPublicKey;
 import org.brekka.phalanx.api.model.KeyPair;
 import org.brekka.phalanx.api.model.Principal;
@@ -215,4 +216,9 @@ public interface PhalanxService {
      * @param newPassword
      */
     void changePassword(Principal principal, String currentPassword, String newPassword);
+
+
+    ExportedPrincipal exportPrincipal(AuthenticatedPrincipal principal, byte[] secret);
+
+    AuthenticatedPrincipal importPrincipal(ExportedPrincipal exportedPrincipal, byte[] secret);
 }

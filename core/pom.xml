@@ -19,7 +19,7 @@
     <dependency>
       <groupId>org.brekka.commons</groupId>
       <artifactId>brekka-commons-persistence</artifactId>
-      <version>2.1.0</version>
+      <version>${brekka-commons-persistence-version}</version>
     </dependency>
     <dependency>
       <groupId>org.brekka.phalanx</groupId>
@@ -53,15 +53,12 @@
     </dependency>
 
     <dependency>
-      <groupId>net.iharder</groupId>
-      <artifactId>base64</artifactId>
-      <version>2.3.8</version>
-    </dependency>
-    <dependency>
       <groupId>org.bouncycastle</groupId>
-      <artifactId>bcprov-jdk16</artifactId>
-      <version>1.46</version>
+      <artifactId>bcprov-jdk15on</artifactId>
+      <optional>true</optional>
+      <version>${bouncycastle-version}</version>
     </dependency>
+    
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

@@ -3,9 +3,8 @@ package org.brekka.phalanx.services.impl;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Random;
-
-import net.iharder.Base64;
 
 import org.brekka.phalanx.api.model.PrivateKeyToken;
 import org.brekka.phalanx.core.dao.AsymmetricKeyPairDAO;
@@ -25,11 +24,11 @@ import org.junit.Test;
 public class AsymmetricCryptoServiceImplTest {
 
     private AsymmetricCryptoServiceImpl service;
-    
+
     private PasswordBasedCryptoServiceImpl pbeService;
-    
+
     private SymmetricCryptoServiceImpl symService;
-    
+
     @Before
     public void setUp() throws Exception {
         CryptoProfileRegistryDocument regDoc = CryptoProfileRegistryDocument.Factory.parse(
@@ -38,18 +37,15 @@ public class AsymmetricCryptoServiceImplTest {
         CryptoProfileServiceImpl cryptoProfileService = new CryptoProfileServiceImpl(regDoc.getCryptoProfileRegistry());
         CryptoDataDAO cryptoDAO = new TestCryptoDataDAO();
         AsymmetricKeyPairDAO asymmetricKeyPairDAO = new TestAsymmetricKeyPairDAO();
-        
-        org.brekka.phoenix.core.services.impl.SymmetricCryptoServiceImpl symCrypSvc = new org.brekka.phoenix.core.services.impl.SymmetricCryptoServiceImpl();
-        
-        
+
         symService = new SymmetricCryptoServiceImpl();
         symService.setCryptoDataDAO(cryptoDAO);
         symService.setCryptoProfileService(cryptoProfileService);
-        
+
         pbeService = new PasswordBasedCryptoServiceImpl();
         pbeService.setCryptoDataDAO(cryptoDAO);
         pbeService.setCryptoProfileService(cryptoProfileService);
-        
+
         service = new AsymmetricCryptoServiceImpl();
         service.setCryptoProfileService(cryptoProfileService);
         service.setCryptoDataDAO(cryptoDAO);
@@ -65,15 +61,15 @@ public class AsymmetricCryptoServiceImplTest {
         String password = "password";
         Principal user = new Principal();
         AsymmetricKeyPair asyncKeyPair = service.generateKeyPair(password, user);
-        
+
         // Extract the private Key from what was created
         PrivateKeyToken privateKeyToken = service.decrypt(asyncKeyPair, password);
-        
+
         AsymedCryptoData asyncCryptoData = service.encrypt(data, asyncKeyPair);
         byte[] result = service.decrypt(asyncCryptoData, privateKeyToken, byte[].class);
-        System.out.printf("Data(%d): %s%n", asyncCryptoData.getData().length, Base64.encodeBytes(asyncCryptoData.getData()));
+        System.out.printf("Data(%d): %s%n",
+                asyncCryptoData.getData().length, Base64.getEncoder().encodeToString(asyncCryptoData.getData()));
+
         assertTrue(Arrays.equals(data, result));
     }
-    
-
 }

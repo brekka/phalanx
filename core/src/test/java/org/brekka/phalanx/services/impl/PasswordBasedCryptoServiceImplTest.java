@@ -3,9 +3,8 @@ package org.brekka.phalanx.services.impl;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Random;
-
-import net.iharder.Base64;
 
 import org.brekka.phalanx.api.PhalanxException;
 import org.brekka.phalanx.core.dao.CryptoDataDAO;
@@ -20,7 +19,7 @@ import org.junit.Test;
 public class PasswordBasedCryptoServiceImplTest {
 
     private PasswordBasedCryptoServiceImpl service;
-    
+
     @Before
     public void setUp() throws Exception {
         CryptoProfileRegistryDocument regDoc = CryptoProfileRegistryDocument.Factory.parse(
@@ -38,23 +37,31 @@ public class PasswordBasedCryptoServiceImplTest {
         byte[] data = new byte[58];
         new Random().nextBytes(data);
         PasswordedCryptoData encrypt = service.encrypt(data, "password");
-        System.out.printf("Data(%d): %s%n", encrypt.getData().length, Base64.encodeBytes(encrypt.getData()));
-        System.out.printf("Salt(%d): %s%n", encrypt.getSalt().length, Base64.encodeBytes(encrypt.getSalt()));
+        System.out.printf("Data(%d): %s%n",
+                encrypt.getData().length, Base64.getEncoder().encodeToString(encrypt.getData()));
+
+        System.out.printf("Salt(%d): %s%n",
+                encrypt.getSalt().length, Base64.getEncoder().encodeToString(encrypt.getSalt()));
+
         long start = System.nanoTime();
         byte[] decrypted = service.decrypt(encrypt, "password", byte[].class);
         long end = System.nanoTime();
-        
+
         System.out.printf("%.2f seconds%n", (float) (end - start) / 1000000000);
         assertTrue(Arrays.equals(data, decrypted));
     }
-    
+
     @Test(expected=PhalanxException.class) @Ignore
     public void testInvalidPassword() {
         byte[] data = new byte[58];
         new Random().nextBytes(data);
         PasswordedCryptoData encrypt = service.encrypt(data, "password");
-        System.out.printf("Data(%d): %s%n", encrypt.getData().length, Base64.encodeBytes(encrypt.getData()));
-        System.out.printf("Salt(%d): %s%n", encrypt.getSalt().length, Base64.encodeBytes(encrypt.getSalt()));
+        System.out.printf("Data(%d): %s%n",
+                encrypt.getData().length, Base64.getEncoder().encodeToString(encrypt.getData()));
+
+        System.out.printf("Salt(%d): %s%n",
+                encrypt.getSalt().length, Base64.getEncoder().encodeToString(encrypt.getSalt()));
+
         service.decrypt(encrypt, "notthepassword", byte[].class);
     }
 

@@ -39,10 +39,10 @@ public class SymmetricCryptoServiceImpl extends AbstractCryptoService implements
 
     @Autowired
     private CryptoDataDAO cryptoDataDAO;
-    
+
     @Override
     @Transactional(propagation=Propagation.SUPPORTS)
-    public <T> T decrypt(SymedCryptoData cryptoData, SecretKeyToken secretKeyToken, Class<T> expectedType) {
+    public <T> T decrypt(final SymedCryptoData cryptoData, final SecretKeyToken secretKeyToken, final Class<T> expectedType) {
         CryptoProfile profile = cryptoProfileService.retrieveProfile(cryptoData.getProfile());
         InternalSecretKeyToken internalSecretKeyToken = verify(secretKeyToken);
         byte[] data;
@@ -50,7 +50,7 @@ public class SymmetricCryptoServiceImpl extends AbstractCryptoService implements
             DefaultSymmetricCryptoSpec spec = new DefaultSymmetricCryptoSpec(internalSecretKeyToken.getSecretKey(), cryptoData.getIv());
             data = phoenixSymmetric.decrypt(cryptoData.getData(), spec);
         } catch (PhoenixException e) {
-            throw new PhalanxException(PhalanxErrorCode.CP106, e, 
+            throw new PhalanxException(PhalanxErrorCode.CP106, e,
                     "Failed to decrypt CryptoData with id '%s'", cryptoData.getId());
         }
         return toType(data, expectedType, cryptoData.getId(), profile);
@@ -59,7 +59,7 @@ public class SymmetricCryptoServiceImpl extends AbstractCryptoService implements
 
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
-    public SymedCryptoData encrypt(Object obj, SecretKeyToken secretKeyToken) {
+    public SymedCryptoData encrypt(final Object obj, final SecretKeyToken secretKeyToken) {
         InternalSecretKeyToken internalSecretKeyToken = verify(secretKeyToken);
         SecretKey secretKey = internalSecretKeyToken.getSecretKey();
         byte[] data = toBytes(obj);
@@ -67,18 +67,18 @@ public class SymmetricCryptoServiceImpl extends AbstractCryptoService implements
         try {
             cryptoResult = phoenixSymmetric.encrypt(data, secretKey);
         } catch (PhoenixException e) {
-            throw new PhalanxException(PhalanxErrorCode.CP105, e, 
+            throw new PhalanxException(PhalanxErrorCode.CP105, e,
                     "Failed to symmetric encrypt object");
         }
-        
+
         SymedCryptoData cryptoData = new SymedCryptoData();
-        cryptoData.setIv(cryptoResult.getSpec().getIV());
+        cryptoData.setIv(cryptoResult.getSpec().getIv());
         cryptoData.setData(cryptoResult.getCipherText());
         cryptoData.setProfile(cryptoResult.getSpec().getCryptoProfile().getNumber());
         cryptoDataDAO.create(cryptoData);
         return cryptoData;
     }
-    
+
     @Override
     @Transactional(propagation=Propagation.SUPPORTS)
     public SecretKeyToken generateSecretKey() {
@@ -86,22 +86,22 @@ public class SymmetricCryptoServiceImpl extends AbstractCryptoService implements
         SecretKey secretKey = phoenixSymmetric.createSecretKey(cryptoProfile);
         return new InternalSecretKeyToken(secretKey);
     }
-    
-    
-    protected InternalSecretKeyToken verify(SecretKeyToken secretKey) {
+
+
+    protected InternalSecretKeyToken verify(final SecretKeyToken secretKey) {
         if (secretKey == null) {
             throw new NullPointerException("No secret key token supplied");
         }
         if (secretKey instanceof InternalSecretKeyToken == false) {
-            throw new PhalanxException(PhalanxErrorCode.CP104, 
-                    "Secret key token must be an instance issued previously by this service. Found '%s'.", 
+            throw new PhalanxException(PhalanxErrorCode.CP104,
+                    "Secret key token must be an instance issued previously by this service. Found '%s'.",
                     secretKey.getClass().getSimpleName());
         }
         return (InternalSecretKeyToken) secretKey;
     }
-    
-    public void setCryptoDataDAO(CryptoDataDAO cryptoDataDAO) {
+
+    public void setCryptoDataDAO(final CryptoDataDAO cryptoDataDAO) {
         this.cryptoDataDAO = cryptoDataDAO;
     }
-    
+
 }

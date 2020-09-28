@@ -43,7 +43,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <brekka-commons-version>2.2.1</brekka-commons-version>
     <brekka-commons-persistence-version>2.2.1</brekka-commons-persistence-version>
-    <phoenix-version>2.4.0-SNAPSHOT</phoenix-version>
+    <phoenix-version>2.4.0</phoenix-version>
     <bouncycastle-version>1.66</bouncycastle-version>
     <xmlbeans-version>2.6.0</xmlbeans-version>
     <spring-version>3.2.4.RELEASE</spring-version>

@@ -20,7 +20,7 @@
     <url>https://github.com/brekka/phalanx.git</url>
     <connection>https://github.com/brekka/phalanx.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/brekka/phalanx.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>2.6</tag>
   </scm>
 
   <developers>
